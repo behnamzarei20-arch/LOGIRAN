@@ -993,9 +993,9 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
               <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><MapPin className="h-5 w-5" aria-hidden="true"/></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-black text-slate-700">مقصد</span>
-                <span className={`mt-1 block truncate text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
+                <span className={`mt-1 block whitespace-normal break-words text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
               </span>
-              <ChevronDown className="h-5 w-5 shrink-0 text-slate-400"/>
+
             </button>
             <button type="button" onClick={chooseAllDestinations} aria-pressed={destination === '__all__'} className={`flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${destination === '__all__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
               <Globe2 className={`h-4 w-4 ${destination === '__all__' ? 'text-amber-800' : 'text-amber-600'}`} aria-hidden="true"/>
