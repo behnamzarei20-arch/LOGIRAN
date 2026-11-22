@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
+  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
   Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle
@@ -961,7 +961,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
     return <div className="flex min-h-0 flex-1 flex-col gap-3 w-full">
       <section aria-label="بنر کامیون‌ها و تریلی‌ها" className="relative h-[120px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 sm:h-[140px]">
-        <img src="/bbberah/truck-banner.svg" alt="تریلی آبی در جاده" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
+        <img src="https://cdn.prod.website-files.com/644fc66709ca3f2c154ef03c/6800b6e5848e0ad5ebb6ebfd_semi%20truck%20wind%20main%20small.jpg" alt="تریلی در جاده‌ای جنگلی" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
         <div className="absolute inset-0 bg-gradient-to-l from-primary-900/75 via-primary-900/30 to-transparent"/>
         <div className="absolute inset-y-0 right-0 flex flex-col justify-center px-4 text-right text-white">
           <span className="text-lg font-black">براه</span>
@@ -971,33 +971,37 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
       <section aria-label="انتخاب مسیر بار" className="flex flex-col gap-3">
         <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : originText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
-          <button type="button" onClick={selectHomeOrigin} className="flex w-full items-center gap-3 text-right">
-            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'origin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-xs font-bold text-slate-500">مبدأ</span>
-              <span className={`mt-1 block truncate text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
-            </span>
-            <ChevronLeft className="h-5 w-5 shrink-0 text-slate-400"/>
-          </button>
-          <button type="button" onClick={chooseNearbyOrigin} className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-extrabold text-slate-700 transition-colors hover:bg-amber-50 active:bg-amber-100">
-            <Navigation className="h-4 w-4 text-amber-600" aria-hidden="true"/>
-            اطراف من
-          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={selectHomeOrigin} className="flex min-w-0 flex-1 items-center gap-3 text-right">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-700"><span className="relative block h-4 w-4 rounded-full border-2 border-current bg-current"><span className="absolute left-1/2 top-1/2 h-[22px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute left-1/2 top-1/2 h-[3px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute inset-[3px] z-10 rounded-full bg-white"/></span></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-xs font-bold text-slate-500">مبدأ</span>
+                <span className={`mt-1 block truncate text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
+              </span>
+              <ChevronDown className="h-5 w-5 shrink-0 text-slate-400"/>
+            </button>
+            <button type="button" onClick={chooseNearbyOrigin} aria-pressed={origin === '__nearby__'} className={`flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${origin === '__nearby__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
+              <Navigation className={`h-4 w-4 ${origin === '__nearby__' ? 'text-amber-800' : 'text-amber-600'}`} aria-hidden="true"/>
+              اطراف من
+            </button>
+          </div>
         </div>
 
         <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : destinationText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
-          <button type="button" onClick={selectHomeDestination} className="flex w-full items-center gap-3 text-right">
-            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'destination' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-xs font-bold text-slate-500">مقصد</span>
-              <span className={`mt-1 block truncate text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
-            </span>
-            <ChevronLeft className="h-5 w-5 shrink-0 text-slate-400"/>
-          </button>
-          <button type="button" onClick={chooseAllDestinations} className={`mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-extrabold transition-colors ${destination === '__all__' ? 'border-amber-400 bg-amber-50 text-amber-800' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
-            <Globe2 className="h-4 w-4 text-amber-600" aria-hidden="true"/>
-            همه شهرها
-          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={selectHomeDestination} className="flex min-w-0 flex-1 items-center gap-3 text-right">
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'destination' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-xs font-bold text-slate-500">مقصد</span>
+                <span className={`mt-1 block truncate text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
+              </span>
+              <ChevronDown className="h-5 w-5 shrink-0 text-slate-400"/>
+            </button>
+            <button type="button" onClick={chooseAllDestinations} aria-pressed={destination === '__all__'} className={`flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${destination === '__all__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
+              <Globe2 className={`h-4 w-4 ${destination === '__all__' ? 'text-amber-800' : 'text-amber-600'}`} aria-hidden="true"/>
+              همه شهرها
+            </button>
+          </div>
         </div>
 
         <button type="button" onClick={runHomeSearch} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#F5A623] px-4 py-3 text-base font-black text-slate-950 shadow-md shadow-amber-200/60 transition-colors hover:bg-amber-500 active:bg-amber-600">
