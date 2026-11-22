@@ -1227,6 +1227,11 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         {!provinceData && !normalized && <div className="mt-5">
           <div className="space-y-2 max-h-[52vh] overflow-auto">{visibleProvinces.map(p=><button type="button" key={p.id} onClick={()=>chooseProvince(String(p.id))} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-bold">{p.name}</span><MapPin className="w-4 h-4 text-black shrink-0" aria-hidden="true"/></button>)}</div>
         </div>}
+        {provinceData && !normalized && <div className="mt-5">
+          <div className="space-y-2 max-h-[52vh] overflow-auto">
+            {selectedCounty ? selectedCountyCities.map(x=><button type="button" key={'selected-city-' + x.countyId + '-' + x.city} onClick={()=>chooseCity(x.city,x.countyId)} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-black">{x.city}</span><span className="text-[11px] text-gray-400">انتخاب شهر</span></button>) : provinceData.counties.map(c=><button type="button" key={'selected-county-' + c.id} onClick={()=>chooseCounty(String(provinceData.id),String(c.id))} className="w-full rounded-xl bg-primary-50 border border-primary-100 p-3.5 flex items-center justify-between text-right"><span><b className="block font-black">شهرستان {c.name}</b><span className="block text-[11px] font-bold text-primary-700 mt-1">{fa(c.cities.length)} شهر — انتخاب شهرستان</span></span><ChevronLeft className="w-4 h-4 text-primary-400"/></button>)}
+          </div>
+        </div>}
         {normalized && <div className="mt-5">
           <div className="space-y-2 max-h-[52vh] overflow-auto">
             {visibleProvinces.map(p=><button type="button" key={"province-search-" + p.id} onClick={()=>chooseProvince(String(p.id))} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-bold">{p.name}</span><MapPin className="w-4 h-4 text-black shrink-0" aria-hidden="true"/></button>)}
