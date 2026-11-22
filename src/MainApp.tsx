@@ -1104,9 +1104,6 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       .sort((a,b) => a.name.localeCompare(b.name, 'fa'));
     const allDestinationCities = iranLocations.flatMap(p => p.counties.flatMap(c => c.cities.map(city => ({ city, countyId:String(c.id), countyName:c.name, provinceId:String(p.id), provinceName:p.name }))));
     const provinceCities = provinceData ? provinceData.counties.flatMap(c => c.cities.map(city => ({ city, countyId:String(c.id), countyName:c.name, provinceId:String(provinceData.id), provinceName:provinceData.name }))) : [];
-    const selectedCountyId = isOrigin ? originCounty : isNearby ? nearbyDestinationCounty : destinationCounty;
-    const selectedCounty = provinceData?.counties.find(c => String(c.id) === selectedCountyId);
-    const selectedCountyCities = selectedCounty ? selectedCounty.cities.map(city => ({ city, countyId:String(selectedCounty.id), countyName:selectedCounty.name, provinceId:String(provinceData!.id), provinceName:provinceData!.name })) : [];
     const sourceCities = allDestinationCities;
     const filteredCities = sourceCities
       .filter(x => !normalized || normalizeSearch(x.city).slice(0, normalized.length) === normalized)
@@ -1229,7 +1226,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </div>}
         {provinceData && !normalized && <div className="mt-5">
           <div className="space-y-2 max-h-[52vh] overflow-auto">
-            {selectedCounty ? selectedCountyCities.map(x=><button type="button" key={'selected-city-' + x.countyId + '-' + x.city} onClick={()=>chooseCity(x.city,x.countyId)} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-black">{x.city}</span><span className="text-[11px] text-gray-400">انتخاب شهر</span></button>) : provinceData.counties.map(c=><button type="button" key={'selected-county-' + c.id} onClick={()=>chooseCounty(String(provinceData.id),String(c.id))} className="w-full rounded-xl bg-primary-50 border border-primary-100 p-3.5 flex items-center justify-between text-right"><span><b className="block font-black">شهرستان {c.name}</b><span className="block text-[11px] font-bold text-primary-700 mt-1">{fa(c.cities.length)} شهر — انتخاب شهرستان</span></span><ChevronLeft className="w-4 h-4 text-primary-400"/></button>)}
+            {provinceCities.map(x=><button type="button" key={'province-city-' + x.countyId + '-' + x.city} onClick={()=>chooseCity(x.city,x.countyId)} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-black">{x.city}</span><span className="text-[11px] text-gray-400">انتخاب شهر</span></button>)}
           </div>
         </div>}
         {normalized && <div className="mt-5">
