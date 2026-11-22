@@ -630,7 +630,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   };
   const openSearchPage = () => {
     resetSearchFields();
-    go('search');
+    goHome();
   };
   const findCityLocation = (city:string) => {
     for (const province of iranLocations) for (const county of province.counties) if (county.cities.includes(city)) return { provinceId:String(province.id), countyId:String(county.id) };
@@ -1060,30 +1060,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       );
     }
 
-    return <div className="space-y-4">
-      <Card><CardBody className="p-4">
-        <div className="flex items-center gap-2 px-1"><Search className="w-5 h-5 text-primary-700" aria-hidden="true"/><h2 className="font-black text-lg text-gray-900">جستجوی بار</h2></div>
-        <button onClick={()=>{setActiveSearchField('origin');setLocationReturnPage('search');setOrigin('');setOriginText('');setOriginProvince('');setOriginCounty('');replacePage('origin-select');}} className="w-full mt-5 mb-3 rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
-          <span className="block text-xs font-bold text-gray-400 mb-1">مبدأ</span>
-          <div className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary-600 shrink-0"/><span className={originText ? 'text-gray-900 font-bold' : 'text-gray-400'}>{originText || 'مبدأ را انتخاب کنید'}</span><ChevronLeft className="w-4 h-4 text-gray-300 mr-auto"/></div>
-        </button>
-        <div className="border-t border-gray-100 my-6"/>
-        <button onClick={()=>{setActiveSearchField('destination');setLocationReturnPage('search');setDestination('');setDestinationText('');setDestinationProvince('');setDestinationCounty('');replacePage('destination-select');}} className="w-full rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
-          <span className="block text-xs font-bold text-gray-400 mb-1">مقصد</span>
-          <div className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary-600 shrink-0"/><span className={destinationText ? 'text-gray-900 font-bold' : 'text-gray-400'}>{destinationText || 'مقصد را انتخاب کنید'}</span><ChevronLeft className="w-4 h-4 text-gray-300 mr-auto"/></div>
-        </button>
-      </CardBody></Card>
-      <Button size="full" className="mt-6 h-14 text-base font-black shadow-lg shadow-primary-100" onClick={runSearch}><Search className="w-5 h-5 ml-2"/> جستجوی بار</Button>
-      <Card><CardBody className="p-4">
-        <div className="flex items-center justify-between mb-3"><h3 className="font-black">سه مسیر پرتکرار</h3><span className="text-[11px] text-gray-400">انتخاب سریع</span></div>
-        <div className="space-y-2">{frequentRoutes.map(route=><button type="button" key={route.from+'-'+route.to} onClick={()=>{
-          const fromLocation=findCityLocation(route.from); const toLocation=findCityLocation(route.to);
-          setOrigin(route.from); setOriginText(route.from); setOriginProvince(fromLocation?.provinceId || ''); setOriginCounty(fromLocation?.countyId || '');
-          setDestination(route.to); setDestinationText(route.to); setDestinationProvince(toLocation?.provinceId || ''); setDestinationCounty(toLocation?.countyId || '');
-          setFrequentRoute({from:route.from,to:route.to}); go('frequent-route');
-        }} className="w-full rounded-xl border border-gray-100 bg-gray-50 p-3 flex items-center justify-between text-right"><span className="font-bold text-sm">{route.from} <span className="text-gray-400 mx-1">←</span> {route.to}</span><ChevronLeft className="w-4 h-4 text-gray-300"/></button>)}</div>
-      </CardBody></Card>
-    </div>;
+    return <HomePage/>;
   };
 
   const FrequentRoutePage = () => {
