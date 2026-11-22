@@ -970,7 +970,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </section>
 
       <section aria-label="انتخاب مسیر بار" className="flex flex-col gap-3">
-        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : 'border-slate-200'}`}>
+        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : originText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
           <button type="button" onClick={selectHomeOrigin} className="flex w-full items-center gap-3 text-right">
             <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'origin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
             <span className="min-w-0 flex-1">
@@ -985,7 +985,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
           </button>
         </div>
 
-        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : 'border-slate-200'}`}>
+        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : destinationText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
           <button type="button" onClick={selectHomeDestination} className="flex w-full items-center gap-3 text-right">
             <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'destination' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
             <span className="min-w-0 flex-1">
