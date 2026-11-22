@@ -1228,7 +1228,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     return <div className="space-y-4">
       <Card><CardBody className="p-4">
         <div className="flex items-center gap-3 mb-4">
-          <button type="button" onClick={()=>{ if (isOrigin) { goHome(); } else if (isNearby) { setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty(''); goHome(); } else { setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); goHome(); } }} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><ArrowLeft className="w-5 h-5"/></button>
+          <button type="button" onClick={()=>{ if (isOrigin) { if(locationReturnPage==='home') goHome(); else replacePage('search'); } else if (isNearby) { setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty(''); goHome(); } else { setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); if(locationReturnPage==='home') goHome(); else replacePage('search'); } }} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><ArrowLeft className="w-5 h-5"/></button>
           <div><h2 className="font-black text-lg">{isOrigin ? 'مبدأ را انتخاب کنید' : 'مقصد را انتخاب کنید'}</h2></div>
         </div>
         <div className="relative">
