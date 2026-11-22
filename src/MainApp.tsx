@@ -961,7 +961,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
     return <div className="flex min-h-0 flex-1 flex-col gap-3 w-full">
       <section aria-label="بنر کامیون‌ها و تریلی‌ها" className="relative h-[120px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 sm:h-[140px]">
-        <img src="https://cdn.prod.website-files.com/644fc66709ca3f2c154ef03c/6800b6e5848e0ad5ebb6ebfd_semi%20truck%20wind%20main%20small.jpg" alt="تریلی در جاده‌ای جنگلی" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
+        <img src="https://images.unsplash.com/photo-1773438791088-9d5c2d5663cf?auto=format&fit=crop&fm=jpg&q=85&w=1600" alt="تریلی در جاده‌ای جنگلی" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
         <div className="absolute inset-0 bg-gradient-to-l from-primary-900/75 via-primary-900/30 to-transparent"/>
         <div className="absolute inset-y-0 right-0 flex flex-col justify-center px-4 text-right text-white">
           <span className="text-lg font-black">براه</span>
