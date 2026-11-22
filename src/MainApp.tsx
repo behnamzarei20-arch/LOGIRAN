@@ -268,6 +268,8 @@ export function MainApp() {
   const [destinationCounty, setDestinationCounty] = useState('');
   const [frequentRoute, setFrequentRoute] = useState<{from:string;to:string}|null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [activeSearchField, setActiveSearchField] = useState<'origin'|'destination'>('origin');
+  const [locationReturnPage, setLocationReturnPage] = useState<'home'|'search'>('search');
   const [nearbyDestination, setNearbyDestination] = useState('');
   const [nearbyDestinationText, setNearbyDestinationText] = useState('');
   const [nearbyDestinationProvince, setNearbyDestinationProvince] = useState('');
@@ -913,7 +915,51 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         notify('وضعیت تماس به «توافق نکردیم» تغییر کرد.');
       }
     };
-    return <div className="flex min-h-0 flex-1 flex-col gap-2 w-full">
+    const runHomeSearch = () => {
+      const allDestinationsMode = destinationText === 'همه شهرها' || destination === '__all__';
+      if (!originText || (!destinationText && !allDestinationsMode)) {
+        notify('لطفاً مبدأ و مقصد را انتخاب کنید.');
+        if (!originText) setActiveSearchField('origin');
+        else setActiveSearchField('destination');
+        return;
+      }
+      if (!origin) setOrigin(originText);
+      if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
+      window.history.pushState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
+      setSearchSubmitted(true);
+      setPageWithTransition('search');
+      window.scrollTo({top:0,behavior:'auto'});
+    };
+
+    const selectHomeOrigin = () => {
+      setActiveSearchField('origin');
+      setLocationReturnPage('home');
+      go('origin-select');
+    };
+    const selectHomeDestination = () => {
+      setActiveSearchField('destination');
+      setLocationReturnPage('home');
+      go('destination-select');
+    };
+    const chooseNearbyOrigin = () => {
+      setOriginProvince('');
+      setOriginCounty('');
+      setOrigin('__nearby__');
+      setOriginText('اطراف من');
+      requestNearbyLocation();
+      setSearchSubmitted(false);
+      setActiveSearchField('destination');
+    };
+    const chooseAllDestinations = () => {
+      setDestinationProvince('');
+      setDestinationCounty('');
+      setDestination('__all__');
+      setDestinationText('همه شهرها');
+      setSearchSubmitted(false);
+      setActiveSearchField('destination');
+    };
+
+    return <div className="flex min-h-0 flex-1 flex-col gap-3 w-full">
       <section aria-label="بنر کامیون‌ها و تریلی‌ها" className="relative h-[120px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 sm:h-[140px]">
         <img src="/bbberah/truck-banner.svg" alt="تریلی آبی در جاده" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
         <div className="absolute inset-0 bg-gradient-to-l from-primary-900/75 via-primary-900/30 to-transparent"/>
@@ -923,32 +969,40 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </div>
       </section>
 
-      <section aria-label="دسترسی سریع" className="grid flex-none grid-cols-2 content-start gap-2 pt-1">
-        <button type="button" onClick={()=>animateHomeCard('search',openSearchPage)} className="home-quick-action col-span-1 flex aspect-square h-auto min-h-0 w-full self-start flex-col items-center justify-center gap-5 rounded-2xl bg-white px-3 py-4 text-center shadow-[0_2px_12px_rgba(0,57,88,0.08)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-orange-300 bg-orange-100 shadow-sm"><Search className="h-8 w-8 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="w-full text-center text-lg font-black text-gray-900">جستجوی بار</span>
-          
-        </button>
-        <button type="button" onClick={()=>animateHomeCard('nearby',()=>{setNearbyDestination('');setNearbyDestinationText('');setNearbyDestinationProvince('');setNearbyDestinationCounty('');requestNearbyLocation();go('nearby-destination-select')})} className="home-quick-action col-span-1 flex aspect-square h-auto min-h-0 w-full self-start flex-col items-center justify-center gap-5 rounded-2xl bg-white px-3 py-4 text-center shadow-[0_2px_12px_rgba(0,57,88,0.06)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-orange-300 bg-orange-100 shadow-sm"><Navigation className="h-8 w-8 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="w-full text-center text-lg font-black text-gray-900">اطراف من</span>
-          
-        </button>
-        <button type="button" onClick={()=>notify('بخش فروشگاه به‌زودی فعال می‌شود.')} className="home-quick-action col-span-1 flex aspect-[3/2] w-full flex-col items-center justify-center gap-5 rounded-xl bg-white px-1 py-1 text-center shadow-[0_2px_12px_rgba(0,57,88,0.06)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-orange-300 bg-orange-100 shadow-sm"><Store className="h-5 w-5 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="text-sm font-black leading-5 text-gray-900">فروشگاه</span>
-        </button>
-        <button type="button" onClick={()=>notify('بخش بارهای مشاهده‌شده هنوز فعال نشده است.')} className="home-quick-action col-span-1 flex aspect-[3/2] w-full flex-col items-center justify-center gap-5 rounded-xl bg-white px-1 py-1 text-center shadow-[0_2px_12px_rgba(0,57,88,0.06)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-orange-300 bg-orange-100 shadow-sm"><Eye className="h-5 w-5 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="text-sm font-black leading-5 text-gray-900">بارهای مشاهده‌شده</span>
-        </button>
-        <button type="button" onClick={()=>window.open('https://smartcard.rmto.ir','_blank','noopener,noreferrer')} className="home-quick-action col-span-1 flex aspect-[3/2] w-full flex-col items-center justify-center gap-5 rounded-xl bg-white px-1 py-1 text-center shadow-[0_2px_12px_rgba(0,57,88,0.06)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-orange-300 bg-orange-100 shadow-sm"><CreditCard className="h-5 w-5 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="text-sm font-black leading-5 text-gray-900">کارت هوشمند</span>
-        </button>
-        <button type="button" onClick={()=>window.open('https://smartcard.rmto.ir','_blank','noopener,noreferrer')} className="home-quick-action col-span-1 flex aspect-[3/2] w-full flex-col items-center justify-center gap-5 rounded-xl bg-white px-1 py-1 text-center shadow-[0_2px_12px_rgba(0,57,88,0.06)] transition-colors hover:bg-white active:bg-gray-50">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-orange-300 bg-orange-100 shadow-sm"><HeartPulse className="h-5 w-5 shrink-0 text-accent-500" aria-hidden="true"/></span>
-          <span className="text-sm font-black leading-5 text-gray-900">کارت سلامت</span>
+      <section aria-label="انتخاب مسیر بار" className="flex flex-col gap-3">
+        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : 'border-slate-200'}`}>
+          <button type="button" onClick={selectHomeOrigin} className="flex w-full items-center gap-3 text-right">
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'origin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-bold text-slate-500">مبدأ</span>
+              <span className={`mt-1 block truncate text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
+            </span>
+            <ChevronLeft className="h-5 w-5 shrink-0 text-slate-400"/>
+          </button>
+          <button type="button" onClick={chooseNearbyOrigin} className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-extrabold text-slate-700 transition-colors hover:bg-amber-50 active:bg-amber-100">
+            <Navigation className="h-4 w-4 text-amber-600" aria-hidden="true"/>
+            اطراف من
+          </button>
+        </div>
+
+        <div className={`rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : 'border-slate-200'}`}>
+          <button type="button" onClick={selectHomeDestination} className="flex w-full items-center gap-3 text-right">
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${activeSearchField === 'destination' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}><MapPin className="h-5 w-5" aria-hidden="true"/></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-bold text-slate-500">مقصد</span>
+              <span className={`mt-1 block truncate text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
+            </span>
+            <ChevronLeft className="h-5 w-5 shrink-0 text-slate-400"/>
+          </button>
+          <button type="button" onClick={chooseAllDestinations} className={`mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-extrabold transition-colors ${destination === '__all__' ? 'border-amber-400 bg-amber-50 text-amber-800' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
+            <Globe2 className="h-4 w-4 text-amber-600" aria-hidden="true"/>
+            همه شهرها
+          </button>
+        </div>
+
+        <button type="button" onClick={runHomeSearch} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#F5A623] px-4 py-3 text-base font-black text-slate-950 shadow-md shadow-amber-200/60 transition-colors hover:bg-amber-500 active:bg-amber-600">
+          <Search className="h-5 w-5" aria-hidden="true"/>
+          جستجوی بار
         </button>
       </section>
     </div>;
@@ -1005,12 +1059,12 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     return <div className="space-y-4">
       <Card><CardBody className="p-4">
         <div className="flex items-center gap-2 px-1"><Search className="w-5 h-5 text-primary-700" aria-hidden="true"/><h2 className="font-black text-lg text-gray-900">جستجوی بار</h2></div>
-        <button onClick={()=>{setOrigin('');setOriginText('');setOriginProvince('');setOriginCounty('');replacePage('origin-select');}} className="w-full mt-5 mb-3 rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
+        <button onClick={()=>{setActiveSearchField('origin');setLocationReturnPage('search');setOrigin('');setOriginText('');setOriginProvince('');setOriginCounty('');replacePage('origin-select');}} className="w-full mt-5 mb-3 rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
           <span className="block text-xs font-bold text-gray-400 mb-1">مبدأ</span>
           <div className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary-600 shrink-0"/><span className={originText ? 'text-gray-900 font-bold' : 'text-gray-400'}>{originText || 'مبدأ را انتخاب کنید'}</span><ChevronLeft className="w-4 h-4 text-gray-300 mr-auto"/></div>
         </button>
         <div className="border-t border-gray-100 my-6"/>
-        <button onClick={()=>{setDestination('');setDestinationText('');setDestinationProvince('');setDestinationCounty('');replacePage('destination-select');}} className="w-full rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
+        <button onClick={()=>{setActiveSearchField('destination');setLocationReturnPage('search');setDestination('');setDestinationText('');setDestinationProvince('');setDestinationCounty('');replacePage('destination-select');}} className="w-full rounded-lg border border-gray-200 bg-white p-4 text-right active:bg-gray-50">
           <span className="block text-xs font-bold text-gray-400 mb-1">مقصد</span>
           <div className="flex items-center gap-3"><MapPin className="w-5 h-5 text-primary-600 shrink-0"/><span className={destinationText ? 'text-gray-900 font-bold' : 'text-gray-400'}>{destinationText || 'مقصد را انتخاب کنید'}</span><ChevronLeft className="w-4 h-4 text-gray-300 mr-auto"/></div>
         </button>
@@ -1105,7 +1159,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         setOrigin('');
         setOriginText(province?.name || '');
         setSearchSubmitted(false);
-        replacePage('search');
+        setActiveSearchField('destination');
+        replacePage(locationReturnPage);
       } else if (isNearby) {
         setNearbyDestinationProvince(id);
         setNearbyDestinationCounty('');
@@ -1118,7 +1173,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         setDestination('__province__');
         setDestinationText(province?.name || '');
         setSearchSubmitted(false);
-        replacePage('search');
+        setActiveSearchField('destination');
+        replacePage(locationReturnPage);
       }
     };
     const chooseCounty = (provinceId:string, countyId:string) => {
@@ -1134,7 +1190,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         setOrigin(city);
         setOriginText(city);
         setSearchSubmitted(false);
-        replacePage('search');
+        setActiveSearchField('destination');
+        replacePage(locationReturnPage);
       } else if (isNearby) {
         setNearbyDestinationProvince(provinceIdForCity || '');
         setNearbyDestinationCounty(countyId);
@@ -1151,7 +1208,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         setQuery('');
         setCityLimit(120);
         setSearchSubmitted(false);
-        replacePage('search');
+        setActiveSearchField('destination');
+        replacePage(locationReturnPage);
       }
     };
     const chooseNearby = () => {
@@ -1162,8 +1220,9 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       setOriginText('اطراف من');
       requestNearbyLocation();
       setSearchSubmitted(false);
+      setActiveSearchField('destination');
       // Replace the selector entry instead of going back: popstate would clear the nearby origin.
-      replacePage('search');
+      replacePage(locationReturnPage);
     };
 
     return <div className="space-y-4">
@@ -1209,13 +1268,13 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     const matches = (value:string) => !normalized || normalizeSearch(value).includes(normalized);
     const chooseCity = (city:string, countyId:string, provinceId:string) => {
       setDestinationProvince(provinceId); setDestinationCounty(countyId);
-      setDestination(city); setDestinationText(city); setSearchSubmitted(false); replacePage('search');
+      setDestination(city); setDestinationText(city); setSearchSubmitted(false); setActiveSearchField('destination'); replacePage(locationReturnPage);
     };
     const totalCities = iranLocations.reduce((sum,p)=>sum+p.counties.reduce((n,c)=>n+c.cities.length,0),0);
     return <div className="space-y-4">
       <Card><CardBody className="p-4">
         <div className="flex items-center gap-3 mb-4">
-          <button type="button" onClick={()=>{setDestination('');setDestinationText('');setDestinationProvince('');setDestinationCounty('');setSearchSubmitted(false);goHome();}} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><ArrowLeft className="w-5 h-5"/></button>
+          <button type="button" onClick={()=>{setDestination('');setDestinationText('');setDestinationProvince('');setDestinationCounty('');setSearchSubmitted(false); if(locationReturnPage==='home') goHome(); else replacePage('search');}} className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center"><ArrowLeft className="w-5 h-5"/></button>
           <div><h2 className="font-black text-lg">همه شهرها</h2><p className="text-xs text-gray-400 mt-1">{fa(iranLocations.length)} استان و {fa(totalCities)} شهر ایران</p></div>
         </div>
         <div className="relative">
