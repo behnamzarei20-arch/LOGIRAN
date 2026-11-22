@@ -1084,7 +1084,6 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     const setCounty = isOrigin ? setOriginCounty : isNearby ? setNearbyDestinationCounty : setDestinationCounty;
     const setCity = isOrigin ? setOrigin : isNearby ? setNearbyDestination : setDestination;
     const setText = isOrigin ? setOriginText : isNearby ? setNearbyDestinationText : setDestinationText;
-    const provinceData = iranLocations.find(p => String(p.id) === provinceId);
     const [query, setQuery] = useState('');
     const normalizeSearch = (value:string) => value
       .normalize('NFKC')
@@ -1103,7 +1102,6 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       .filter(p => !normalized || normalizeSearch(p.name).includes(normalized))
       .sort((a,b) => a.name.localeCompare(b.name, 'fa'));
     const allDestinationCities = iranLocations.flatMap(p => p.counties.flatMap(c => c.cities.map(city => ({ city, countyId:String(c.id), countyName:c.name, provinceId:String(p.id), provinceName:p.name }))));
-    const provinceCities = provinceData ? provinceData.counties.flatMap(c => c.cities.map(city => ({ city, countyId:String(c.id), countyName:c.name, provinceId:String(provinceData.id), provinceName:provinceData.name }))) : [];
     const sourceCities = allDestinationCities;
     const filteredCities = sourceCities
       .filter(x => !normalized || normalizeSearch(x.city).slice(0, normalized.length) === normalized)
@@ -1221,13 +1219,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
           <Globe2 className="w-5 h-5" />
           همه شهرها
         </button>}
-        {!provinceData && !normalized && <div className="mt-5">
+        {!normalized && <div className="mt-5">
           <div className="space-y-2 max-h-[52vh] overflow-auto">{visibleProvinces.map(p=><button type="button" key={p.id} onClick={()=>chooseProvince(String(p.id))} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-bold">{p.name}</span><MapPin className="w-4 h-4 text-black shrink-0" aria-hidden="true"/></button>)}</div>
-        </div>}
-        {provinceData && !normalized && <div className="mt-5">
-          <div className="space-y-2 max-h-[52vh] overflow-auto">
-            {provinceCities.map(x=><button type="button" key={'province-city-' + x.countyId + '-' + x.city} onClick={()=>chooseCity(x.city,x.countyId)} className="w-full rounded-xl bg-gray-50 hover:bg-primary-50 p-3.5 flex items-center justify-between text-right"><span className="font-black">{x.city}</span><span className="text-[11px] text-gray-400">انتخاب شهر</span></button>)}
-          </div>
         </div>}
         {normalized && <div className="mt-5">
           <div className="space-y-2 max-h-[52vh] overflow-auto">
