@@ -70,12 +70,15 @@ const cityProvinceName = (city:string) => {
 };
 
 function VehicleIcon({ type }: { type: string }) {
-  const common = { width: 28, height: 28, viewBox: '0 0 64 40', fill: 'none', stroke: 'currentColor', strokeWidth: 3, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  if (type === 'تریلی') return <svg {...common} aria-hidden="true"><path d="M3 27V12h20v15M23 27h7V18h10l6 9h15v4H3v-4"/><path d="M40 18V12h10l6 9"/><circle cx="13" cy="31" r="4"/><circle cx="35" cy="31" r="4"/><circle cx="54" cy="31" r="4"/><path d="M27 27h4"/></svg>;
-  if (type === 'جفت') return <svg {...common} aria-hidden="true"><path d="M3 28V11h22v17h8V18h10l7 10h11v4H3v-4"/><circle cx="12" cy="32" r="4"/><circle cx="37" cy="32" r="4"/><circle cx="53" cy="32" r="4"/><path d="M25 28h8"/></svg>;
-  if (type === 'تک') return <svg {...common} aria-hidden="true"><path d="M3 28V11h22v17h8V18h10l7 10h8v4H3v-4"/><circle cx="12" cy="32" r="4"/><circle cx="37" cy="32" r="4"/><path d="M25 28h8"/></svg>;
-  if (type === 'کامیونت') return <svg {...common} aria-hidden="true"><path d="M5 28V10h25v18h7V17h10l7 11h5v4H5v-4"/><circle cx="15" cy="32" r="4"/><circle cx="42" cy="32" r="4"/><path d="M30 28h7"/></svg>;
-  return <svg {...common} aria-hidden="true"><path d="M5 27V15h25v12h6v-7h10l8 7h5v4H5v-4"/><path d="M37 20h8l5 7"/><circle cx="14" cy="31" r="4"/><circle cx="45" cy="31" r="4"/><path d="M30 27h6"/></svg>;
+  const images: Record<string, string> = {
+    'تریلی': 'trailer.svg',
+    'جفت': 'joft.svg',
+    'تک': 'tak.svg',
+    'کامیونت': 'khavar.svg',
+    'نیسان و وانت': 'vanet.svg',
+  };
+  const image = images[type] ?? 'vanet.svg';
+  return <img src={`${import.meta.env.BASE_URL}images/vehicles/${image}?v=20261122`} alt="" aria-hidden="true" className="h-8 w-11 object-contain" />;
 }
 
 function Status({ status }: { status: LoadStatus }) {
