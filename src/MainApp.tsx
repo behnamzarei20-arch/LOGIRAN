@@ -2044,7 +2044,7 @@ const ProfilePage = () => <div className="space-y-3">
     </div>;
   };
 
-  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'min-h-[100dvh] overflow-x-hidden overscroll-y-auto' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-[#f8faff] text-gray-900"}`}>
+  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'min-h-[100dvh] overflow-x-hidden overscroll-y-auto' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-[#F8FAFC] text-gray-900"}`}>
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={()=>{if(page==='search'){goHome();}else if(page==='profile'){goHome();}else if(window.history.state?.bbberahPage){window.history.back();}else{goHome();}}} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
