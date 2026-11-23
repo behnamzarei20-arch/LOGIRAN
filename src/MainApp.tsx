@@ -1608,7 +1608,7 @@ const ProfilePage = () => <div className="space-y-3">
                 <span className="text-[11px] font-bold text-gray-500">{compactDateTime(item.at)}</span>
                 <span className={'shrink-0 rounded-lg border px-2 py-1 text-[11px] font-black '+statusClass}>{status}</span>
               </div>
-              <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-sky-700"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span>{load.to}</span></div>
+              <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-sky-700" aria-hidden="true"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span className="relative mx-0.5 inline-block h-3 w-3 shrink-0 rounded-full border-2 border-sky-700 bg-sky-700" aria-hidden="true"><span className="absolute inset-[2px] rounded-full bg-white"/></span><span>{load.to}</span></div>
               <div className="mt-1 text-xs font-bold text-gray-600">📦 {load.type}</div>
               <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-sky-800"><span>تماس</span><span>{expanded?'بستن منو':'لمس برای عملیات'}</span></div>
             </button>
@@ -1629,7 +1629,7 @@ const ProfilePage = () => <div className="space-y-3">
             const statusClass=offer.status==='accepted'?'bg-emerald-50 text-emerald-700 border-emerald-200':offer.status==='rejected'?'bg-red-50 text-red-700 border-red-200':'bg-gray-100 text-gray-700 border-gray-200';
             return <button key={offer.loadId} type="button" onClick={()=>openOfferDetail(offer.loadId)} className="block w-full rounded-xl border border-violet-200 bg-violet-50/50 p-3 text-right shadow-sm">
               <div className="flex items-center justify-between gap-2"><span className="text-[11px] font-bold text-gray-500">{compactDateTime(offer.at)}</span><span className={'shrink-0 rounded-lg border px-2 py-1 text-[11px] font-black '+statusClass}>{statusText}</span></div>
-              <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-violet-700"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span>{load.to}</span></div>
+              <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-violet-700" aria-hidden="true"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span className="relative mx-0.5 inline-block h-3 w-3 shrink-0 rounded-full border-2 border-violet-700 bg-violet-700" aria-hidden="true"><span className="absolute inset-[2px] rounded-full bg-white"/></span><span>{load.to}</span></div>
               <div className="mt-1 text-xs font-bold text-gray-600">📦 {load.type}</div>
               <div className="mt-2 text-[10px] font-bold text-violet-800">پیشنهاد قیمت · لمس برای جزئیات</div>
             </button>;
@@ -1661,7 +1661,7 @@ const ProfilePage = () => <div className="space-y-3">
           const statusClass=offer.status==='accepted'?'bg-emerald-50 text-emerald-700 border-emerald-200':offer.status==='rejected'?'bg-red-50 text-red-700 border-red-200':'bg-gray-100 text-gray-700 border-gray-200';
           return <button key={offer.loadId} type="button" onClick={()=>openOfferDetail(offer.loadId)} className="block w-full rounded-xl border border-violet-200 bg-violet-50/50 p-3 text-right shadow-sm">
             <div className="flex items-center justify-between gap-2"><span className="text-[11px] font-bold text-gray-500">{compactDateTime(offer.at)}</span><span className={'shrink-0 rounded-lg border px-2 py-1 text-[11px] font-black '+statusClass}>{statusText}</span></div>
-            <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-violet-700"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span>{load.to}</span></div>
+            <div className="mt-2 flex items-center gap-1 text-sm font-black text-gray-900"><MapPin className="h-4 w-4 shrink-0 text-violet-700" aria-hidden="true"/><span>{load.from}</span><span className="text-gray-400">&gt;</span><span className="relative mx-0.5 inline-block h-3 w-3 shrink-0 rounded-full border-2 border-violet-700 bg-violet-700" aria-hidden="true"><span className="absolute inset-[2px] rounded-full bg-white"/></span><span>{load.to}</span></div>
             <div className="mt-1 text-xs font-bold text-gray-600">📦 {load.type}</div>
             <div className="mt-2 text-[10px] font-bold text-violet-800">پیشنهاد قیمت · لمس برای جزئیات</div>
           </button>;
