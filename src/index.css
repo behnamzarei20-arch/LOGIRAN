@@ -180,3 +180,8 @@
 [data-theme="dark"] [class~="bg-primary-50"] { background-color: #273449 !important; }
 
 [data-theme="dark"] [class~="bg-[#F5A623]"] { color: #102b45 !important; }
+
+
+/* Keep the two home location shortcut labels readable in dark mode. */
+[data-theme="dark"] .home-location-quick-button[aria-pressed="false"] { color: #334155 !important; }
+[data-theme="dark"] .home-location-quick-button[aria-pressed="true"] { color: #78350f !important; }
