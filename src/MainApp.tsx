@@ -801,11 +801,9 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
-        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-16 min-w-0 rounded-xl flex flex-col items-center justify-center gap-1 border-2 transition-colors ${active ? 'border-[#E58A00] bg-[#F5A623]/20 shadow-[0_2px_8px_rgba(229,138,0,0.22)]' : 'border-transparent bg-transparent'}`}>
-          <span className="flex h-8 items-center justify-center">
-            {createElement(I as any,{className:`w-6 h-6 transition-colors ${active ? 'text-[#C66A00] fill-[#F5A623]/35' : 'text-gray-500'}`,strokeWidth:3})}
-          </span>
-          <span className={`text-[11px] leading-tight font-black transition-colors ${active ? 'text-[#A94F00]' : 'text-black'}`}>{String(l)}</span>
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-14 min-w-0 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors ${active ? 'bg-[#F5A623] text-white shadow-[0_0_0_5px_rgba(245,166,35,0.13)] font-black' : 'bg-transparent text-gray-500 font-bold hover:text-accent-500'}`}>
+          {createElement(I as any,{className:'w-5 h-5'})}
+          <span className="text-[10px] leading-tight">{String(l)}</span>
         </button>
       })}
     </div>
@@ -2058,7 +2056,7 @@ const ProfilePage = () => <div className="space-y-3">
     </div>;
   };
 
-  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-[#F8FAFC] text-gray-900"}`}>
+  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={()=>{if(page==='search'){goHome();}else if(page==='profile'){goHome();}else if(window.history.state?.bbberahPage){window.history.back();}else{goHome();}}} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
