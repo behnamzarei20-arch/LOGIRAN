@@ -770,7 +770,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
   const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(255,102,0,0.06)]">
     <div className="max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1">
       {[
-        ['features','امکانات',Store],['calls','تماس‌های من',PhoneCall],['home','خانه',Home],['offers','پیشنهادهای من',MessageCircle],['profile','پروفایل',User]
+        ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
         const isHome = p==='home';
