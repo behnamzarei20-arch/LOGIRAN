@@ -795,8 +795,11 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 backdrop-blur" style={{background: `radial-gradient(circle 41px at 50% 0px, transparent 38px, ${effectiveDark ? '#374151' : '#CBD5E1'} 39px, ${effectiveDark ? '#374151' : '#CBD5E1'} 40px, ${effectiveDark ? 'rgba(3,7,18,0.95)' : 'rgba(255,255,255,0.95)'} 41px), ${effectiveDark ? 'rgba(3,7,18,0.95)' : 'rgba(255,255,255,0.95)'}`}}>
-    <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1 rounded-b-[30px]">
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 h-[72px] backdrop-blur">
+    <svg aria-hidden="true" viewBox="0 0 400 72" preserveAspectRatio="none" className="absolute inset-0 w-full h-full pointer-events-none">
+      <path d="M0 0 H154 C158 0 160 1 162 4 C164 8 164 15 164 29 A40 40 0 0 0 236 29 C236 15 236 8 238 4 C240 1 242 0 246 0 H400 V72 H0 Z" fill={effectiveDark ? "rgba(3,7,18,0.95)" : "rgba(255,255,255,0.95)"} stroke={effectiveDark ? "#374151" : "#CBD5E1"} strokeWidth="1.5" strokeLinejoin="round"/>
+    </svg>
+    <div className="relative z-10 max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1 rounded-b-[30px]">
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
