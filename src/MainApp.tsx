@@ -757,17 +757,16 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(255,102,0,0.06)]">
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur">
     <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1">
-      <span aria-hidden="true" className="pointer-events-none absolute -top-[30px] left-1/2 z-0 h-[90px] w-[90px] -translate-x-1/2 rounded-full border border-orange-100 bg-white"/>
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
         const isHome = p==='home';
-        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'absolute left-1/2 top-[-24px] h-16 w-16 -translate-x-1/2 rounded-full border-2 border-[#F5A623] bg-white text-slate-950' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'col-start-3 row-start-1 justify-self-center -translate-y-6 h-16 w-16 rounded-full border-[3px] border-white bg-[#F5A623] text-white shadow-[0_3px_10px_rgba(245,166,35,0.28)]' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
           {!isHome && active && <span className="absolute top-0 h-[3px] w-7 rounded-b-full bg-accent-500"/>}
-          {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-[#F5A623]':active?'text-accent-500':'text-gray-500'}`})}
+          {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-white':active?'text-accent-500':'text-gray-500'}`})}
           <span className={isHome?'text-[11px] font-black':'leading-tight'}>{String(l)}</span>
         </button>
       })}
