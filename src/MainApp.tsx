@@ -983,6 +983,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
             </button>
           </div>
         </div>
+        </div>
 
         <div>
           <div className="mb-1 text-right text-lg font-black text-slate-800">مقصد</div>
@@ -1000,6 +1001,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
               همه شهرها
             </button>
           </div>
+        </div>
         </div>
 
         <button type="button" onClick={runHomeSearch} className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#F5A623] px-4 py-3 text-lg font-black text-slate-950 shadow-md shadow-amber-200/60 transition-colors hover:bg-amber-500 active:bg-amber-600">
