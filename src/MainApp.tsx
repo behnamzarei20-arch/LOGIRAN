@@ -795,7 +795,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur">
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className={`fixed bottom-0 inset-x-0 z-30 border-t ${effectiveDark ? "border-gray-700 bg-gray-950/95" : "border-gray-300 bg-white/95"} backdrop-blur`}>
     <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1 rounded-b-[30px]">
       <span aria-hidden="true" className="pointer-events-none absolute -top-[27px] left-1/2 z-0 h-[78px] w-[78px] -translate-x-1/2 rounded-full bg-[#F8FAFC]"/>
       {[
