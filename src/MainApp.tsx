@@ -12,7 +12,7 @@ import { iranLocations } from '@/data/iranLocations';
 import { readDemoVerificationStatus, writeDemoVerificationStatus, type IdentityVerificationStatus } from '@/features/verification/verificationStatus';
 
 type Page =
-  | 'home' | 'search' | 'nearby' | 'calls' | 'profile' | 'account' | 'vehicle' | 'vehicle-dashboard' | 'vehicle-select'
+  | 'home' | 'search' | 'nearby' | 'calls' | 'profile' | 'features' | 'account' | 'vehicle' | 'vehicle-dashboard' | 'vehicle-select'
   | 'wallet' | 'transactions' | 'support' | 'rules' | 'notifications' | 'display'
   | 'cargo-detail' | 'vehicle-loader' | 'trailer-select' | 'jooft-usage' | 'jooft-feature' | 'tak-usage' | 'tak-feature' | 'komionet-usage' | 'komionet-feature' | 'van-usage' | 'van-feature' | 'flatbed-size' | 'report' | 'offers' | 'verification' | 'verification-intro' | 'shipment' | 'origin-select' | 'destination-select' | 'nearby-destination-select' | 'nearby-results' | 'destination-all' | 'frequent-route' | 'contact-report';
 
@@ -676,7 +676,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     return originMatch && destinationMatch;
   }), [loads, origin, originProvince, originCounty, destination, destinationProvince, destinationCounty, nearbyUserLocation]);
   const title:Record<Page,string> = {
-    home:'براه', search:'جستجوی بار', nearby:'اطراف من', calls:'تماس‌های من', profile:'حساب کاربری',
+    home:'براه', search:'جستجوی بار', nearby:'اطراف من', calls:'تماس‌های من', profile:'پروفایل', features:'امکانات',
     account:'اطلاعات حساب', verification:'احراز هویت', 'verification-intro':'چرا احراز هویت ضروری است؟', vehicle:'خودروی من', 'vehicle-dashboard':'خودروی من', 'vehicle-select':'نوع خودرو', wallet:'کیف پول', transactions:'تراکنش‌ها',
     support:'پشتیبانی', rules:'قوانین و مقررات', notifications:'اعلان‌ها', display:'تنظیمات ظاهری', 'cargo-detail':'جزئیات بار',
 offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 'trailer-select':'نوع کاربری را انتخاب کنید', 'jooft-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'jooft-feature':'ویژگی کاربری', 'tak-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'tak-feature':'ویژگی کاربری', 'komionet-usage':'نوع بارگیر خود را انتخاب کنید', 'komionet-feature':'ویژگی بارگیر خود را انتخاب کنید', 'van-usage':'نوع کاربری خود را انتخاب کنید', 'van-feature':'ویژگی بارگیر خود را انتخاب کنید', 'flatbed-size':'ویژگی کاربری', report:'گزارش تخلف', shipment:'سفر جاری', 'origin-select':'انتخاب مبدأ', 'destination-select':'انتخاب مقصد', 'destination-all':'انتخاب شهر مقصد', 'frequent-route':'بارهای مسیر', 'contact-report':'نتیجه تماس', 'nearby-destination-select':'انتخاب مقصد', 'nearby-results':'اطراف من'
@@ -767,16 +767,17 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(255,102,0,0.06)]">
-    <div className="max-w-lg mx-auto grid grid-cols-4 h-[72px]">
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(255,102,0,0.06)]">
+    <div className="max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1">
       {[
-        ['home','خانه',Home],['search','جستجو',Search],['calls','تماس‌ها',PhoneCall],['profile','حساب',User]
+        ['features','امکانات',Store],['calls','تماس‌های من',PhoneCall],['home','خانه',Home],['offers','پیشنهادهای من',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
-        return <button key={p as string} onClick={()=>p==='search' ? openSearchPage() : go(p as Page)} className={`relative flex flex-col items-center justify-center gap-1 text-[11px] transition-colors ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`}>
-          {active && <span className="absolute top-0 h-[3px] w-8 rounded-b-full bg-accent-500"/>}
-          {createElement(I as any,{className:`w-5 h-5 ${active?'text-accent-500':'text-gray-500'}`})}
-          {String(l)}
+        const isHome = p==='home';
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'mx-1 my-1 rounded-2xl bg-[#F5A623] text-slate-950 shadow-md shadow-amber-200/60' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
+          {!isHome && active && <span className="absolute top-0 h-[3px] w-7 rounded-b-full bg-accent-500"/>}
+          {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-slate-950':active?'text-accent-500':'text-gray-500'}`})}
+          <span className={isHome?'text-[11px] font-black':'leading-tight'}>{String(l)}</span>
         </button>
       })}
     </div>
@@ -1587,6 +1588,19 @@ const ProfilePage = () => <div className="space-y-3">
   };
 
   const SimplePage = () => {
+    if (page==='features') return <div className="space-y-4">
+      <section className="grid grid-cols-2 gap-3">
+        <button type="button" onClick={()=>notify('خدمت فروشگاه هنوز به سامانه متصل نشده است.')} className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border border-orange-200 bg-white p-4 text-center shadow-sm"><Store className="h-7 w-7 text-accent-500"/><b className="text-sm">فروشگاه</b><span className="text-[10px] font-bold text-gray-400">به‌زودی</span></button>
+        <button type="button" onClick={()=>notify('استعلام کارت هوشمند هنوز به سامانه متصل نشده است.')} className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border border-orange-200 bg-white p-4 text-center shadow-sm"><CreditCard className="h-7 w-7 text-primary-600"/><b className="text-sm">استعلام کارت هوشمند</b><span className="text-[10px] font-bold text-gray-400">به‌زودی</span></button>
+        <button type="button" onClick={()=>notify('استعلام کارت سلامت هنوز به سامانه متصل نشده است.')} className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border border-orange-200 bg-white p-4 text-center shadow-sm"><HeartPulse className="h-7 w-7 text-emerald-600"/><b className="text-sm">استعلام کارت سلامت</b><span className="text-[10px] font-bold text-gray-400">به‌زودی</span></button>
+      </section>
+      <h2 className="pt-2 text-base font-black">سایر امکانات براه</h2>
+      <section className="grid grid-cols-2 gap-3">
+        {[
+          ['جستجوی بار',Search,'search'],['بارهای اطراف من',Navigation,'nearby'],['احراز هویت',ShieldCheck,'account'],['مشخصات خودرو',CarFront,'vehicle-dashboard'],['کیف پول',Coins,'wallet'],['تراکنش‌ها',ReceiptText,'transactions'],['پشتیبانی',Headset,'support'],['اعلان‌ها',Bell,'notifications'],['سفر جاری',Truck,'shipment']
+        ].map(([label,Icon,target])=><button key={String(target)} type="button" onClick={()=>go(target as Page)} className="flex min-h-20 items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 text-right shadow-sm"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-accent-500">{createElement(Icon as any,{className:'h-5 w-5'})}</span><b className="text-xs leading-5">{String(label)}</b></button>)}
+      </section>
+    </div>;
     if (page==='verification-intro') return <VerificationIntroPage/>;
     if (page==='verification') return <VerificationPage/>;
     if (page==='nearby') return <div className="space-y-4">{loads.filter(l=>!l.id.startsWith('s') && l.status==='open' && l.distance<=50).sort((a,b)=>a.distance-b.distance).map(l=>{return <LoadCard key={l.id} load={l} onOpen={()=>{setSelected(l);go('cargo-detail')}} onOffer={()=>requestOffer(l)}/>;})}</div>;
@@ -2016,7 +2030,7 @@ const ProfilePage = () => <div className="space-y-3">
     </div>;
   };
 
-  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'min-h-[100dvh] overflow-x-hidden overscroll-y-auto' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-[#F8FAFC] text-gray-900"}`}>
+  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-[#F8FAFC] text-gray-900"}`}>
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={()=>{if(page==='search'){goHome();}else if(page==='profile'){goHome();}else if(window.history.state?.bbberahPage){window.history.back();}else{goHome();}}} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
@@ -2024,9 +2038,9 @@ const ProfilePage = () => <div className="space-y-3">
         <button type="button" onClick={()=>setShowPageHelp(true)} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-primary-600" aria-label="توضیحات این صفحه" title="توضیحات این صفحه"><Info className="w-5 h-5"/></button>
       </div>
     </div>}
-    <main key={page} style={{ viewTransitionName: "app-page" }} className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8rem)] min-h-0 overflow-hidden flex flex-col' : 'pb-24'}`}>
+    <main key={page} style={{ viewTransitionName: "app-page" }} className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : 'pb-24'}`}>
       {pendingContactLoadId && page!=='contact-report' && <button type="button" onClick={()=>{const load=loads.find(l=>l.id===pendingContactLoadId); if(load){setSelected(load);go('contact-report');}}} className="w-full mb-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4 text-right text-amber-900 shadow-sm"><b className="block">⚠️ این بار هنوز تعیین تکلیف نشده است</b><span className="block text-xs font-bold mt-1">نتیجه تماس را ثبت کنید تا این یادآوری بسته شود.</span></button>}
-      {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='cargo-detail' ? <DetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
+      {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
     </main>
     <BottomNav />
     <Toast message={toast} onClose={()=>setToast('')} />
