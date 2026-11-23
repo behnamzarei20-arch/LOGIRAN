@@ -142,7 +142,8 @@
 [data-theme="dark"] [class~="text-primary-900"],
 [data-theme="dark"] [class~="text-primary-800"],
 [data-theme="dark"] [class~="text-primary-700"],
-[data-theme="dark"] [class~="text-primary-600"] { color: #bfdbfe !important; }
+[data-theme="dark"] [class~="text-primary-600"],
+[data-theme="dark"] [class~="text-primary-500"] { color: #bfdbfe !important; }
 
 [data-theme="dark"] [class~="text-amber-900"],
 [data-theme="dark"] [class~="text-amber-800"],
@@ -151,11 +152,13 @@
 
 [data-theme="dark"] [class~="text-emerald-800"],
 [data-theme="dark"] [class~="text-emerald-700"],
-[data-theme="dark"] [class~="text-emerald-600"] { color: #6ee7b7 !important; }
+[data-theme="dark"] [class~="text-emerald-600"],
+[data-theme="dark"] [class~="text-emerald-500"] { color: #6ee7b7 !important; }
 
 [data-theme="dark"] [class~="text-red-800"],
 [data-theme="dark"] [class~="text-red-700"],
-[data-theme="dark"] [class~="text-red-600"] { color: #fca5a5 !important; }
+[data-theme="dark"] [class~="text-red-600"],
+[data-theme="dark"] [class~="text-red-500"] { color: #fca5a5 !important; }
 
 [data-theme="dark"] [class~="text-orange-700"],
 [data-theme="dark"] [class~="text-orange-600"],
