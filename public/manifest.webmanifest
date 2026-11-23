@@ -1,0 +1,22 @@
+{
+  "id": "/bbberah/",
+  "name": "براه | بازارگاه حمل و نقل",
+  "short_name": "براه",
+  "description": "بازارگاه حمل و نقل براه",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/bbberah/",
+  "scope": "/bbberah/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1358ED",
+  "icons": [
+    {
+      "src": "/bbberah/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
