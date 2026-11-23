@@ -10,8 +10,8 @@
     --brah-accent: 245 166 35;
   }
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-  html { min-height: 100%; background: #F8FAFC; }
-  body { min-height: 100vh; margin: 0; font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif; background: #F8FAFC; color: #102B45; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html { min-height: 100%; background: #FFFFFF; }
+  body { min-height: 100vh; margin: 0; font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif; background: #FFFFFF; color: #102B45; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   input, textarea, select, button { font-family: inherit; }
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
