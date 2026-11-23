@@ -121,3 +121,59 @@
 @layer utilities {
   .bg-white { background-color: #FFFFFF; }
 }
+
+
+/* Improve text and surface contrast throughout the app in dark mode. */
+[data-theme="dark"] [class~="text-black"],
+[data-theme="dark"] [class~="text-gray-950"],
+[data-theme="dark"] [class~="text-gray-900"],
+[data-theme="dark"] [class~="text-gray-800"],
+[data-theme="dark"] [class~="text-gray-700"],
+[data-theme="dark"] [class~="text-gray-600"],
+[data-theme="dark"] [class~="text-gray-500"],
+[data-theme="dark"] [class~="text-gray-400"],
+[data-theme="dark"] [class~="text-slate-950"],
+[data-theme="dark"] [class~="text-slate-900"],
+[data-theme="dark"] [class~="text-slate-800"],
+[data-theme="dark"] [class~="text-slate-700"],
+[data-theme="dark"] [class~="text-slate-600"],
+[data-theme="dark"] [class~="text-slate-400"] { color: #e5e7eb !important; }
+
+[data-theme="dark"] [class~="text-primary-900"],
+[data-theme="dark"] [class~="text-primary-800"],
+[data-theme="dark"] [class~="text-primary-700"],
+[data-theme="dark"] [class~="text-primary-600"] { color: #bfdbfe !important; }
+
+[data-theme="dark"] [class~="text-amber-900"],
+[data-theme="dark"] [class~="text-amber-800"],
+[data-theme="dark"] [class~="text-amber-700"],
+[data-theme="dark"] [class~="text-amber-600"] { color: #fcd34d !important; }
+
+[data-theme="dark"] [class~="text-emerald-800"],
+[data-theme="dark"] [class~="text-emerald-700"],
+[data-theme="dark"] [class~="text-emerald-600"] { color: #6ee7b7 !important; }
+
+[data-theme="dark"] [class~="text-red-800"],
+[data-theme="dark"] [class~="text-red-700"],
+[data-theme="dark"] [class~="text-red-600"] { color: #fca5a5 !important; }
+
+[data-theme="dark"] [class~="text-orange-700"],
+[data-theme="dark"] [class~="text-orange-600"],
+[data-theme="dark"] [class~="text-orange-500"] { color: #fdba74 !important; }
+
+[data-theme="dark"] [class~="text-sky-800"],
+[data-theme="dark"] [class~="text-sky-700"] { color: #7dd3fc !important; }
+
+[data-theme="dark"] [class~="text-violet-800"],
+[data-theme="dark"] [class~="text-violet-700"] { color: #c4b5fd !important; }
+
+[data-theme="dark"] [class~="bg-amber-50"],
+[data-theme="dark"] [class~="bg-amber-100"],
+[data-theme="dark"] [class~="bg-orange-50"],
+[data-theme="dark"] [class~="bg-emerald-50"],
+[data-theme="dark"] [class~="bg-red-50"],
+[data-theme="dark"] [class~="bg-sky-50"],
+[data-theme="dark"] [class~="bg-violet-50"],
+[data-theme="dark"] [class~="bg-primary-50"] { background-color: #273449 !important; }
+
+[data-theme="dark"] [class~="bg-[#F5A623]"] { color: #102b45 !important; }
