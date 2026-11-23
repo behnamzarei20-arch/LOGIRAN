@@ -246,6 +246,44 @@ export function MainApp() {
   const { profile, session, signOut } = useAuth();
   // A full browser refresh always starts at the home page, regardless of the current section or URL hash.
   const [page, setPage] = useState<Page>('home');
+  useEffect(() => {
+    let startY = 0;
+    let canRefresh = false;
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 1) { canRefresh = false; return; }
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input,textarea,select,button,a,[contenteditable="true"]')) { canRefresh = false; return; }
+      const touch = event.touches[0];
+      startY = touch.clientY;
+      let node: HTMLElement | null = target;
+      canRefresh = true;
+      while (node && node !== document.body) {
+        const style = window.getComputedStyle(node);
+        const scrollable = /(auto|scroll)/.test(style.overflowY) && node.scrollHeight > node.clientHeight;
+        if (scrollable) {
+          if (node.scrollTop > 0) canRefresh = false;
+          break;
+        }
+        node = node.parentElement;
+      }
+      if (!node && (document.scrollingElement?.scrollTop || 0) > 0) canRefresh = false;
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      if (!canRefresh || !event.changedTouches.length) return;
+      const distance = event.changedTouches[0].clientY - startY;
+      canRefresh = false;
+      if (distance >= 110) window.location.reload();
+    };
+    const onTouchCancel = () => { canRefresh = false; };
+    document.addEventListener('touchstart', onTouchStart, {passive:true});
+    document.addEventListener('touchend', onTouchEnd, {passive:true});
+    document.addEventListener('touchcancel', onTouchCancel, {passive:true});
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchCancel);
+    };
+  }, []);
   const demoPublicationAges = [3, 15, 30, 60, 120, 180, 240, 15, 30, 60, 120, 180, 240, 5, 45, 90];
   const demoPriceIndexes = [72, 64, 83, 51, 76, 69, 58, 81, 62, 74, 68, 55, 77, 60, 88, 71];
   const [loads, setLoads] = useState<Load[]>([...seedLoads, ...searchOnlyLoads].map((load, index) => ({
@@ -757,14 +795,15 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur">
-    <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1">
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur">
+    <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1 rounded-b-[30px]">
+      <span aria-hidden="true" className="pointer-events-none absolute -top-[27px] left-1/2 z-0 h-[78px] w-[78px] -translate-x-1/2 rounded-full bg-[#F8FAFC]"/>
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
         const isHome = p==='home';
-        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'col-start-3 row-start-1 justify-self-center -translate-y-6 h-16 w-16 rounded-full border-[3px] border-white bg-[#F5A623] text-white shadow-[0_3px_10px_rgba(245,166,35,0.28)]' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'col-start-3 row-start-1 justify-self-center -translate-y-6 h-16 w-16 rounded-full border-[3px] border-white bg-[#F5A623] text-white' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
           {!isHome && active && <span className="absolute top-0 h-[3px] w-7 rounded-b-full bg-accent-500"/>}
           {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-white':active?'text-accent-500':'text-gray-500'}`})}
           <span className={isHome?'text-[11px] font-black':'leading-tight'}>{String(l)}</span>
