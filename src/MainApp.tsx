@@ -795,7 +795,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     </div>
   </header>;
 
-  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className={`fixed bottom-0 inset-x-0 z-30 backdrop-blur ${effectiveDark ? 'bg-gray-950/95' : 'bg-white/95'}`}>
+  const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className={`fixed bottom-0 inset-x-0 z-30 pb-[env(safe-area-inset-bottom)] ${effectiveDark ? 'bg-gray-950' : 'bg-white'}`}>
     <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-2 items-center gap-1">
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
