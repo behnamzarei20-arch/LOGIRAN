@@ -581,18 +581,8 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
-  const setPageWithTransition = (next: Page, direction: 'forward' | 'back' = 'forward') => {
-    const transitionDocument = document as Document & {
-      startViewTransition?: (callback: () => void) => { finished: Promise<unknown> };
-    };
-    if (transitionDocument.startViewTransition) {
-      document.documentElement.dataset.navDirection = direction;
-      const transition = transitionDocument.startViewTransition(() => setPage(next));
-      const clearDirection = () => { delete document.documentElement.dataset.navDirection; };
-      transition.finished.then(clearDirection, clearDirection);
-    } else {
-      setPage(next);
-    }
+  const setPageWithTransition = (next: Page, _direction: 'forward' | 'back' = 'forward') => {
+    setPage(next);
   };
   const go = (p:Page, preserveSearch = false) => {
     if (p === 'search' && !preserveSearch) {
@@ -769,15 +759,15 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const BottomNav = () => <nav dir="rtl" aria-label="منوی اصلی" className="fixed bottom-0 inset-x-0 z-30 border-t border-orange-100 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(255,102,0,0.06)]">
     <div className="relative max-w-lg mx-auto grid grid-cols-5 h-[72px] px-1">
-      <span aria-hidden="true" className="pointer-events-none absolute -top-9 left-1/2 z-0 h-20 w-20 -translate-x-1/2 rounded-full border border-orange-100 bg-white shadow-[0_-3px_10px_rgba(255,102,0,0.05)]"/>
+      <span aria-hidden="true" className="pointer-events-none absolute -top-[30px] left-1/2 z-0 h-[90px] w-[90px] -translate-x-1/2 rounded-full border border-orange-100 bg-white"/>
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
         const isHome = p==='home';
-        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'absolute left-1/2 top-[-27px] h-16 w-16 -translate-x-1/2 rounded-full border-4 border-white bg-[#F5A623] text-slate-950 shadow-lg shadow-amber-300/60' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`relative z-10 flex flex-col items-center justify-center gap-1 transition-colors ${isHome ? 'absolute left-1/2 top-[-24px] h-16 w-16 -translate-x-1/2 rounded-full border-2 border-[#F5A623] bg-white text-slate-950' : `text-[10px] ${active?'font-black text-accent-500':'font-bold text-gray-500 hover:text-accent-500'}`} `}>
           {!isHome && active && <span className="absolute top-0 h-[3px] w-7 rounded-b-full bg-accent-500"/>}
-          {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-slate-950':active?'text-accent-500':'text-gray-500'}`})}
+          {createElement(I as any,{className:`${isHome?'w-6 h-6':'w-5 h-5'} ${isHome?'text-[#F5A623]':active?'text-accent-500':'text-gray-500'}`})}
           <span className={isHome?'text-[11px] font-black':'leading-tight'}>{String(l)}</span>
         </button>
       })}
@@ -2039,7 +2029,7 @@ const ProfilePage = () => <div className="space-y-3">
         <button type="button" onClick={()=>setShowPageHelp(true)} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-primary-600" aria-label="توضیحات این صفحه" title="توضیحات این صفحه"><Info className="w-5 h-5"/></button>
       </div>
     </div>}
-    <main key={page} style={{ viewTransitionName: "app-page" }} className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : 'pb-24'}`}>
+    <main key={page}  className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : 'pb-24'}`}>
       {pendingContactLoadId && page!=='contact-report' && <button type="button" onClick={()=>{const load=loads.find(l=>l.id===pendingContactLoadId); if(load){setSelected(load);go('contact-report');}}} className="w-full mb-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4 text-right text-amber-900 shadow-sm"><b className="block">⚠️ این بار هنوز تعیین تکلیف نشده است</b><span className="block text-xs font-bold mt-1">نتیجه تماس را ثبت کنید تا این یادآوری بسته شود.</span></button>}
       {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
     </main>
