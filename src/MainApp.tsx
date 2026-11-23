@@ -801,9 +801,11 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
         const active = page===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(page));
-        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-14 min-w-0 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors ${active ? 'bg-[#F5A623] text-white shadow-[0_0_0_5px_rgba(245,166,35,0.06)] font-black' : 'bg-transparent text-gray-500 font-bold hover:text-accent-500'}`}>
-          {createElement(I as any,{className:'w-5 h-5',strokeWidth:2.8})}
-          <span className="text-[10px] leading-tight">{String(l)}</span>
+        return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className="h-14 min-w-0 rounded-2xl bg-transparent flex flex-col items-center justify-center gap-1">
+          <span className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${active ? 'bg-[#F5A623]/10' : 'bg-transparent'}`}>
+            {createElement(I as any,{className:`w-5 h-5 transition-colors ${active ? 'text-[#F5A623] fill-[#F5A623]/25' : 'text-gray-500'}`,strokeWidth:2.8})}
+          </span>
+          <span className="text-[10px] leading-tight font-black text-black">{String(l)}</span>
         </button>
       })}
     </div>
