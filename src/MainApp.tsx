@@ -977,7 +977,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
               </span>
               
             </button>
-            <button type="button" onClick={chooseNearbyOrigin} aria-pressed={origin === '__nearby__'} className={`flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${origin === '__nearby__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
+            <button type="button" onClick={chooseNearbyOrigin} aria-pressed={origin === '__nearby__'} className={`home-location-quick-button flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${origin === '__nearby__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
               <Navigation className={`h-4 w-4 ${origin === '__nearby__' ? 'text-amber-800' : 'text-amber-600'}`} aria-hidden="true"/>
               اطراف من
             </button>
@@ -996,7 +996,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
               </span>
 
             </button>
-            <button type="button" onClick={chooseAllDestinations} aria-pressed={destination === '__all__'} className={`flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${destination === '__all__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
+            <button type="button" onClick={chooseAllDestinations} aria-pressed={destination === '__all__'} className={`home-location-quick-button flex min-h-11 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border px-3 py-1.5 text-xs font-black transition-colors ${destination === '__all__' ? 'border-amber-500 bg-amber-100 text-amber-900 shadow-inner' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-amber-50'}`}>
               <Globe2 className={`h-4 w-4 ${destination === '__all__' ? 'text-amber-800' : 'text-amber-600'}`} aria-hidden="true"/>
               همه شهرها
             </button>
