@@ -1,4 +1,4 @@
-const CACHE_NAME = "berah-shell-v1";
+const CACHE_NAME = "berah-shell-v2";
 const APP_PREFIX = "/bbberah/";
 const CORE_ASSETS = [APP_PREFIX, APP_PREFIX + "index.html", APP_PREFIX + "manifest.webmanifest", APP_PREFIX + "icon.svg"];
 
