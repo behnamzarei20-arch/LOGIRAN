@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
+  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Circle, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
   Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle
@@ -157,11 +157,7 @@ function LoadCard({ load, onOpen, onOffer }: { load:Load; onOpen:()=>void; onOff
       <div className="flex items-center gap-2 border-b border-gray-300 px-2.5 py-2" dir="rtl">
         <div className="min-w-0 flex-1 text-center">
           <div className="mb-1 flex h-5 items-center justify-center" aria-label="مبدأ">
-            <span className="relative block h-4 w-4 rounded-full border-2 border-primary-600 bg-primary-600">
-              <span className="absolute left-1/2 top-1/2 h-[22px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600"/>
-              <span className="absolute left-1/2 top-1/2 h-[3px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600"/>
-              <span className="absolute inset-[3px] z-10 rounded-full bg-white"/>
-            </span>
+            <MapPin className="h-5 w-5 text-primary-600" aria-hidden="true"/>
           </div>
           <b className="block truncate text-xl font-extrabold leading-7">{load.from}</b>
           <span className="block text-sm font-bold text-gray-600">استان {cityProvinceName(load.from)}</span>
@@ -175,7 +171,7 @@ function LoadCard({ load, onOpen, onOffer }: { load:Load; onOpen:()=>void; onOff
         </div>
         <div className="min-w-0 flex-1 text-center">
           <div className="mb-1 flex h-5 items-center justify-center" aria-label="مقصد">
-            <MapPin className="h-5 w-5 text-primary-600 [&>circle]:fill-white" fill="currentColor" aria-hidden="true" />
+            <Circle className="h-5 w-5 text-primary-600" fill="currentColor" aria-hidden="true"/>
           </div>
           <b className="block truncate text-xl font-extrabold leading-7">{load.to}</b>
           <span className="block text-sm font-bold text-gray-600">استان {cityProvinceName(load.to)}</span>
@@ -970,13 +966,14 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </section>
 
       <section aria-label="انتخاب مسیر بار" className="flex flex-col gap-3">
-        <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : originText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
+        <div>
+          <div className="mb-1 text-right text-lg font-black text-slate-800">مبدأ</div>
+          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : originText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
           <div className="flex items-center gap-2">
             <button type="button" onClick={selectHomeOrigin} className="flex min-w-0 flex-1 items-center gap-3 text-right">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><span className="relative block h-4 w-4 rounded-full border-2 border-current bg-current"><span className="absolute left-1/2 top-1/2 h-[22px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute left-1/2 top-1/2 h-[3px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute inset-[3px] z-10 rounded-full bg-white"/></span></span>
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><MapPin className="h-5 w-5" aria-hidden="true"/></span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black text-slate-700">مبدأ</span>
-                <span className={`mt-1 block truncate text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
+                <span className={`block text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
               </span>
               
             </button>
@@ -987,13 +984,14 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
           </div>
         </div>
 
-        <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : destinationText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
+        <div>
+          <div className="mb-1 text-right text-lg font-black text-slate-800">مقصد</div>
+          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : destinationText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
           <div className="flex items-center gap-2">
             <button type="button" onClick={selectHomeDestination} className="flex min-w-0 flex-1 items-center gap-3 text-right">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><MapPin className="h-5 w-5" aria-hidden="true"/></span>
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><Circle className="h-5 w-5" aria-hidden="true" fill="currentColor"/></span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black text-slate-700">مقصد</span>
-                <span className={`mt-1 block whitespace-normal break-words text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
+                <span className={`block whitespace-normal break-words text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
               </span>
 
             </button>
