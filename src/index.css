@@ -183,5 +183,5 @@
 
 
 /* Keep the two home location shortcut labels readable in dark mode. */
-[data-theme="dark"] .home-location-quick-button[aria-pressed="false"] { color: #e5e7eb !important; }
+[data-theme="dark"] .home-location-quick-button[aria-pressed="false"] { color: #f3f4f6 !important; background-color: #374151 !important; border-color: #6b7280 !important; }
 [data-theme="dark"] .home-location-quick-button[aria-pressed="true"] { color: #fcd34d !important; }
