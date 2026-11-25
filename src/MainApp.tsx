@@ -241,6 +241,7 @@ export function MainApp() {
   // A full browser refresh always starts at the home page, regardless of the current section or URL hash.
   const [page, setPage] = useState<Page>('home');
   const pageHistoryRef = useRef<Page[]>(['home']);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -565,40 +566,26 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setDisplayMode(current => current === 'night' ? 'day' : 'night');
   };
   useEffect(() => {
-    const state = window.history.state;
-    if (!state?.bbberahPage) window.history.replaceState({ bbberahPage: page }, '', window.location.href.split('#')[0]);
+    if (!window.history.state?.bbberahPage) {
+      window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    }
     const onPopState = () => {
-      const historyState = window.history.state;
-      const next = historyState?.bbberahPage as Page | undefined;
-      if (next) {
-        if (next === 'origin-select') {
-          setOrigin('');
-          setOriginText('');
-          setOriginProvince('');
-          setOriginCounty('');
-          setSearchSubmitted(false);
+      const stack = pageHistoryRef.current;
+      if (stack.length > 1) {
+        stack.pop();
+        const previous = stack[stack.length - 1] || 'home';
+        pageHistoryRef.current = stack.length ? stack : ['home'];
+        if (previous === 'origin-select') {
+          setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty(''); setSearchSubmitted(false);
         }
-        if (next === 'destination-select' || next === 'destination-all' || next === 'frequent-route') {
-          setDestination('');
-          setDestinationText('');
-          setDestinationProvince('');
-          setDestinationCounty('');
-          setSearchSubmitted(false);
+        if (previous === 'destination-select' || previous === 'destination-all' || previous === 'frequent-route') {
+          setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); setSearchSubmitted(false);
         }
-        if (next === 'nearby-destination-select') {
-          setNearbyDestination('');
-          setNearbyDestinationText('');
-          setNearbyDestinationProvince('');
-          setNearbyDestinationCounty('');
+        if (previous === 'nearby-destination-select' || previous === 'nearby-results') {
+          setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty('');
         }
-        if (next === 'nearby-results') {
-          setNearbyDestination('');
-          setNearbyDestinationText('');
-          setNearbyDestinationProvince('');
-          setNearbyDestinationCounty('');
-        }
-        if (next === 'search') {
-          const returningToResults = historyState?.bbberahSearchResults === true;
+        if (previous === 'search') {
+          const returningToResults = window.history.state?.bbberahSearchResults === true;
           setSearchSubmitted(returningToResults);
           if (!returningToResults) {
             setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
@@ -606,9 +593,14 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
             setFrequentRoute(null);
           }
         }
-        setPageWithTransition(next, 'back');
-        
+        window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
+        setPageWithTransition(previous, 'back');
         window.scrollTo({top:0,behavior:'auto'});
+      } else {
+        pageHistoryRef.current = ['home'];
+        setShowExitConfirm(true);
+        // Keep a history entry inside the app so the first back press never closes it.
+        window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
       }
     };
     window.addEventListener('popstate', onPopState);
@@ -626,12 +618,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (p === page) return;
     const stack = pageHistoryRef.current;
     const existingIndex = stack.lastIndexOf(p);
-    if (existingIndex >= 0) {
-      pageHistoryRef.current = stack.slice(0, existingIndex + 1);
-    } else {
-      pageHistoryRef.current = [...stack, p];
-    }
-    window.history.replaceState({ bbberahPage: p }, '', '#' + p);
+    if (existingIndex >= 0) pageHistoryRef.current = stack.slice(0, existingIndex + 1);
+    else pageHistoryRef.current = [...stack, p];
+    window.history.pushState({ bbberahPage: p }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -644,17 +633,15 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     window.scrollTo({top:0,behavior:'auto'});
   };
   const goBack = () => {
-    const stack = pageHistoryRef.current;
-    if (stack.length > 1) stack.pop();
-    const previous = stack[stack.length - 1] || 'home';
-    pageHistoryRef.current = stack.length ? stack : ['home'];
-    window.history.replaceState({ bbberahPage: previous }, '', '#' + previous);
-    setPageWithTransition(previous, 'back');
-    window.scrollTo({top:0,behavior:'auto'});
+    if (pageHistoryRef.current.length > 1) {
+      window.history.back();
+    } else {
+      setShowExitConfirm(true);
+    }
   };
   const goHome = () => {
     pageHistoryRef.current = ['home'];
-    window.history.replaceState({ bbberahPage: 'home' }, '', '#home');
+    window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -2063,6 +2050,17 @@ const ProfilePage = () => <div className="space-y-3">
   };
 
   return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
+    {showExitConfirm && <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-5" role="dialog" aria-modal="true" aria-labelledby="exit-confirm-title" dir="rtl">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-5 text-center shadow-2xl">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600"><LogOut className="h-6 w-6"/></div>
+        <h2 id="exit-confirm-title" className="text-lg font-black text-gray-900">خروج از لوجیران</h2>
+        <p className="mt-2 text-sm font-bold leading-6 text-gray-600">آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟</p>
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <button type="button" onClick={()=>setShowExitConfirm(false)} className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-black text-gray-700">ادامه کار</button>
+          <button type="button" onClick={()=>{setShowExitConfirm(false); window.history.go(-2);}} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
+        </div>
+      </div>
+    </div>}
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={goBack} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
