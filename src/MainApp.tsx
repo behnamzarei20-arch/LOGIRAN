@@ -240,6 +240,7 @@ export function MainApp() {
   const { profile, session, signOut } = useAuth();
   // A full browser refresh always starts at the home page, regardless of the current section or URL hash.
   const [page, setPage] = useState<Page>('home');
+  const pageHistoryRef = useRef<Page[]>(['home']);
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -622,22 +623,39 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
       setFrequentRoute(null); setSearchSubmitted(false);
     }
-    if (p === page) {  return; }
-    window.history.pushState({ bbberahPage: p }, '', '#' + p);
+    if (p === page) return;
+    const stack = pageHistoryRef.current;
+    const existingIndex = stack.lastIndexOf(p);
+    if (existingIndex >= 0) {
+      pageHistoryRef.current = stack.slice(0, existingIndex + 1);
+    } else {
+      pageHistoryRef.current = [...stack, p];
+    }
+    window.history.replaceState({ bbberahPage: p }, '', '#' + p);
     setPageWithTransition(p);
-    
     window.scrollTo({top:0,behavior:'auto'});
   };
   const replacePage = (p:Page) => {
+    const stack = pageHistoryRef.current;
+    if (stack.length) stack[stack.length - 1] = p;
+    else pageHistoryRef.current = [p];
     window.history.replaceState({ bbberahPage: p }, '', '#' + p);
     setPageWithTransition(p);
-    
+    window.scrollTo({top:0,behavior:'auto'});
+  };
+  const goBack = () => {
+    const stack = pageHistoryRef.current;
+    if (stack.length > 1) stack.pop();
+    const previous = stack[stack.length - 1] || 'home';
+    pageHistoryRef.current = stack.length ? stack : ['home'];
+    window.history.replaceState({ bbberahPage: previous }, '', '#' + previous);
+    setPageWithTransition(previous, 'back');
     window.scrollTo({top:0,behavior:'auto'});
   };
   const goHome = () => {
+    pageHistoryRef.current = ['home'];
     window.history.replaceState({ bbberahPage: 'home' }, '', '#home');
     setPageWithTransition('home', 'back');
-    
     window.scrollTo({top:0,behavior:'auto'});
   };
   const resetSearchFields = () => {
@@ -2047,7 +2065,7 @@ const ProfilePage = () => <div className="space-y-3">
   return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
-        <button type="button" onClick={()=>{if(page==='search'){goHome();}else if(page==='profile'){goHome();}else if(window.history.state?.bbberahPage){window.history.back();}else{goHome();}}} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
+        <button type="button" onClick={goBack} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
         <h1 className="flex-1 text-center text-lg font-black">{currentPageTitle}</h1>
         <button type="button" onClick={()=>setShowPageHelp(true)} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-primary-600" aria-label="توضیحات این صفحه" title="توضیحات این صفحه"><Info className="w-5 h-5"/></button>
       </div>
