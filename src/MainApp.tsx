@@ -246,6 +246,8 @@ export function MainApp() {
   const pageHistoryRef = useRef<Page[]>(['home']);
   const lastBackActionAtRef = useRef(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const exitConfirmRef = useRef(false);
+  exitConfirmRef.current = showExitConfirm;
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -579,7 +581,12 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     // Exit confirmation is only ever available from the home screen.
     if (currentPage === 'home') {
       pageHistoryRef.current = ['home'];
-      setShowExitConfirm(true);
+      if (exitConfirmRef.current) {
+        CapacitorApp.exitApp().catch(() => {});
+      } else {
+        exitConfirmRef.current = true;
+        setShowExitConfirm(true);
+      }
       return;
     }
 
@@ -615,6 +622,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     pageHistoryRef.current = ['home'];
     window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
+    exitConfirmRef.current = false;
     setShowExitConfirm(false);
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -671,6 +679,11 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     window.scrollTo({top:0,behavior:'auto'});
   };
   const goBack = () => handleBackNavigation();
+  const confirmAppExit = () => {
+    exitConfirmRef.current = false;
+    setShowExitConfirm(false);
+    CapacitorApp.exitApp().catch(() => {});
+  };
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     pageRef.current = 'home';
@@ -938,7 +951,16 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const HomePage = () => {
     const [frequentRoutesOpen, setFrequentRoutesOpen] = useState(false);
+    const frequentMenuRef = useRef<HTMLDivElement>(null);
     const frequentRoutes = [{from:'تهران',to:'مشهد'},{from:'کرج',to:'اصفهان'},{from:'تبریز',to:'تهران'}];
+    useEffect(() => {
+      if (!frequentRoutesOpen) return;
+      const closeOnOutsidePress = (event: PointerEvent) => {
+        if (!frequentMenuRef.current?.contains(event.target as Node)) setFrequentRoutesOpen(false);
+      };
+      document.addEventListener('pointerdown', closeOnOutsidePress);
+      return () => document.removeEventListener('pointerdown', closeOnOutsidePress);
+    }, [frequentRoutesOpen]);
     const resolveUncertainContact = (item: typeof contactHistory[number], status:'agreed'|'declined') => {
       const load = loads.find(l=>l.id===item.loadId);
       if (!load) return;
@@ -1051,19 +1073,17 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </button>
       </section>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center px-2">
-        {frequentRoutesOpen && <div className="w-full max-w-[220px] py-1" dir="rtl">
-          <div className="mb-2 flex items-center justify-center gap-2">
-            <div className="text-xs font-black text-slate-700">مسیرهای پرتکرار</div>
-            <button type="button" onClick={()=>setFrequentRoutesOpen(false)} aria-label="بستن منو" className="flex h-6 w-6 items-center justify-center rounded-full text-slate-500 active:bg-slate-100"><X className="h-3.5 w-3.5"/></button>
-          </div>
-          <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-8 items-center justify-between rounded-lg bg-slate-50 px-3 text-[11px] font-black text-slate-800 active:bg-amber-50"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
+      <div ref={frequentMenuRef} className="mt-1 w-full shrink-0" dir="rtl">
+        {frequentRoutesOpen && <div className="grid grid-cols-3 gap-2">
+          {frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex min-h-[58px] flex-col items-center justify-center gap-1 rounded-xl bg-slate-50 px-1.5 py-2 text-[11px] font-black text-slate-800 shadow-sm active:bg-amber-50">
+            <span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span>
+          </button>)}
         </div>}
-      </div>
-      <div className="fixed bottom-36 right-4 z-40 h-12 w-12">
-        <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
-          <Route className="h-5 w-5"/>
-        </button>
+        <div className="mt-2 flex justify-start">
+          <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-amber-700 shadow-md transition-transform active:scale-95">
+            <Route className="h-5 w-5"/>
+          </button>
+        </div>
       </div>
     </div>;
   };
@@ -2092,8 +2112,8 @@ const ProfilePage = () => <div className="space-y-3">
         <h2 id="exit-confirm-title" className="text-lg font-black text-gray-900">خروج از لوجیران</h2>
         <p className="mt-2 text-sm font-bold leading-6 text-gray-600">آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <button type="button" onClick={()=>setShowExitConfirm(false)} className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-black text-gray-700">ادامه کار</button>
-          <button type="button" onClick={()=>{setShowExitConfirm(false); CapacitorApp.exitApp().catch(()=>{});}} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
+          <button type="button" onClick={()=>{exitConfirmRef.current=false;setShowExitConfirm(false);}} className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-black text-gray-700">ادامه کار</button>
+          <button type="button" onClick={confirmAppExit} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
         </div>
       </div>
     </div>}
