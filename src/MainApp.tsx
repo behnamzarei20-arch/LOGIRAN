@@ -623,14 +623,12 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (offerOpen) { setOfferOpen(false); setOfferDragY(0); return true; }
     if (offerDetailLoadId) { setOfferDetailLoadId(null); return true; }
     if (plateEntryOpen) { setPlateEntryOpen(false); return true; }
-    if (picker) { setPicker(null); return true; }
     if (confirmAction) { setConfirmAction(null); return true; }
     if (showIdentityGate) { setShowIdentityGate(false); return true; }
     if (offerSuccess) { setOfferSuccess(false); return true; }
     if (shipmentRewardSummary) { setShipmentRewardSummary(null); return true; }
     if (contactReport) { setContactReport(null); return true; }
     if (showPageHelp) { setShowPageHelp(false); return true; }
-    if (frequentRoutesOpen) { setFrequentRoutesOpen(false); return true; }
     if (expandedCallId) { setExpandedCallId(null); return true; }
     return false;
   };
@@ -940,6 +938,10 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const HomePage = () => {
     const [frequentRoutesOpen, setFrequentRoutesOpen] = useState(false);
+    useEffect(() => {
+      if (!frequentRoutesOpen) return;
+      return registerBackHandler(() => { setFrequentRoutesOpen(false); return true; }, 150);
+    }, [frequentRoutesOpen]);
     const frequentMenuRef = useRef<HTMLDivElement>(null);
     const frequentRoutes = [{from:'تهران',to:'مشهد'},{from:'کرج',to:'اصفهان'},{from:'تبریز',to:'تهران'}];
     useEffect(() => {
@@ -1369,6 +1371,10 @@ const ProfilePage = () => <div className="space-y-3">
     const [licensePhoto, setLicensePhoto] = useState<File | null>(null);
     const [licenseFacePhoto, setLicenseFacePhoto] = useState<File | null>(null);
     const [picker, setPicker] = useState<'license' | 'face' | null>(null);
+    useEffect(() => {
+      if (!picker) return;
+      return registerBackHandler(() => { setPicker(null); return true; }, 150);
+    }, [picker]);
 
     const chooseSource = (source: 'gallery' | 'camera') => {
       const input = document.getElementById(`verification-${picker}-${source}`) as HTMLInputElement | null;
