@@ -811,82 +811,53 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const AccountHome = () => {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-        const verificationLabel = identityVerified ? 'تأییدشده' : identityPending ? 'در انتظار تأیید' : 'تأییدنشده';
-    const verificationClass = identityVerified ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : identityPending ? 'border-orange-200 bg-orange-50 text-orange-700' : identityRejected ? 'border-red-200 bg-red-50 text-red-700' : 'border-gray-200 bg-white text-gray-600';
+    const verificationLabel = identityVerified ? 'تأیید شده' : identityPending ? 'در انتظار بررسی' : identityRejected ? 'رد شده' : 'تأیید نشده';
     const savedVehicle = Boolean(window.localStorage.getItem('bbberah_vehicle_v1') && vehicleForm.type && vehicleForm.feature);
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
     const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
-    const cardClass = 'w-full rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden';
-    const rowClass = 'w-full flex items-center justify-between gap-3 px-4 py-3 text-right';
-    const labelClass = 'flex min-w-0 items-center gap-3 text-right text-xl font-black text-gray-900';
-    const statusClass = 'shrink-0 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 text-base font-black text-orange-700';
-    const verificationStatusClass = `shrink-0 rounded-full border px-2.5 py-1 text-base font-black ${identityVerified ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : identityPending ? 'border-orange-200 bg-orange-50 text-orange-700' : identityRejected ? 'border-red-200 bg-red-50 text-red-700' : 'border-gray-200 bg-white text-gray-600'}`;
-    return <div className="space-y-3">
-      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="p-4 flex items-center justify-between gap-3" dir="rtl">
-          <div className="min-w-0 flex flex-col items-start text-right gap-2">
-            <div aria-label="آواتار پیش‌فرض" className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-primary-100 bg-primary-50"><FacelessAvatar className="h-full w-full"/></div>
-            <h2 className="font-black text-2xl text-gray-900">{profile?.full_name === 'د' ? 'بهنام' : (profile?.full_name || 'کاربر براه')}</h2>
-            <p className="text-base font-bold text-gray-900 dark:text-gray-900" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
-          </div>
-          <div className="shrink-0 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-center text-orange-700">
-            <div className="flex items-center justify-center gap-1.5 text-sm font-bold"><Award className="h-5 w-5 text-orange-600"/> امتیاز شما</div>
-            <strong className="mt-1 block text-2xl font-black" dir="rtl">{money(driverScore)}</strong>
-          </div>
+    const items = [
+      { title:'اطلاعات کاربری', icon:User, status:profile?.full_name && profile?.phone ? 'ثبت شده' : 'نیازمند تکمیل', action:()=>go('account') },
+      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, action:()=>go('verification-intro') },
+      { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', action:()=>go('vehicle-dashboard') },
+      { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', action:()=>go('wallet') },
+      { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', action:()=>go('transactions') },
+      { title:'قوانین و مقررات', icon:FileText, status:'مشاهده قوانین', action:()=>go('rules') },
+      { title:'تنظیمات', icon:Monitor, status:'تنظیمات نمایش', action:()=>go('display') },
+      { title:'پشتیبانی', icon:Headset, status:'ارتباط با پشتیبانی', action:()=>go('support') },
+      { title:'دعوت از دوستان', icon:MessageCircle, status:'اشتراک‌گذاری لوجیران', action:async()=>{
+        const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';
+        try { if(navigator.share) await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin}); else if(navigator.clipboard) { await navigator.clipboard.writeText(inviteText+' '+window.location.origin); notify('پیام دعوت کپی شد.'); } else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.'); } catch {}
+      } },
+    ];
+    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-2">
+      <div className="relative shrink-0 flex items-center justify-between min-h-7">
+        <span className="text-[10px] font-bold text-gray-400">پروفایل کاربر</span>
+        <div className="absolute left-0 top-0 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-center text-orange-700">
+          <div className="flex items-center justify-center gap-1 text-[10px] font-bold"><Award className="h-3.5 w-3.5"/> امتیاز شما</div>
+          <strong className="block text-sm font-black" dir="rtl">{money(driverScore)}</strong>
         </div>
       </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>go('account')} className={rowClass} dir="rtl">
-          <span className={labelClass}><AccountMenuIcon kind="identity"><ShieldCheck/></AccountMenuIcon><span>احراز هویت</span></span>
-          <span className={verificationStatusClass}>{verificationLabel}</span>
-        </button>
+      <div className="shrink-0 flex flex-col items-center justify-center py-1">
+        <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-primary-100 bg-primary-50"><FacelessAvatar className="h-full w-full"/></div>
+        <h2 className="mt-1 max-w-[70%] truncate text-base font-black leading-5 text-gray-900">{profile?.full_name || 'کاربر لوجیران'}</h2>
+        <p className="text-xs font-bold leading-4 text-gray-500" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
       </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>go('vehicle-dashboard')} className={rowClass} dir="rtl">
-          <span className={labelClass}><AccountMenuIcon kind="vehicle"><CarFront/></AccountMenuIcon><span>خودروی من</span></span>
-          <span className={`${statusClass} max-w-[55%] truncate`}>{savedVehicle ? vehicleSummary : 'ثبت نشده'}</span>
-        </button>
+      <div className="min-h-0 flex-1 grid grid-cols-3 grid-rows-3 content-center gap-x-2 gap-y-1.5">
+        {items.map(({title,icon:Icon,status,action})=><div key={title} className="min-w-0 flex flex-col items-center gap-1">
+          <button type="button" onClick={action} className="flex aspect-square w-full max-w-[88px] flex-col items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white px-1 shadow-sm active:scale-[0.98]">
+            <Icon className="h-6 w-6 shrink-0 text-primary-700"/>
+            <span className="text-center text-[10px] font-black leading-4 text-gray-800">{title}</span>
+          </button>
+          <div className="flex min-h-6 w-full max-w-[88px] items-center justify-center rounded-lg border border-gray-200 bg-white px-1 py-1 text-center text-[9px] font-bold leading-3 text-gray-500">{status}</div>
+        </div>)}
       </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>go('wallet')} className={rowClass} dir="rtl">
-          <span className={labelClass}><WalletMovementIcon type="increase"/><span>کیف پول</span></span>
-          <span className={`${statusClass}`}>{money(walletBalance)} تومان</span>
-        </button>
-      </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>go('transactions')} className={rowClass} dir="rtl">
-          <span className={labelClass}><AccountMenuIcon kind="transactions"><ReceiptText/></AccountMenuIcon><span>تراکنش‌ها</span></span>
-          <ChevronLeft className="h-5 w-5 shrink-0 text-gray-400"/>
-        </button>
-      </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>go('rules')} className={rowClass} dir="rtl">
-          <span className={labelClass}><AccountMenuIcon kind="rules"><FileText/></AccountMenuIcon><span>قوانین و مقررات</span></span>
-        </button>
-      </div>
-
-      <div className={cardClass}>
-        <button type="button" onClick={()=>setShowLogoutConfirm(true)} className={rowClass} dir="rtl">
-          <span className="flex min-w-0 items-center gap-3 text-xl font-black text-red-600"><AccountMenuIcon kind="logout"><LogOut/></AccountMenuIcon><span>خروج از حساب کاربری</span></span>
-        </button>
-      </div>
-      <div className="rounded-2xl border border-gray-200 bg-white px-4 py-5 text-center shadow-sm">
+      <div className="shrink-0 pt-0.5">
         <div className="flex items-center justify-center gap-4">
-          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm"><Instagram className="h-9 w-9 text-[#d62976]" strokeWidth={2.2}/></span>
-          <span aria-label="لوگوی تلگرام" title="تلگرام" className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm"><img src="https://telegram.org/img/t_logo.png" alt="لوگوی تلگرام" className="h-9 w-9 object-contain" loading="lazy"/></span>
-          <span aria-label="روبیکا" title="روبیکا" className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="لوگوی روبیکا" className="h-9 w-9 object-contain" loading="lazy"/></span>
+          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-5 w-5"/></span>
+          <span aria-label="تلگرام" title="تلگرام" className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-4 w-4 object-contain" loading="lazy"/></span>
+          <span aria-label="روبیکا" title="روبیکا" className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-4 w-4 object-contain" loading="lazy"/></span>
         </div>
-      </div>
-      <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm">
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="font-bold text-gray-500">نسخه برنامه</span>
-          <span className="font-black text-gray-800" dir="ltr">۱.۰.۱</span>
-        </div>
+        <p className="mt-0.5 text-center text-[9px] leading-3 text-gray-400">نسخه برنامه ۱.۰.۱</p>
       </div>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
@@ -901,7 +872,6 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </div>}
     </div>;
   };
-
   const getLoadInteraction = (loadId:string) => {
     const contact = contactHistory.some(item => item.loadId === loadId);
     const offer = myOffers.some(item => item.loadId === loadId);
