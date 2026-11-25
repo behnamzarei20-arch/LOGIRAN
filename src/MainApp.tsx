@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse, Radio, Play, Pause, ListMusic, Heart, Menu, ChevronUp,
+  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
   Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle, Share2
@@ -899,23 +899,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
   };
 
   const HomePage = () => {
-    const [radioPlaying, setRadioPlaying] = useState(false);
-    const [radioExpanded, setRadioExpanded] = useState(false);
-    const [podcastLibraryOpen, setPodcastLibraryOpen] = useState(false);
-    const [showPlaylistOnly, setShowPlaylistOnly] = useState(false);
-    const [favoritePodcastIds, setFavoritePodcastIds] = useState<string[]>(() => { try { const saved=JSON.parse(window.localStorage.getItem('logiran-podcast-favorites-v1') || '[]'); return Array.isArray(saved) ? saved.filter((id:any)=>typeof id==='string') : []; } catch { return []; } });
     const [frequentRoutesOpen, setFrequentRoutesOpen] = useState(false);
     const frequentRoutes = [{from:'تهران',to:'مشهد'},{from:'کرج',to:'اصفهان'},{from:'تبریز',to:'تهران'}];
-    const podcastItems = [{id:'p1',title:'سفر ایمن در جاده',category:'آموزش رانندگی',duration:'۱۸:۲۰'},{id:'p2',title:'مدیریت هوشمند حمل‌ونقل',category:'لجستیک و کسب‌وکار',duration:'۲۴:۱۰'},{id:'p3',title:'روایت‌های جاده',category:'داستان و سرگرمی',duration:'۱۵:۴۵'}];
-    const togglePodcastFavorite = (id:string) => setFavoritePodcastIds(current => { const next=current.includes(id)?current.filter(item=>item!==id):[...current,id]; window.localStorage.setItem('logiran-podcast-favorites-v1',JSON.stringify(next)); return next; });
-    const [radioElapsed, setRadioElapsed] = useState(268);
-    const radioDuration = 2198;
-    const formatRadioTime = (seconds:number) => `${fa(Math.floor(seconds / 60)).padStart(2, '۰')}:${fa(seconds % 60).padStart(2, '۰')}`;
-    useEffect(() => {
-      if (!radioPlaying) return;
-      const timer = window.setInterval(() => setRadioElapsed(value => value >= radioDuration ? 0 : value + 1), 1000);
-      return () => window.clearInterval(timer);
-    }, [radioPlaying]);
     const resolveUncertainContact = (item: typeof contactHistory[number], status:'agreed'|'declined') => {
       const load = loads.find(l=>l.id===item.loadId);
       if (!load) return;
@@ -1029,70 +1014,14 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </button>
       </section>
 
-      <section aria-label="پخش‌کننده پادکست لوجیران" className="relative mt-auto mx-auto w-full shrink-0 rounded-2xl border border-slate-200 bg-[#F4F7FA] px-3 py-2.5 shadow-sm">
-        <div className="flex items-center gap-2.5" dir="rtl">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[#092B4C] via-[#164A65] to-[#D88A35] text-white shadow-sm">
-            <div className="flex flex-col items-center gap-0.5">
-              <Radio className="h-6 w-6"/>
-              <span className="text-[8px] font-black tracking-wide">LOGIRAN</span>
-            </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-xs font-black text-slate-900">رادیو و پادکست لوجیران</div>
-            <div className="mt-0.5 truncate text-[10px] font-semibold text-slate-500">صدای سفر به دنیای شگفت‌انگیز</div>
-            <div className="mt-2 flex items-center gap-2" dir="ltr">
-              <span className="min-w-[34px] text-[9px] font-bold tabular-nums text-slate-500">{formatRadioTime(radioElapsed)}</span>
-              <input aria-label="موقعیت پادکست" type="range" min={0} max={radioDuration} value={radioElapsed} onChange={event=>setRadioElapsed(Number(event.target.value))} className="h-1 min-w-0 flex-1 cursor-pointer accent-[#D88A35]"/>
-              <span className="min-w-[34px] text-[9px] font-bold tabular-nums text-slate-500">{formatRadioTime(radioDuration)}</span>
-            </div>
-          </div>
-          <button type="button" onClick={()=>setRadioPlaying(value=>!value)} aria-label={radioPlaying?'توقف پخش':'شروع پخش'} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-sm transition-colors ${radioPlaying?'bg-[#D88A35] hover:bg-[#C77825]':'bg-[#082F55] hover:bg-[#12466F]'}`}>
-            {radioPlaying?<Pause className="h-5 w-5 fill-current"/>:<Play className="h-5 w-5 fill-current"/>}
-          </button>
-          <button type="button" onClick={()=>setRadioExpanded(true)} aria-expanded={radioExpanded} aria-label="بازکردن تمام‌صفحه پلیر" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300">
-            <ChevronUp className="h-5 w-5"/>
-          </button>
-        </div>
-
-      </section>
-
-      <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} className="fixed bottom-24 left-4 z-40 flex items-center gap-2 rounded-full border border-amber-300 bg-white/95 px-4 py-3 text-xs font-black text-slate-900 shadow-lg">
-        <Route className="h-4 w-4 text-amber-600"/> مسیرهای پرتکرار <ChevronDown className={frequentRoutesOpen ? "h-4 w-4 rotate-180" : "h-4 w-4"}/>
+      {frequentRoutesOpen && <button type="button" aria-label="بستن منوی مسیرهای پرتکرار" className="fixed inset-0 z-30 cursor-default bg-transparent" onClick={()=>setFrequentRoutesOpen(false)}/>}
+      {frequentRoutesOpen && <div className="fixed bottom-[7.1rem] left-4 z-40 w-44 rounded-xl border border-amber-200 bg-white p-2 shadow-xl" dir="rtl" onClick={event=>event.stopPropagation()}>
+        <div className="mb-1.5 px-1 text-[10px] font-black text-slate-500">مسیرهای پرتکرار</div>
+        <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setOrigin(route.from);setOriginText(route.from);setOriginProvince('');setOriginCounty('');setDestination(route.to);setDestinationText(route.to);setDestinationProvince('');setDestinationCounty('');setSearchSubmitted(false);setFrequentRoutesOpen(false);}} className="flex h-8 items-center justify-between rounded-lg border border-slate-100 bg-[#FFF8EA] px-2 text-[11px] font-black text-slate-900"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
+      </div>}
+      <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="fixed bottom-24 left-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
+        <Route className="h-5 w-5"/>
       </button>
-      {frequentRoutesOpen && <div className="fixed bottom-[7.1rem] left-4 z-40 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-amber-200 bg-white p-3 shadow-2xl" dir="rtl">
-        <div className="mb-2 text-xs font-black text-slate-700">انتخاب مسیر پرتکرار</div>
-        <div className="grid gap-2">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setOrigin(route.from);setOriginText(route.from);setOriginProvince('');setOriginCounty('');setDestination(route.to);setDestinationText(route.to);setDestinationProvince('');setDestinationCounty('');setSearchSubmitted(false);setFrequentRoutesOpen(false);}} className="flex items-center justify-between rounded-xl border border-slate-200 bg-[#FFF8EA] px-3 py-3 text-sm font-black text-slate-900"><span>{route.from}</span><ArrowLeft className="h-4 w-4 text-amber-600"/><span>{route.to}</span></button>)}</div>
-      </div>}
-      {radioExpanded && <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#F7F9FC] text-slate-900" dir="rtl">
-        <div className="mx-auto min-h-full w-full max-w-lg px-4 pb-10 pt-5">
-          <div className="flex items-center justify-between gap-3" dir="ltr">
-            <button type="button" onClick={()=>{setPodcastLibraryOpen(value=>!value);setShowPlaylistOnly(false);}} aria-label="بازکردن کتابخانه پادکست‌ها" className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"><Menu className="h-5 w-5"/></button>
-            <div className="text-center" dir="rtl"><div className="text-base font-black">پادکست‌های لوجیران</div><div className="text-[11px] text-slate-500">کتابخانه صوتی</div></div>
-            <button type="button" onClick={()=>setRadioExpanded(false)} aria-label="بستن پلیر" className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"><ChevronDown className="h-5 w-5"/></button>
-          </div>
-          <div className="mt-8 rounded-3xl bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#092B4C] via-[#164A65] to-[#D88A35] text-white"><Radio className="h-11 w-11"/></div>
-              <div className="min-w-0 flex-1"><div className="text-lg font-black">رادیو و پادکست لوجیران</div><div className="mt-1 text-xs text-slate-500">صدای سفر به دنیای شگفت‌انگیز</div><div className="mt-3 flex items-center gap-2"><button type="button" onClick={()=>setRadioPlaying(value=>!value)} className={radioPlaying ? "flex h-11 w-11 items-center justify-center rounded-full bg-[#D88A35] text-white" : "flex h-11 w-11 items-center justify-center rounded-full bg-[#082F55] text-white"}>{radioPlaying?<Pause className="h-5 w-5"/>:<Play className="h-5 w-5"/>}</button><span className="text-xs font-bold text-slate-500">{radioPlaying?'در حال پخش':'متوقف'}</span></div></div>
-            </div>
-            <div className="mt-5 flex items-center gap-2" dir="ltr"><span className="text-[10px] tabular-nums text-slate-500">{formatRadioTime(radioElapsed)}</span><input aria-label="موقعیت پادکست" type="range" min={0} max={radioDuration} value={radioElapsed} onChange={event=>setRadioElapsed(Number(event.target.value))} className="h-1 min-w-0 flex-1 cursor-pointer accent-[#D88A35]"/><span className="text-[10px] tabular-nums text-slate-500">{formatRadioTime(radioDuration)}</span></div>
-          </div>
-          <div className="mt-5 flex items-center justify-between">
-            
-            <button type="button" onClick={()=>{setPodcastLibraryOpen(true);setShowPlaylistOnly(true);}} className="flex h-10 items-center gap-2 rounded-xl bg-white px-3 text-sm font-black shadow-sm"><ListMusic className="h-5 w-5"/>پلی‌لیست من ({favoritePodcastIds.length})</button>
-          </div>
-          {podcastLibraryOpen && <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between"><h3 className="font-black">{showPlaylistOnly?'پلی‌لیست من':'کتابخانه پادکست‌ها'}</h3><button type="button" onClick={()=>{setPodcastLibraryOpen(false);setShowPlaylistOnly(false);}} className="text-xs font-bold text-slate-500">بستن</button></div>
-            <div className="space-y-2">{podcastItems.filter(item=>!showPlaylistOnly||favoritePodcastIds.includes(item.id)).map(item=><div key={item.id} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-amber-600"><Radio className="h-6 w-6"/></div>
-              <div className="min-w-0 flex-1"><div className="truncate text-sm font-black">{item.title}</div><div className="mt-1 text-[10px] text-slate-500">{item.category} · {item.duration}</div></div>
-              <button type="button" onClick={()=>togglePodcastFavorite(item.id)} aria-label={favoritePodcastIds.includes(item.id)?'حذف از پلی‌لیست':'افزودن به پلی‌لیست'} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"><Heart className={favoritePodcastIds.includes(item.id)?"h-6 w-6 fill-rose-500 text-rose-500":"h-6 w-6 text-slate-400"}/></button>
-            </div>)}</div>
-            {!podcastItems.some(item=>!showPlaylistOnly||favoritePodcastIds.includes(item.id)) && <p className="py-6 text-center text-sm text-slate-500">هنوز پادکستی به پلی‌لیست اضافه نشده است.</p>}
-          </section>}
-          {!podcastLibraryOpen && <div className="mt-5 rounded-2xl border border-dashed border-slate-300 p-5 text-center text-sm leading-7 text-slate-500">برای مشاهده مجموعه قسمت‌ها، منوی کتابخانه را باز کنید و با لمس قلب کنار هر قسمت، آن را به پلی‌لیست خود اضافه کنید.</div>}
-        </div>
-      </div>}
     </div>;
   };
 
