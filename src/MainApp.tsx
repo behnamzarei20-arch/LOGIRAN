@@ -604,7 +604,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     const onPopState = () => {
       handleBackNavigation();
       // Re-arm the guard so another Back press is handled inside the app.
-      window.history.pushState({ bbberahPage: pageHistoryRef.current.at(-1) || 'home', bbberahGuard: true }, '', '#' + (pageHistoryRef.current.at(-1) || 'home'));
+      const currentStack = pageHistoryRef.current;
+      const currentPage = currentStack[currentStack.length - 1] || 'home';
+      window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
     };
     window.addEventListener('popstate', onPopState);
     let nativeBackListener: { remove: () => Promise<void> } | undefined;
