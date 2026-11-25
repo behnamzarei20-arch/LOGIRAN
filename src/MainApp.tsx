@@ -983,12 +983,12 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     };
 
     return <div className="flex min-h-0 flex-1 flex-col gap-3 w-full">
-      <section aria-label="بنر کامیون‌ها و تریلی‌ها" className="relative h-[120px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 sm:h-[140px]">
+      <section aria-label="بنر لوجیران" className="relative h-[120px] shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-slate-900 sm:h-[140px]">
         <img src="https://images.unsplash.com/photo-1773438791088-9d5c2d5663cf?auto=format&fit=crop&fm=jpg&q=85&w=1600" alt="تریلی در جاده‌ای جنگلی" loading="eager" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center"/>
-        <div className="absolute inset-0 bg-gradient-to-l from-primary-900/75 via-primary-900/30 to-transparent"/>
-        <div className="absolute inset-y-0 right-0 flex flex-col justify-center px-4 text-right text-white">
-          <span className="text-lg font-black">براه</span>
-          <span className="mt-1 text-xs font-bold text-white/95">همراه مسیرهای جاده‌ای</span>
+        <div className="absolute inset-0 bg-gradient-to-l from-primary-900/85 via-primary-900/55 to-primary-900/10"/>
+        <div className="absolute inset-y-0 right-0 flex items-center gap-3 px-4 text-right text-white">
+          <img src={`${import.meta.env.BASE_URL}1000049799.svg`} alt="LOGIRAN لوجیران" className="h-12 w-16 shrink-0 object-contain"/>
+          <span className="max-w-[230px] text-sm font-black leading-6 text-white">شبکه هوشمند خدمات و لجستیک ایران</span>
         </div>
       </section>
 
