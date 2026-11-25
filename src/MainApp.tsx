@@ -621,13 +621,16 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
   const handleOverlayBack = () => {
     if (offerOpen) { setOfferOpen(false); setOfferDragY(0); return true; }
+    if (offerDetailLoadId) { setOfferDetailLoadId(null); return true; }
     if (plateEntryOpen) { setPlateEntryOpen(false); return true; }
+    if (picker) { setPicker(null); return true; }
     if (confirmAction) { setConfirmAction(null); return true; }
     if (showIdentityGate) { setShowIdentityGate(false); return true; }
     if (offerSuccess) { setOfferSuccess(false); return true; }
     if (shipmentRewardSummary) { setShipmentRewardSummary(null); return true; }
     if (contactReport) { setContactReport(null); return true; }
     if (showPageHelp) { setShowPageHelp(false); return true; }
+    if (frequentRoutesOpen) { setFrequentRoutesOpen(false); return true; }
     if (expandedCallId) { setExpandedCallId(null); return true; }
     return false;
   };
@@ -652,6 +655,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setPage(next);
   };
   const go = (p:Page, preserveSearch = false) => {
+    if (p === 'home') { goHome(); return; }
     if (p === 'search' && !preserveSearch) {
       setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
       setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
@@ -664,6 +668,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     window.scrollTo({top:0,behavior:'auto'});
   };
   const replacePage = (p:Page) => {
+    if (p === 'home') { goHome(); return; }
     const stack = pageHistoryRef.current;
     if (stack.length > 1 && stack[stack.length - 2] === p) stack.pop();
     else if (stack.length) stack[stack.length - 1] = p;
