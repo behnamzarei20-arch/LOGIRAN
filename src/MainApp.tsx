@@ -3,7 +3,7 @@ import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
-  Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle
+  Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle, Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardBody } from '@/components/ui/Card';
@@ -816,48 +816,59 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
     const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
     const items = [
-      { title:'اطلاعات کاربری', icon:User, status:profile?.full_name && profile?.phone ? 'ثبت شده' : 'نیازمند تکمیل', action:()=>go('account') },
-      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, action:()=>go('verification-intro') },
-      { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', action:()=>go('vehicle-dashboard') },
-      { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', action:()=>go('wallet') },
-      { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', action:()=>go('transactions') },
-      { title:'قوانین و مقررات', icon:FileText, status:'مشاهده قوانین', action:()=>go('rules') },
-      { title:'تنظیمات', icon:Monitor, status:'تنظیمات نمایش', action:()=>go('display') },
-      { title:'پشتیبانی', icon:Headset, status:'ارتباط با پشتیبانی', action:()=>go('support') },
-      { title:'دعوت از دوستان', icon:MessageCircle, status:'اشتراک‌گذاری لوجیران', action:async()=>{
+      { title:'اطلاعات کاربری', icon:User, status:profile?.full_name && profile?.phone ? 'ثبت شده' : 'نیازمند تکمیل', tone:profile?.full_name && profile?.phone ? 'green' : 'amber', action:()=>go('account') },
+      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('verification-intro') },
+      { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', tone:savedVehicle ? 'blue' : 'amber', action:()=>go('vehicle-dashboard') },
+      { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
+      { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', tone:'slate', action:()=>go('transactions') },
+      { title:'قوانین و مقررات', icon:FileText, status:'مشاهده قوانین', tone:'slate', action:()=>go('rules') },
+      { title:'تنظیمات', icon:Monitor, status:'تنظیمات نمایش', tone:'blue', action:()=>go('display') },
+      { title:'پشتیبانی', icon:Headset, status:'ارتباط با پشتیبانی', tone:'cyan', action:()=>go('support') },
+      { title:'دعوت از دوستان', icon:Share2, status:'اشتراک‌گذاری لوجیران', tone:'pink', action:async()=>{
         const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';
         try { if(navigator.share) await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin}); else if(navigator.clipboard) { await navigator.clipboard.writeText(inviteText+' '+window.location.origin); notify('پیام دعوت کپی شد.'); } else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.'); } catch {}
       } },
     ];
+    const statusTones:Record<string,string> = {
+      green:'border-emerald-200 bg-emerald-50 text-emerald-800',
+      amber:'border-amber-200 bg-amber-50 text-amber-800',
+      red:'border-rose-200 bg-rose-50 text-rose-800',
+      blue:'border-sky-200 bg-sky-50 text-sky-800',
+      violet:'border-violet-200 bg-violet-50 text-violet-800',
+      cyan:'border-cyan-200 bg-cyan-50 text-cyan-800',
+      pink:'border-pink-200 bg-pink-50 text-pink-800',
+      slate:'border-slate-200 bg-slate-100 text-slate-700',
+    };
+    const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-2">
-      <div className="relative shrink-0 flex items-center justify-between min-h-7">
-        <span className="text-[10px] font-bold text-gray-400">پروفایل کاربر</span>
-        <div className="absolute left-0 top-0 rounded-lg border border-orange-200 bg-orange-50 px-2.5 py-1 text-center text-orange-700">
-          <div className="flex items-center justify-center gap-1 text-[10px] font-bold"><Award className="h-3.5 w-3.5"/> امتیاز شما</div>
-          <strong className="block text-sm font-black" dir="rtl">{money(driverScore)}</strong>
+      <div className="relative shrink-0 flex items-center justify-between min-h-8">
+        <span className="text-xs font-bold text-gray-500">پروفایل کاربر</span>
+        <div className="absolute left-0 top-0 rounded-xl border border-orange-200 bg-orange-50 px-3 py-1.5 text-center text-orange-800">
+          <div className="flex items-center justify-center gap-1 text-xs font-bold"><Award className="h-4 w-4"/> امتیاز شما</div>
+          <strong className="block text-base font-black" dir="rtl">{money(driverScore)}</strong>
         </div>
       </div>
       <div className="shrink-0 flex flex-col items-center justify-center py-1">
-        <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-primary-100 bg-primary-50"><FacelessAvatar className="h-full w-full"/></div>
-        <h2 className="mt-1 max-w-[70%] truncate text-base font-black leading-5 text-gray-900">{profile?.full_name || 'کاربر لوجیران'}</h2>
-        <p className="text-xs font-bold leading-4 text-gray-500" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
+        <div className="h-16 w-16 overflow-hidden rounded-full border-2 border-primary-100 bg-primary-50"><FacelessAvatar className="h-full w-full"/></div>
+        <h2 className="mt-1 max-w-[70%] truncate text-lg font-black leading-6 text-gray-900">{displayName}</h2>
+        <p className="text-sm font-bold leading-5 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
       </div>
-      <div className="min-h-0 flex-1 grid grid-cols-3 grid-rows-3 content-center gap-x-2 gap-y-1.5">
-        {items.map(({title,icon:Icon,status,action})=><div key={title} className="min-w-0 flex flex-col items-center gap-1">
-          <button type="button" onClick={action} className="flex aspect-square w-full max-w-[88px] flex-col items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white px-1 shadow-sm active:scale-[0.98]">
-            <Icon className="h-6 w-6 shrink-0 text-primary-700"/>
-            <span className="text-center text-[10px] font-black leading-4 text-gray-800">{title}</span>
+      <div className="min-h-0 flex-1 grid grid-cols-3 grid-rows-3 gap-x-2 gap-y-2">
+        {items.map(({title,icon:Icon,status,tone,action})=><div key={title} className="min-w-0 min-h-0 flex flex-col items-center gap-1.5">
+          <button type="button" onClick={action} className="flex min-h-0 flex-1 aspect-square w-full flex-col items-center justify-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-1.5 shadow-sm active:scale-[0.98]">
+            <Icon className="h-7 w-7 shrink-0 text-primary-700"/>
+            <span className="text-center text-xs font-black leading-4 text-gray-800">{title}</span>
           </button>
-          <div className="flex min-h-6 w-full max-w-[88px] items-center justify-center rounded-lg border border-gray-200 bg-white px-1 py-1 text-center text-[9px] font-bold leading-3 text-gray-500">{status}</div>
+          <div className={`flex min-h-8 w-full items-center justify-center rounded-xl border px-1.5 py-1 text-center text-[10px] font-extrabold leading-4 ${statusTones[tone] || statusTones.slate}`}>{status}</div>
         </div>)}
       </div>
-      <div className="shrink-0 pt-0.5">
-        <div className="flex items-center justify-center gap-4">
-          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-5 w-5"/></span>
-          <span aria-label="تلگرام" title="تلگرام" className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-4 w-4 object-contain" loading="lazy"/></span>
-          <span aria-label="روبیکا" title="روبیکا" className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-4 w-4 object-contain" loading="lazy"/></span>
+      <div className="shrink-0 pt-1">
+        <div className="flex items-center justify-center gap-6">
+          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-8 w-8"/></span>
+          <span aria-label="تلگرام" title="تلگرام" className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></span>
+          <span aria-label="روبیکا" title="روبیکا" className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-8 w-8 object-contain" loading="lazy"/></span>
         </div>
-        <p className="mt-0.5 text-center text-[9px] leading-3 text-gray-400">نسخه برنامه ۱.۰.۱</p>
+        <p className="mt-1 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه ۱.۰.۱</p>
       </div>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
@@ -2034,7 +2045,7 @@ const ProfilePage = () => <div className="space-y-3">
         <button type="button" onClick={()=>setShowPageHelp(true)} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-primary-600" aria-label="توضیحات این صفحه" title="توضیحات این صفحه"><Info className="w-5 h-5"/></button>
       </div>
     </div>}
-    <main key={page}  className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : 'pb-24'}`}>
+    <main key={page}  className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : page === 'profile' ? 'h-[calc(100dvh-9.5rem)] min-h-0 overflow-hidden flex flex-col pb-2' : 'pb-24'}`}>
       {pendingContactLoadId && page!=='contact-report' && <button type="button" onClick={()=>{const load=loads.find(l=>l.id===pendingContactLoadId); if(load){setSelected(load);go('contact-report');}}} className="w-full mb-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4 text-right text-amber-900 shadow-sm"><b className="block">⚠️ این بار هنوز تعیین تکلیف نشده است</b><span className="block text-xs font-bold mt-1">نتیجه تماس را ثبت کنید تا این یادآوری بسته شود.</span></button>}
       {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
     </main>
