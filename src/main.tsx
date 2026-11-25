@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { AuthPage } from '@/pages/auth/AuthPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
 import './index.css';
-import { Truck, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { ADMIN_DEMO_MODE } from '@/features/admin/demoMode';
 
 const AdminWorkspace = lazy(() => import('@/pages/admin/AdminWorkspace').then(module => ({ default: module.AdminWorkspace })));
