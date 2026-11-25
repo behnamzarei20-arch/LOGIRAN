@@ -1,5 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
@@ -244,10 +245,6 @@ export function MainApp() {
   const pageRef = useRef<Page>('home');
   pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
-  const lastBackActionAtRef = useRef(0);
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const exitConfirmRef = useRef(false);
-  exitConfirmRef.current = showExitConfirm;
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -572,20 +569,14 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setDisplayMode(current => current === 'night' ? 'day' : 'night');
   };
   const handleBackNavigation = () => {
-    const now = Date.now();
-    if (now - lastBackActionAtRef.current < 300) return;
-    lastBackActionAtRef.current = now;
     const currentPage = pageRef.current;
     const stack = pageHistoryRef.current;
 
-    // Exit confirmation is only ever available from the home screen.
+    // The app may exit only from Home, and only on a native device.
     if (currentPage === 'home') {
       pageHistoryRef.current = ['home'];
-      if (exitConfirmRef.current) {
-        CapacitorApp.exitApp().catch(() => {});
-      } else {
-        exitConfirmRef.current = true;
-        setShowExitConfirm(true);
+      if (Capacitor.isNativePlatform()) {
+        void CapacitorApp.exitApp().catch(() => {});
       }
       return;
     }
@@ -612,43 +603,52 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
           setFrequentRoute(null);
         }
       }
-      window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
+      if (!Capacitor.isNativePlatform()) {
+        window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
+      }
       setPageWithTransition(previous, 'back');
       window.scrollTo({top:0,behavior:'auto'});
       return;
     }
 
-    // A page without an earlier in-app destination returns home; it never exits.
+    // A page without an earlier in-app destination returns Home; it never exits.
     pageHistoryRef.current = ['home'];
-    window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    if (!Capacitor.isNativePlatform()) {
+      window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    }
     setPageWithTransition('home', 'back');
-    exitConfirmRef.current = false;
-    setShowExitConfirm(false);
     window.scrollTo({top:0,behavior:'auto'});
   };
   useEffect(() => {
-    // Keep exactly one browser-history guard; page navigation is tracked in pageHistoryRef.
+    let disposed = false;
+
+    if (Capacitor.isNativePlatform()) {
+      // Android hardware Back is handled only by Capacitor, never by browser popstate.
+      let nativeBackListener: { remove: () => Promise<void> } | undefined;
+      CapacitorApp.addListener('backButton', () => {
+        handleBackNavigation();
+      }).then(listener => {
+        if (disposed) void listener.remove();
+        else nativeBackListener = listener;
+      }).catch(() => {});
+      return () => {
+        disposed = true;
+        if (nativeBackListener) void nativeBackListener.remove();
+      };
+    }
+
+    // Browser Back is handled only on web; keep a single guard entry.
     window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     const onPopState = () => {
       handleBackNavigation();
-      // Re-arm the guard so another Back press is handled inside the app.
       const currentStack = pageHistoryRef.current;
       const currentPage = currentStack[currentStack.length - 1] || 'home';
       window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
     };
     window.addEventListener('popstate', onPopState);
-    let disposed = false;
-    let nativeBackListener: { remove: () => Promise<void> } | undefined;
-    CapacitorApp.addListener('backButton', () => {
-      handleBackNavigation();
-    }).then(listener => {
-      if (disposed) listener.remove();
-      else nativeBackListener = listener;
-    }).catch(() => {});
     return () => {
       disposed = true;
       window.removeEventListener('popstate', onPopState);
-      nativeBackListener?.remove();
     };
   }, []);
   const setPageWithTransition = (next: Page, _direction: 'forward' | 'back' = 'forward') => {
@@ -679,11 +679,6 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     window.scrollTo({top:0,behavior:'auto'});
   };
   const goBack = () => handleBackNavigation();
-  const confirmAppExit = () => {
-    exitConfirmRef.current = false;
-    setShowExitConfirm(false);
-    CapacitorApp.exitApp().catch(() => {});
-  };
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     pageRef.current = 'home';
@@ -2106,17 +2101,6 @@ const ProfilePage = () => <div className="space-y-3">
   };
 
   return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
-    {showExitConfirm && <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-5" role="dialog" aria-modal="true" aria-labelledby="exit-confirm-title" dir="rtl">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-5 text-center shadow-2xl">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600"><LogOut className="h-6 w-6"/></div>
-        <h2 id="exit-confirm-title" className="text-lg font-black text-gray-900">خروج از لوجیران</h2>
-        <p className="mt-2 text-sm font-bold leading-6 text-gray-600">آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟</p>
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <button type="button" onClick={()=>{exitConfirmRef.current=false;setShowExitConfirm(false);}} className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-black text-gray-700">ادامه کار</button>
-          <button type="button" onClick={confirmAppExit} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
-        </div>
-      </div>
-    </div>}
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={goBack} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
