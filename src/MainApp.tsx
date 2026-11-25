@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
+  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse, Radio, PlayCircle,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
   Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle, Share2
@@ -1017,6 +1017,41 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
           جستجوی بار
         </button>
       </section>
+
+      <section aria-label="مسیرهای پرتکرار" className="shrink-0 space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-black text-slate-700">مسیرهای پرتکرار</h2>
+          <span className="text-[10px] font-medium text-slate-400">انتخاب سریع مسیر</span>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {frequentRoutes.map((route, index) => (
+            <button key={route.from + '-' + route.to} type="button"
+              onClick={() => {
+                setOrigin(route.from); setOriginText(route.from); setOriginProvince(''); setOriginCounty('');
+                setDestination(route.to); setDestinationText(route.to); setDestinationProvince(''); setDestinationCounty('');
+                setFrequentRoute(null); setSearchSubmitted(true);
+                window.history.pushState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
+                setPageWithTransition('search');
+                window.scrollTo({ top: 0, behavior: 'auto' });
+              }}
+              className="flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-amber-300 hover:bg-amber-50 active:bg-amber-100"
+              aria-label={`جستجوی بار از ${route.from} به ${route.to}`}>
+              <span className="text-amber-600">{route.from}</span>
+              <ArrowLeft className="h-3 w-3 text-slate-400" aria-hidden="true"/>
+              <span>{route.to}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div aria-label="رادیو لوجیران" className="mt-auto flex min-h-12 shrink-0 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#032E5C] text-white"><Radio className="h-4 w-4" aria-hidden="true"/></span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-xs font-black text-slate-800">رادیو لوجیران</span>
+          <span className="block text-[10px] text-slate-500">پخش زنده به‌زودی</span>
+        </span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-500" title="به‌زودی فعال می‌شود"><PlayCircle className="h-5 w-5" aria-hidden="true"/></span>
+      </div>
     </div>;
   };
 
