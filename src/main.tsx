@@ -11,7 +11,7 @@ import { ADMIN_DEMO_MODE } from '@/features/admin/demoMode';
 const AdminWorkspace = lazy(() => import('@/pages/admin/AdminWorkspace').then(module => ({ default: module.AdminWorkspace })));
 const AdminPanel = lazy(() => import('@/pages/admin/AdminPanel').then(module => ({ default: module.AdminPanel })));
 
-function Splash({onDone}:{onDone:()=>void}){useEffect(()=>{const t=window.setTimeout(onDone,1400);return()=>window.clearTimeout(t)},[onDone]);return <div dir="rtl" className="min-h-screen bg-white flex items-center justify-center px-6"><div className="w-full max-w-md text-center"><img src="/1000049799.svg" alt="LOGIRAN لوجیران" className="mx-auto w-full max-w-[340px] h-auto object-contain"/></div></div>}
+function Splash({onDone}:{onDone:()=>void}){useEffect(()=>{const t=window.setTimeout(onDone,1400);return()=>window.clearTimeout(t)},[onDone]);return <div dir="rtl" className="min-h-screen bg-white flex items-center justify-center px-6"><div className="w-full max-w-md text-center"><img src={`${import.meta.env.BASE_URL}1000049799.svg` } alt="LOGIRAN لوجیران" className="mx-auto w-full max-w-[340px] h-auto object-contain"/></div></div>}
 
 
 type AdminRole = 'owner' | 'support' | 'reviewer';
