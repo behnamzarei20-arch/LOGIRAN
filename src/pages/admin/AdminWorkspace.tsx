@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ADMIN_DEMO_MODE } from '@/features/admin/demoMode';
+import { dispatchBack, registerBackHandler } from '@/navigation/backManager';
 import { admins, users, events, tickets, adminSessions, verificationRequests, financialTransactions } from '@/features/admin/demoData';
 import { Activity, BarChart3, CalendarDays, Clock3, Download, Eye, FileText, LayoutDashboard, Package, Search, ShieldAlert, ShieldCheck, Ticket, Truck, Users, X, CircleDollarSign, FileCheck2, Check, XCircle, Wallet } from 'lucide-react';
 
@@ -42,15 +43,17 @@ export function AdminWorkspace({role='owner',onExit}:{role?:AdminRole;onExit?:()
   const viewWindow=window as Window & {startViewTransition?: (callback:()=>void)=>void};
   if(viewWindow.startViewTransition) viewWindow.startViewTransition(update); else update();
  };
- const goBack=()=>{
-  if(ticketProfile){setTicketProfile(null);return;}
-  if(profile){setProfile(null);return;}
-  if(adminProfile){setAdminProfile(null);return;}
+ const handleAdminBack=()=>{
+  if(ticketProfile){setTicketProfile(null);return true;}
+  if(profile){setProfile(null);return true;}
+  if(adminProfile){setAdminProfile(null);return true;}
   const previous=historyRef.current[historyRef.current.length-1];
-  if(previous&&roleConfig[role].allowed.includes(previous)){navigate(previous,'back');return;}
-  if(section!==(role==='owner'?'overview':role==='support'?'tickets':'drivers')){navigate(role==='owner'?'overview':role==='support'?'tickets':'drivers','back');return;}
+  if(previous&&roleConfig[role].allowed.includes(previous)){navigate(previous,'back');return true;}
+  if(section!==(role==='owner'?'overview':role==='support'?'tickets':'drivers')){navigate(role==='owner'?'overview':role==='support'?'tickets':'drivers','back');return true;}
   setBackPulse(true);window.setTimeout(()=>setBackPulse(false),1200);
+  return true;
  };
+ const goBack=()=>dispatchBack();
  const [query,setQuery]=useState('');
  const [range,setRange]=useState('ماه جاری');
  const [roleFilter,setRoleFilter]=useState('همه نقش‌ها');
@@ -84,18 +87,16 @@ export function AdminWorkspace({role='owner',onExit}:{role?:AdminRole;onExit?:()
  };
  const updateVerificationStatus=(id:string,nextStatus:string)=>{if(role!=='owner'&&role!=='reviewer')return;setVerificationRecords(current=>current.map(item=>item.id===id?{...item,status:nextStatus}:item));};
  const updateFinancialStatus=(id:string,nextStatus:string)=>{if(role!=='owner')return;setFinancialRecords(current=>current.map(item=>item.id===id?{...item,status:nextStatus}:item));};
+ useEffect(()=>registerBackHandler(handleAdminBack,50),[handleAdminBack]);
  useEffect(()=>{
   const keepPanel=()=>window.history.pushState({bbberahAdminPanel:true},'',window.location.href);
   window.history.pushState({bbberahAdminPanel:true},'',window.location.href);
-  const onPopState=()=>{keepPanel();goBack();};
+  const onPopState=()=>{keepPanel();dispatchBack();};
   window.addEventListener('popstate',onPopState);
-  const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();goBack();}};
+  const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();dispatchBack();}};
   window.addEventListener('keydown',onKeyDown);
-  let appBackListener: {remove:()=>Promise<void>}|undefined;
-  const cap= (window as Window & {Capacitor?:{Plugins?:{App?:{addListener:(eventName:string,callback:()=>void)=>Promise<{remove:()=>Promise<void>}>}}}}).Capacitor;
-  cap?.Plugins?.App?.addListener('backButton',()=>goBack()).then(listener=>{appBackListener=listener}).catch(()=>{});
-  return()=>{window.removeEventListener('popstate',onPopState);window.removeEventListener('keydown',onKeyDown);appBackListener?.remove();};
- },[section,profile,adminProfile,ticketProfile,role]);
+  return()=>{window.removeEventListener('popstate',onPopState);window.removeEventListener('keydown',onKeyDown);};
+ },[]);
  const filteredUsers=useMemo(()=>users.filter(u=>(u.name+' '+u.phone+' '+u.id+' '+u.city).toLowerCase().includes(query.toLowerCase())&&(section==='users'?u.role==='صاحب بار':section==='drivers'?u.role==='راننده':(roleFilter==='همه نقش‌ها'||u.role===roleFilter))&&(status==='همه وضعیت‌ها'||u.status===status)),[query,roleFilter,status,section]);
  const filteredEvents=useMemo(()=>events.filter(e=>(e.user+' '+e.userId+' '+e.event+' '+e.detail).includes(query)&&(eventType==='همه رویدادها'||e.event===eventType)),[query,eventType]);
  const filteredReportEvents=useMemo(()=>events.filter(e=>(eventType==='همه رویدادها'||e.event===eventType)&&(!fromDate||e.dateKey>=fromDate)&&(!toDate||e.dateKey<=toDate)&&e.timeKey>=fromTime&&e.timeKey<=toTime),[eventType,fromDate,toDate,fromTime,toTime]);
