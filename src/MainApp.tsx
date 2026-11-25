@@ -1,6 +1,6 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse, Radio, PlayCircle,
+  ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse, Radio, Play, Pause, ListMusic,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
   Phone, PhoneCall, ReceiptText, Search, ShieldCheck,
   Truck, Container, BusFront, User, X, RefreshCw, Plus, Star, Award, Route, CircleDollarSign, Coins, Target, Globe2, AlertTriangle, XCircle, Sun, Moon, Monitor, Info, Instagram, MessageCircle, Share2
@@ -47,12 +47,6 @@ const searchOnlyLoads: Load[] = [
   { id:'s8', title:'لوازم خانگی تهران به رشت', from:'تهران', to:'رشت', type:'لوازم خانگی', vehicle:'کامیون', weight:6800, price:11900000, pickup:'دوشنبه، ۰۹:۰۰', delivery:'دوشنبه، ۱۷:۳۰', status:'open', distance:128, routeDistance:320, description:'لوازم خانگی بسته‌بندی‌شده.', phone:'09121110008' },
   { id:'s9', title:'بار بسته‌بندی شیراز به بندرعباس', from:'شیراز', to:'بندرعباس', type:'بار بسته‌بندی', vehicle:'تریلی', weight:16000, price:18700000, pickup:'دوشنبه، ۱۳:۰۰', delivery:'سه‌شنبه، ۰۹:۰۰', status:'open', distance:140, routeDistance:570, description:'بار بسته‌بندی‌شده برای حمل جاده‌ای.', phone:'09121110009' },
   { id:'s10', title:'محصولات کشاورزی ساری به تهران', from:'ساری', to:'تهران', type:'کشاورزی', vehicle:'کامیون', weight:7300, price:10100000, pickup:'سه‌شنبه، ۰۸:۳۰', delivery:'سه‌شنبه، ۱۵:۳۰', status:'open', distance:155, routeDistance:280, description:'محصولات کشاورزی بسته‌بندی‌شده.', phone:'09121110010' },
-];
-
-const frequentRoutes = [
-  { from:'تهران', to:'مشهد' },
-  { from:'کرج', to:'اصفهان' },
-  { from:'تبریز', to:'تهران' },
 ];
 
 const notificationItems = [
@@ -905,6 +899,16 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
   };
 
   const HomePage = () => {
+    const [radioPlaying, setRadioPlaying] = useState(false);
+    const [radioMenuOpen, setRadioMenuOpen] = useState(false);
+    const [radioElapsed, setRadioElapsed] = useState(268);
+    const radioDuration = 2198;
+    const formatRadioTime = (seconds:number) => `${fa(Math.floor(seconds / 60)).padStart(2, '۰')}:${fa(seconds % 60).padStart(2, '۰')}`;
+    useEffect(() => {
+      if (!radioPlaying) return;
+      const timer = window.setInterval(() => setRadioElapsed(value => value >= radioDuration ? 0 : value + 1), 1000);
+      return () => window.clearInterval(timer);
+    }, [radioPlaying]);
     const resolveUncertainContact = (item: typeof contactHistory[number], status:'agreed'|'declined') => {
       const load = loads.find(l=>l.id===item.loadId);
       if (!load) return;
@@ -976,12 +980,12 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       <section aria-label="انتخاب مسیر بار" className="flex flex-col gap-4">
         <div>
           <div className="mb-1 text-right text-lg font-black text-slate-800">مبدأ</div>
-          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : originText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
+          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'origin' ? 'border-[#E9A23B] bg-[#FFF4DF] shadow-[0_4px_16px_rgba(245,166,35,0.12)]' : originText ? 'border-amber-200 bg-[#FFF8EA]' : 'border-slate-200 bg-[#FFF8EA]'}`}>
           <div className="flex items-center gap-2">
             <button type="button" onClick={selectHomeOrigin} className="flex min-w-0 flex-1 items-center gap-3 text-right">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><MapPin className="h-5 w-5" aria-hidden="true"/></span>
               <span className="min-w-0 flex-1">
-                <span className={`block text-base font-black ${originText ? 'text-slate-900' : 'text-slate-400'}`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
+                <span className={`block text-base font-black text-slate-950`}>{originText || 'برای انتخاب مبدأ لمس کنید'}</span>
               </span>
               
             </button>
@@ -995,12 +999,12 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
         <div>
           <div className="mb-1 text-right text-lg font-black text-slate-800">مقصد</div>
-          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#F5A623] bg-white shadow-[0_4px_16px_rgba(245,166,35,0.16)]' : destinationText ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
+          <div className={`-mx-[9px] rounded-2xl border-2 bg-white p-3 shadow-sm transition-all ${activeSearchField === 'destination' ? 'border-[#E9A23B] bg-[#FFF4DF] shadow-[0_4px_16px_rgba(245,166,35,0.12)]' : destinationText ? 'border-amber-200 bg-[#FFF8EA]' : 'border-slate-200 bg-[#FFF8EA]'}`}>
           <div className="flex items-center gap-2">
             <button type="button" onClick={selectHomeDestination} className="flex min-w-0 flex-1 items-center gap-3 text-right">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center text-amber-700"><span className="relative block h-4 w-4 rounded-full border-2 border-current bg-current"><span className="absolute left-1/2 top-1/2 h-[22px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute left-1/2 top-1/2 h-[3px] w-[22px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-current"/><span className="absolute inset-[3px] z-10 rounded-full bg-white"/></span></span>
               <span className="min-w-0 flex-1">
-                <span className={`block whitespace-normal break-words text-base font-black ${destinationText ? 'text-slate-900' : 'text-slate-400'}`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
+                <span className={`block whitespace-normal break-words text-base font-black text-slate-950`}>{destinationText || 'برای انتخاب مقصد لمس کنید'}</span>
               </span>
 
             </button>
@@ -1018,40 +1022,36 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </button>
       </section>
 
-      <section aria-label="مسیرهای پرتکرار" className="shrink-0 space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-black text-slate-700">مسیرهای پرتکرار</h2>
-          <span className="text-[10px] font-medium text-slate-400">انتخاب سریع مسیر</span>
+      <section aria-label="پخش‌کننده پادکست لوجیران" className="relative mt-auto mx-auto w-[94%] shrink-0 rounded-2xl border border-slate-200 bg-[#F4F7FA] px-3 py-2.5 shadow-sm">
+        <div className="flex items-center gap-2.5" dir="rtl">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-[#092B4C] via-[#164A65] to-[#D88A35] text-white shadow-sm">
+            <div className="flex flex-col items-center gap-0.5">
+              <Radio className="h-6 w-6"/>
+              <span className="text-[8px] font-black tracking-wide">LOGIRAN</span>
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-xs font-black text-slate-900">رادیو و پادکست لوجیران</div>
+            <div className="mt-0.5 truncate text-[10px] font-semibold text-slate-500">صدای سفر به دنیای شگفت‌انگیز</div>
+            <div className="mt-2 flex items-center gap-2" dir="ltr">
+              <span className="min-w-[34px] text-[9px] font-bold tabular-nums text-slate-500">{formatRadioTime(radioElapsed)}</span>
+              <input aria-label="موقعیت پادکست" type="range" min={0} max={radioDuration} value={radioElapsed} onChange={event=>setRadioElapsed(Number(event.target.value))} className="h-1 min-w-0 flex-1 cursor-pointer accent-[#D88A35]"/>
+              <span className="min-w-[34px] text-[9px] font-bold tabular-nums text-slate-500">{formatRadioTime(radioDuration)}</span>
+            </div>
+          </div>
+          <button type="button" onClick={()=>setRadioPlaying(value=>!value)} aria-label={radioPlaying?'توقف پخش':'شروع پخش'} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-sm transition-colors ${radioPlaying?'bg-[#D88A35] hover:bg-[#C77825]':'bg-[#082F55] hover:bg-[#12466F]'}`}>
+            {radioPlaying?<Pause className="h-5 w-5 fill-current"/>:<Play className="h-5 w-5 fill-current"/>}
+          </button>
+          <button type="button" onClick={()=>setRadioMenuOpen(value=>!value)} aria-expanded={radioMenuOpen} aria-label="منوی پادکست‌ها" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300">
+            <ChevronDown className={`h-5 w-5 transition-transform ${radioMenuOpen?'rotate-180':''}`}/>
+          </button>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {frequentRoutes.map((route, index) => (
-            <button key={route.from + '-' + route.to} type="button"
-              onClick={() => {
-                setOrigin(route.from); setOriginText(route.from); setOriginProvince(''); setOriginCounty('');
-                setDestination(route.to); setDestinationText(route.to); setDestinationProvince(''); setDestinationCounty('');
-                setFrequentRoute(null); setSearchSubmitted(true);
-                window.history.pushState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
-                setPageWithTransition('search');
-                window.scrollTo({ top: 0, behavior: 'auto' });
-              }}
-              className="flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:border-amber-300 hover:bg-amber-50 active:bg-amber-100"
-              aria-label={`جستجوی بار از ${route.from} به ${route.to}`}>
-              <span className="text-amber-600">{route.from}</span>
-              <ArrowLeft className="h-3 w-3 text-slate-400" aria-hidden="true"/>
-              <span>{route.to}</span>
-            </button>
-          ))}
-        </div>
+        {radioMenuOpen && <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-200 pt-2" dir="rtl">
+          <button type="button" onClick={()=>notify('کتابخانه پادکست‌ها در حال آماده‌سازی است.')} className="flex items-center justify-center gap-1 rounded-lg bg-white px-2 py-2 text-[10px] font-bold text-slate-700"><Radio className="h-3.5 w-3.5 text-[#D88A35]"/>پادکست‌ها</button>
+          <button type="button" onClick={()=>notify('بخش پلی‌لیست‌ها در حال آماده‌سازی است.')} className="flex items-center justify-center gap-1 rounded-lg bg-white px-2 py-2 text-[10px] font-bold text-slate-700"><ListMusic className="h-3.5 w-3.5 text-[#D88A35]"/>پلی‌لیست من</button>
+          <button type="button" onClick={()=>notify('تنظیمات پلیر در مرحله بعد اضافه می‌شود.')} className="flex items-center justify-center gap-1 rounded-lg bg-white px-2 py-2 text-[10px] font-bold text-slate-700"><ChevronDown className="h-3.5 w-3.5 text-[#D88A35]"/>تنظیمات</button>
+        </div>}
       </section>
-
-      <div aria-label="رادیو لوجیران" className="mt-auto flex min-h-12 shrink-0 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#032E5C] text-white"><Radio className="h-4 w-4" aria-hidden="true"/></span>
-        <span className="min-w-0 flex-1">
-          <span className="block text-xs font-black text-slate-800">رادیو لوجیران</span>
-          <span className="block text-[10px] text-slate-500">پخش زنده به‌زودی</span>
-        </span>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-500" title="به‌زودی فعال می‌شود"><PlayCircle className="h-5 w-5" aria-hidden="true"/></span>
-      </div>
     </div>;
   };
 
