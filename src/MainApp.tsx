@@ -244,6 +244,7 @@ export function MainApp() {
   const pageRef = useRef<Page>('home');
   pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
+  const lastBackActionAtRef = useRef(0);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   useEffect(() => {
     let startY = 0;
@@ -569,6 +570,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setDisplayMode(current => current === 'night' ? 'day' : 'night');
   };
   const handleBackNavigation = () => {
+    const now = Date.now();
+    if (now - lastBackActionAtRef.current < 300) return;
+    lastBackActionAtRef.current = now;
     const currentPage = pageRef.current;
     const stack = pageHistoryRef.current;
 
@@ -640,6 +644,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     };
   }, []);
   const setPageWithTransition = (next: Page, _direction: 'forward' | 'back' = 'forward') => {
+    pageRef.current = next;
     setPage(next);
   };
   const go = (p:Page, preserveSearch = false) => {
@@ -648,7 +653,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
       setFrequentRoute(null); setSearchSubmitted(false);
     }
-    if (p === page) return;
+    if (p === pageRef.current) return;
     const stack = pageHistoryRef.current;
     const existingIndex = stack.lastIndexOf(p);
     if (existingIndex >= 0) pageHistoryRef.current = stack.slice(0, existingIndex + 1);
@@ -668,6 +673,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   const goBack = () => handleBackNavigation();
   const goHome = () => {
     pageHistoryRef.current = ['home'];
+    pageRef.current = 'home';
     window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
     window.scrollTo({top:0,behavior:'auto'});
@@ -957,9 +963,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       }
       if (!origin) setOrigin(originText);
       if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
-      window.history.pushState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
       setSearchSubmitted(true);
-      setPageWithTransition('search');
+      go('search', true);
       window.scrollTo({top:0,behavior:'auto'});
     };
 
@@ -1046,15 +1051,15 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </button>
       </section>
 
-      {frequentRoutesOpen && <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/10 p-5 backdrop-blur-[2px]" onClick={()=>setFrequentRoutesOpen(false)}>
-        <div className="w-full max-w-xs rounded-3xl border border-white/55 bg-white/35 p-4 shadow-2xl shadow-slate-900/15 backdrop-blur-2xl" dir="rtl" onClick={event=>event.stopPropagation()}>
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="text-sm font-black text-slate-800">مسیرهای پرتکرار</div>
-            <button type="button" onClick={()=>setFrequentRoutesOpen(false)} aria-label="بستن منو" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/50 bg-white/35 text-slate-700"><X className="h-4 w-4"/></button>
+      <div className="flex min-h-0 flex-1 items-center justify-center px-2">
+        {frequentRoutesOpen && <div className="w-full max-w-[260px] py-1" dir="rtl">
+          <div className="mb-2 flex items-center justify-center gap-2">
+            <div className="text-xs font-black text-slate-700">مسیرهای پرتکرار</div>
+            <button type="button" onClick={()=>setFrequentRoutesOpen(false)} aria-label="بستن منو" className="flex h-6 w-6 items-center justify-center rounded-full text-slate-500 active:bg-slate-100"><X className="h-3.5 w-3.5"/></button>
           </div>
-          <div className="grid gap-2">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-10 items-center justify-between rounded-xl border border-white/45 bg-white/30 px-3 text-xs font-black text-slate-900 shadow-sm backdrop-blur-xl active:bg-white/50"><span>{route.from}</span><ArrowLeft className="h-3.5 w-3.5 text-amber-600"/><span>{route.to}</span></button>)}</div>
-        </div>
-      </div>}
+          <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-8 items-center justify-between rounded-lg bg-slate-50 px-3 text-[11px] font-black text-slate-800 active:bg-amber-50"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
+        </div>}
+      </div>
       <div className="fixed bottom-36 right-4 z-40 h-12 w-12">
         <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
           <Route className="h-5 w-5"/>
