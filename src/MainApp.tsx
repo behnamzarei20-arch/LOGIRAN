@@ -241,6 +241,8 @@ export function MainApp() {
   const { profile, session, signOut } = useAuth();
   // A full browser refresh always starts at the home page, regardless of the current section or URL hash.
   const [page, setPage] = useState<Page>('home');
+  const pageRef = useRef<Page>('home');
+  pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   useEffect(() => {
@@ -567,7 +569,16 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setDisplayMode(current => current === 'night' ? 'day' : 'night');
   };
   const handleBackNavigation = () => {
+    const currentPage = pageRef.current;
     const stack = pageHistoryRef.current;
+
+    // Exit confirmation is only ever available from the home screen.
+    if (currentPage === 'home') {
+      pageHistoryRef.current = ['home'];
+      setShowExitConfirm(true);
+      return;
+    }
+
     if (stack.length > 1) {
       stack.pop();
       const previous = stack[stack.length - 1] || 'home';
@@ -593,10 +604,15 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
       setPageWithTransition(previous, 'back');
       window.scrollTo({top:0,behavior:'auto'});
-    } else {
-      pageHistoryRef.current = ['home'];
-      setShowExitConfirm(true);
+      return;
     }
+
+    // A page without an earlier in-app destination returns home; it never exits.
+    pageHistoryRef.current = ['home'];
+    window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    setPageWithTransition('home', 'back');
+    setShowExitConfirm(false);
+    window.scrollTo({top:0,behavior:'auto'});
   };
   useEffect(() => {
     // Keep exactly one browser-history guard; page navigation is tracked in pageHistoryRef.
@@ -1030,12 +1046,16 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         </button>
       </section>
 
-      {frequentRoutesOpen && <button type="button" aria-label="بستن منوی مسیرهای پرتکرار" className="fixed inset-0 z-30 cursor-default bg-transparent" onClick={()=>setFrequentRoutesOpen(false)}/>}
+      {frequentRoutesOpen && <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/10 p-5 backdrop-blur-[2px]" onClick={()=>setFrequentRoutesOpen(false)}>
+        <div className="w-full max-w-xs rounded-3xl border border-white/55 bg-white/35 p-4 shadow-2xl shadow-slate-900/15 backdrop-blur-2xl" dir="rtl" onClick={event=>event.stopPropagation()}>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="text-sm font-black text-slate-800">مسیرهای پرتکرار</div>
+            <button type="button" onClick={()=>setFrequentRoutesOpen(false)} aria-label="بستن منو" className="flex h-8 w-8 items-center justify-center rounded-full border border-white/50 bg-white/35 text-slate-700"><X className="h-4 w-4"/></button>
+          </div>
+          <div className="grid gap-2">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-10 items-center justify-between rounded-xl border border-white/45 bg-white/30 px-3 text-xs font-black text-slate-900 shadow-sm backdrop-blur-xl active:bg-white/50"><span>{route.from}</span><ArrowLeft className="h-3.5 w-3.5 text-amber-600"/><span>{route.to}</span></button>)}</div>
+        </div>
+      </div>}
       <div className="fixed bottom-36 right-4 z-40 h-12 w-12">
-        {frequentRoutesOpen && <div className="absolute right-14 top-1/2 w-44 -translate-y-1/2 rounded-xl border border-amber-200 bg-white p-2 shadow-xl" dir="rtl" onClick={event=>event.stopPropagation()}>
-          <div className="mb-1.5 px-1 text-[10px] font-black text-slate-500">مسیرهای پرتکرار</div>
-          <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-8 items-center justify-between rounded-lg border border-slate-100 bg-[#FFF8EA] px-2 text-[11px] font-black text-slate-900"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
-        </div>}
         <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
           <Route className="h-5 w-5"/>
         </button>
