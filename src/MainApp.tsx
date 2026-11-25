@@ -900,7 +900,6 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const HomePage = () => {
     const [radioPlaying, setRadioPlaying] = useState(false);
-    const [radioMenuOpen, setRadioMenuOpen] = useState(false);
     const [radioExpanded, setRadioExpanded] = useState(false);
     const [podcastLibraryOpen, setPodcastLibraryOpen] = useState(false);
     const [showPlaylistOnly, setShowPlaylistOnly] = useState(false);
@@ -1066,10 +1065,10 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </div>}
       {radioExpanded && <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#F7F9FC] text-slate-900" dir="rtl">
         <div className="mx-auto min-h-full w-full max-w-lg px-4 pb-10 pt-5">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3" dir="ltr">
+            <button type="button" onClick={()=>{setPodcastLibraryOpen(value=>!value);setShowPlaylistOnly(false);}} aria-label="بازکردن کتابخانه پادکست‌ها" className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"><Menu className="h-5 w-5"/></button>
+            <div className="text-center" dir="rtl"><div className="text-base font-black">پادکست‌های لوجیران</div><div className="text-[11px] text-slate-500">کتابخانه صوتی</div></div>
             <button type="button" onClick={()=>setRadioExpanded(false)} aria-label="بستن پلیر" className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm"><ChevronDown className="h-5 w-5"/></button>
-            <div className="text-center"><div className="text-base font-black">پادکست‌های لوجیران</div><div className="text-[11px] text-slate-500">کتابخانه صوتی</div></div>
-            <span className="h-10 w-10"/>
           </div>
           <div className="mt-8 rounded-3xl bg-white p-5 shadow-sm">
             <div className="flex items-center gap-4">
@@ -1079,7 +1078,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
             <div className="mt-5 flex items-center gap-2" dir="ltr"><span className="text-[10px] tabular-nums text-slate-500">{formatRadioTime(radioElapsed)}</span><input aria-label="موقعیت پادکست" type="range" min={0} max={radioDuration} value={radioElapsed} onChange={event=>setRadioElapsed(Number(event.target.value))} className="h-1 min-w-0 flex-1 cursor-pointer accent-[#D88A35]"/><span className="text-[10px] tabular-nums text-slate-500">{formatRadioTime(radioDuration)}</span></div>
           </div>
           <div className="mt-5 flex items-center justify-between">
-            <button type="button" onClick={()=>{setPodcastLibraryOpen(value=>!value);setShowPlaylistOnly(false);}} className="flex h-10 items-center gap-2 rounded-xl bg-white px-3 text-sm font-black shadow-sm"><Menu className="h-5 w-5"/>کتابخانه پادکست‌ها</button>
+            
             <button type="button" onClick={()=>{setPodcastLibraryOpen(true);setShowPlaylistOnly(true);}} className="flex h-10 items-center gap-2 rounded-xl bg-white px-3 text-sm font-black shadow-sm"><ListMusic className="h-5 w-5"/>پلی‌لیست من ({favoritePodcastIds.length})</button>
           </div>
           {podcastLibraryOpen && <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
