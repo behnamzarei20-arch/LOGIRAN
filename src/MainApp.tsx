@@ -1052,7 +1052,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </section>
 
       <div className="flex min-h-0 flex-1 items-center justify-center px-2">
-        {frequentRoutesOpen && <div className="w-full max-w-[260px] py-1" dir="rtl">
+        {frequentRoutesOpen && <div className="w-full max-w-[220px] py-1" dir="rtl">
           <div className="mb-2 flex items-center justify-center gap-2">
             <div className="text-xs font-black text-slate-700">مسیرهای پرتکرار</div>
             <button type="button" onClick={()=>setFrequentRoutesOpen(false)} aria-label="بستن منو" className="flex h-6 w-6 items-center justify-center rounded-full text-slate-500 active:bg-slate-100"><X className="h-3.5 w-3.5"/></button>
