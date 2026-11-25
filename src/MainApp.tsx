@@ -609,11 +609,16 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
     };
     window.addEventListener('popstate', onPopState);
+    let disposed = false;
     let nativeBackListener: { remove: () => Promise<void> } | undefined;
     CapacitorApp.addListener('backButton', () => {
       handleBackNavigation();
-    }).then(listener => { nativeBackListener = listener; }).catch(() => {});
+    }).then(listener => {
+      if (disposed) listener.remove();
+      else nativeBackListener = listener;
+    }).catch(() => {});
     return () => {
+      disposed = true;
       window.removeEventListener('popstate', onPopState);
       nativeBackListener?.remove();
     };
