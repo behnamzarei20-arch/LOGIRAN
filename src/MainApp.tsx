@@ -1015,13 +1015,15 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       </section>
 
       {frequentRoutesOpen && <button type="button" aria-label="بستن منوی مسیرهای پرتکرار" className="fixed inset-0 z-30 cursor-default bg-transparent" onClick={()=>setFrequentRoutesOpen(false)}/>}
-      {frequentRoutesOpen && <div className="fixed bottom-40 right-4 z-40 w-44 rounded-xl border border-amber-200 bg-white p-2 shadow-xl" dir="rtl" onClick={event=>event.stopPropagation()}>
-        <div className="mb-1.5 px-1 text-[10px] font-black text-slate-500">مسیرهای پرتکرار</div>
-        <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-8 items-center justify-between rounded-lg border border-slate-100 bg-[#FFF8EA] px-2 text-[11px] font-black text-slate-900"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
-      </div>}
-      <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="fixed bottom-28 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
-        <Route className="h-5 w-5"/>
-      </button>
+      <div className="fixed bottom-36 right-4 z-40 h-12 w-12">
+        {frequentRoutesOpen && <div className="absolute right-14 top-1/2 w-44 -translate-y-1/2 rounded-xl border border-amber-200 bg-white p-2 shadow-xl" dir="rtl" onClick={event=>event.stopPropagation()}>
+          <div className="mb-1.5 px-1 text-[10px] font-black text-slate-500">مسیرهای پرتکرار</div>
+          <div className="grid gap-1">{frequentRoutes.map(route=><button key={route.from+'-'+route.to} type="button" onClick={()=>{setFrequentRoute({from:route.from,to:route.to});setFrequentRoutesOpen(false);go('frequent-route');}} className="flex h-8 items-center justify-between rounded-lg border border-slate-100 bg-[#FFF8EA] px-2 text-[11px] font-black text-slate-900"><span>{route.from}</span><ArrowLeft className="h-3 w-3 text-amber-600"/><span>{route.to}</span></button>)}</div>
+        </div>}
+        <button type="button" onClick={()=>setFrequentRoutesOpen(value=>!value)} aria-expanded={frequentRoutesOpen} aria-label="مسیرهای پرتکرار" className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300 bg-white text-amber-700 shadow-lg transition-transform active:scale-95">
+          <Route className="h-5 w-5"/>
+        </button>
+      </div>
     </div>;
   };
 
