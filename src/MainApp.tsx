@@ -776,7 +776,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
   const Header = () => <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-gray-200">
     <div className="relative max-w-lg mx-auto h-16 px-4 flex items-center justify-between">
       <button type="button" onClick={()=>go('support')} className="w-10 h-10 rounded-xl border border-orange-200 bg-orange-50 text-accent-500 flex items-center justify-center" aria-label="پشتیبانی" title="پشتیبانی"><Headset className="w-5 h-5"/></button>
-      <button type="button" onClick={()=>goHome()} className="absolute left-1/2 -translate-x-1/2 font-black text-2xl tracking-tight text-primary-700">براه</button>
+      <button type="button" onClick={()=>goHome()} className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center" aria-label="LOGIRAN"><img src="/1000049799.svg" alt="LOGIRAN لوجیران" className="w-[142px] h-auto max-h-12 object-contain"/></button>
       <div className="flex items-center gap-2">
         <button type="button"
           onPointerDown={startThemePress}
