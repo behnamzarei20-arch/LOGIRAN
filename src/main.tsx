@@ -11,7 +11,7 @@ import { ADMIN_DEMO_MODE } from '@/features/admin/demoMode';
 const AdminWorkspace = lazy(() => import('@/pages/admin/AdminWorkspace').then(module => ({ default: module.AdminWorkspace })));
 const AdminPanel = lazy(() => import('@/pages/admin/AdminPanel').then(module => ({ default: module.AdminPanel })));
 
-function Splash({onDone}:{onDone:()=>void}){useEffect(()=>{const t=window.setTimeout(onDone,900);return()=>window.clearTimeout(t)},[onDone]);return <div dir="rtl" className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-primary-100 flex items-center justify-center"><div className="text-center"><div className="mx-auto w-24 h-24 rounded-[30px] bg-primary-600 text-white flex items-center justify-center shadow-2xl shadow-primary-600/25"><Truck className="w-12 h-12"/></div><h1 className="text-4xl font-black text-gray-900 mt-5">براه</h1><p className="text-sm text-gray-400 mt-2">اپلیکیشن براه</p></div></div>}
+function Splash({onDone}:{onDone:()=>void}){useEffect(()=>{const t=window.setTimeout(onDone,1400);return()=>window.clearTimeout(t)},[onDone]);return <div dir="rtl" className="min-h-screen bg-white flex items-center justify-center px-6"><div className="w-full max-w-md text-center"><img src="/1000049799.svg" alt="LOGIRAN لوجیران" className="mx-auto w-full max-w-[340px] h-auto object-contain"/></div></div>}
 
 
 type AdminRole = 'owner' | 'support' | 'reviewer';
