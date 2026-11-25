@@ -1,6 +1,7 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { dispatchBack, registerBackHandler } from '@/navigation/backManager';
 import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
@@ -572,12 +573,10 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     const currentPage = pageRef.current;
     const stack = pageHistoryRef.current;
 
-    // The app may exit only from Home, and only on a native device.
+    // Only the actual home screen may exit the native app.
     if (currentPage === 'home') {
       pageHistoryRef.current = ['home'];
-      if (Capacitor.isNativePlatform()) {
-        void CapacitorApp.exitApp().catch(() => {});
-      }
+      if (Capacitor.isNativePlatform()) void CapacitorApp.exitApp().catch(() => {});
       return;
     }
 
@@ -611,7 +610,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       return;
     }
 
-    // A page without an earlier in-app destination returns Home; it never exits.
+    // A malformed or empty history returns to Home; it never exits from a subpage.
     pageHistoryRef.current = ['home'];
     if (!Capacitor.isNativePlatform()) {
       window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
@@ -619,37 +618,34 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setPageWithTransition('home', 'back');
     window.scrollTo({top:0,behavior:'auto'});
   };
+
+  const handleOverlayBack = () => {
+    if (offerOpen) { setOfferOpen(false); setOfferDragY(0); return true; }
+    if (plateEntryOpen) { setPlateEntryOpen(false); return true; }
+    if (confirmAction) { setConfirmAction(null); return true; }
+    if (showIdentityGate) { setShowIdentityGate(false); return true; }
+    if (offerSuccess) { setOfferSuccess(false); return true; }
+    if (shipmentRewardSummary) { setShipmentRewardSummary(null); return true; }
+    if (contactReport) { setContactReport(null); return true; }
+    if (showPageHelp) { setShowPageHelp(false); return true; }
+    if (expandedCallId) { setExpandedCallId(null); return true; }
+    return false;
+  };
+
+  useEffect(() => registerBackHandler(handleOverlayBack, 100), [handleOverlayBack]);
+  useEffect(() => registerBackHandler(handleBackNavigation, 0), [handleBackNavigation]);
+
   useEffect(() => {
-    let disposed = false;
-
-    if (Capacitor.isNativePlatform()) {
-      // Android hardware Back is handled only by Capacitor, never by browser popstate.
-      let nativeBackListener: { remove: () => Promise<void> } | undefined;
-      CapacitorApp.addListener('backButton', () => {
-        handleBackNavigation();
-      }).then(listener => {
-        if (disposed) void listener.remove();
-        else nativeBackListener = listener;
-      }).catch(() => {});
-      return () => {
-        disposed = true;
-        if (nativeBackListener) void nativeBackListener.remove();
-      };
-    }
-
-    // Browser Back is handled only on web; keep a single guard entry.
+    if (Capacitor.isNativePlatform()) return;
     window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     const onPopState = () => {
-      handleBackNavigation();
+      dispatchBack();
       const currentStack = pageHistoryRef.current;
       const currentPage = currentStack[currentStack.length - 1] || 'home';
       window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
     };
     window.addEventListener('popstate', onPopState);
-    return () => {
-      disposed = true;
-      window.removeEventListener('popstate', onPopState);
-    };
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
   const setPageWithTransition = (next: Page, _direction: 'forward' | 'back' = 'forward') => {
     pageRef.current = next;
@@ -662,23 +658,21 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       setFrequentRoute(null); setSearchSubmitted(false);
     }
     if (p === pageRef.current) return;
-    const stack = pageHistoryRef.current;
-    const existingIndex = stack.lastIndexOf(p);
-    if (existingIndex >= 0) pageHistoryRef.current = stack.slice(0, existingIndex + 1);
-    else pageHistoryRef.current = [...stack, p];
+    pageHistoryRef.current = [...pageHistoryRef.current, p];
     window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
   const replacePage = (p:Page) => {
     const stack = pageHistoryRef.current;
-    if (stack.length) stack[stack.length - 1] = p;
+    if (stack.length > 1 && stack[stack.length - 2] === p) stack.pop();
+    else if (stack.length) stack[stack.length - 1] = p;
     else pageHistoryRef.current = [p];
-    window.history.replaceState({ bbberahPage: p }, '', '#' + p);
+    window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
-  const goBack = () => handleBackNavigation();
+  const goBack = () => dispatchBack();
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     pageRef.current = 'home';
@@ -802,16 +796,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
     if (selected) setMyOffers(prev => [...prev, { loadId: selected.id, price: n, at: Date.now(), status:'pending' }]);
     setOfferOpen(false); setOfferDragY(0); setOfferSuccess(true); notify('پیشنهاد شما با موفقیت ارسال شد.');
   };
-  useEffect(() => {
-    if (!offerOpen) return;
-    const onOfferBack = () => {
-      if (window.history.state?.bbberahOffer) return;
-      setOfferOpen(false);
-      setOfferDragY(0);
-    };
-    window.addEventListener('popstate', onOfferBack);
-    return () => window.removeEventListener('popstate', onOfferBack);
-  }, [offerOpen]);
+
 
   const Header = () => <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-gray-200">
     <div className="relative max-w-lg mx-auto h-16 px-4 flex items-center justify-between">
@@ -851,6 +836,10 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
 
   const AccountHome = () => {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+    useEffect(() => {
+      if (!showLogoutConfirm) return;
+      return registerBackHandler(() => { setShowLogoutConfirm(false); return true; }, 200);
+    }, [showLogoutConfirm]);
     const verificationLabel = identityVerified ? 'تأیید شده' : identityPending ? 'در انتظار بررسی' : identityRejected ? 'رد شده' : 'تأیید نشده';
     const savedVehicle = Boolean(window.localStorage.getItem('bbberah_vehicle_v1') && vehicleForm.type && vehicleForm.feature);
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
