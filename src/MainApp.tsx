@@ -866,7 +866,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
         <div className="flex items-center justify-center gap-6">
           <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-8 w-8"/></span>
           <a href="https://t.me/berahdraiver" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
-          <a href="https://rubika.ir/null" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکای لوجیران" className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-8 w-8 object-contain" loading="lazy"/></a>
+          <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکای لوجیران" className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-8 w-8 object-contain" loading="lazy"/></a>
         </div>
         <p className="mt-1 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه ۱.۰.۱</p>
       </div>
