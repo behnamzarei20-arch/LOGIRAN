@@ -1,4 +1,5 @@
 import { createElement, useEffect, useMemo, useRef, useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
@@ -565,46 +566,55 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     }
     setDisplayMode(current => current === 'night' ? 'day' : 'night');
   };
-  useEffect(() => {
-    if (!window.history.state?.bbberahPage) {
-      window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
-    }
-    const onPopState = () => {
-      const stack = pageHistoryRef.current;
-      if (stack.length > 1) {
-        stack.pop();
-        const previous = stack[stack.length - 1] || 'home';
-        pageHistoryRef.current = stack.length ? stack : ['home'];
-        if (previous === 'origin-select') {
-          setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty(''); setSearchSubmitted(false);
-        }
-        if (previous === 'destination-select' || previous === 'destination-all' || previous === 'frequent-route') {
-          setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); setSearchSubmitted(false);
-        }
-        if (previous === 'nearby-destination-select' || previous === 'nearby-results') {
-          setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty('');
-        }
-        if (previous === 'search') {
-          const returningToResults = window.history.state?.bbberahSearchResults === true;
-          setSearchSubmitted(returningToResults);
-          if (!returningToResults) {
-            setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
-            setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
-            setFrequentRoute(null);
-          }
-        }
-        window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
-        setPageWithTransition(previous, 'back');
-        window.scrollTo({top:0,behavior:'auto'});
-      } else {
-        pageHistoryRef.current = ['home'];
-        setShowExitConfirm(true);
-        // Keep a history entry inside the app so the first back press never closes it.
-        window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+  const handleBackNavigation = () => {
+    const stack = pageHistoryRef.current;
+    if (stack.length > 1) {
+      stack.pop();
+      const previous = stack[stack.length - 1] || 'home';
+      pageHistoryRef.current = stack.length ? stack : ['home'];
+      if (previous === 'origin-select') {
+        setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty(''); setSearchSubmitted(false);
       }
+      if (previous === 'destination-select' || previous === 'destination-all' || previous === 'frequent-route') {
+        setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); setSearchSubmitted(false);
+      }
+      if (previous === 'nearby-destination-select' || previous === 'nearby-results') {
+        setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty('');
+      }
+      if (previous === 'search') {
+        const returningToResults = window.history.state?.bbberahSearchResults === true;
+        setSearchSubmitted(returningToResults);
+        if (!returningToResults) {
+          setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
+          setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
+          setFrequentRoute(null);
+        }
+      }
+      window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
+      setPageWithTransition(previous, 'back');
+      window.scrollTo({top:0,behavior:'auto'});
+    } else {
+      pageHistoryRef.current = ['home'];
+      setShowExitConfirm(true);
+    }
+  };
+  useEffect(() => {
+    // Keep exactly one browser-history guard; page navigation is tracked in pageHistoryRef.
+    window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    const onPopState = () => {
+      handleBackNavigation();
+      // Re-arm the guard so another Back press is handled inside the app.
+      window.history.pushState({ bbberahPage: pageHistoryRef.current.at(-1) || 'home', bbberahGuard: true }, '', '#' + (pageHistoryRef.current.at(-1) || 'home'));
     };
     window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    let nativeBackListener: { remove: () => Promise<void> } | undefined;
+    CapacitorApp.addListener('backButton', () => {
+      handleBackNavigation();
+    }).then(listener => { nativeBackListener = listener; }).catch(() => {});
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+      nativeBackListener?.remove();
+    };
   }, []);
   const setPageWithTransition = (next: Page, _direction: 'forward' | 'back' = 'forward') => {
     setPage(next);
@@ -620,7 +630,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     const existingIndex = stack.lastIndexOf(p);
     if (existingIndex >= 0) pageHistoryRef.current = stack.slice(0, existingIndex + 1);
     else pageHistoryRef.current = [...stack, p];
-    window.history.pushState({ bbberahPage: p }, '', '#' + p);
+    window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -632,13 +642,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
-  const goBack = () => {
-    if (pageHistoryRef.current.length > 1) {
-      window.history.back();
-    } else {
-      setShowExitConfirm(true);
-    }
-  };
+  const goBack = () => handleBackNavigation();
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
@@ -2057,7 +2061,7 @@ const ProfilePage = () => <div className="space-y-3">
         <p className="mt-2 text-sm font-bold leading-6 text-gray-600">آیا مطمئن هستید که می‌خواهید از برنامه خارج شوید؟</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
           <button type="button" onClick={()=>setShowExitConfirm(false)} className="rounded-xl bg-gray-100 px-4 py-3 text-sm font-black text-gray-700">ادامه کار</button>
-          <button type="button" onClick={()=>{setShowExitConfirm(false); window.history.go(-2);}} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
+          <button type="button" onClick={()=>{setShowExitConfirm(false); CapacitorApp.exitApp().catch(()=>{});}} className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">خروج از برنامه</button>
         </div>
       </div>
     </div>}
