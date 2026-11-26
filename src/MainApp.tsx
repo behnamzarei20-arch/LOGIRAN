@@ -953,47 +953,51 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       } },
     ];
     const statusTones: Record<string, string> = {
-      green:'bg-emerald-100 text-emerald-800',
-      amber:'bg-amber-100 text-amber-800',
-      red:'bg-red-100 text-red-800',
-      slate:'bg-slate-100 text-slate-700',
-      blue:'bg-blue-100 text-blue-800',
-      violet:'bg-violet-100 text-violet-800',
-      cyan:'bg-cyan-100 text-cyan-800',
-      pink:'bg-pink-100 text-pink-800',
+      green:'bg-emerald-100 text-emerald-800', amber:'bg-amber-100 text-amber-800',
+      red:'bg-red-100 text-red-800', slate:'bg-slate-100 text-slate-700',
+      blue:'bg-blue-100 text-blue-800', violet:'bg-violet-100 text-violet-800',
+      cyan:'bg-cyan-100 text-cyan-800', pink:'bg-pink-100 text-pink-800',
     };
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
-    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-1.5">
-      <div className="shrink-0 flex items-center gap-3 px-1 py-1">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
+    const renderMenuCard = (item: typeof items[number]) => {
+      const Icon = item.icon;
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[58px] min-w-0 flex-col items-center justify-center gap-0.5 rounded-md border border-gray-300 bg-white px-1 py-1 text-center shadow-sm transition-colors hover:border-[#032E5C]/40 hover:bg-slate-50 active:scale-[0.98]">
+        <Icon className="h-5 w-5 shrink-0 text-[#032E5C]" aria-hidden="true"/>
+        <span className="block w-full truncate text-[11px] font-black leading-4 text-gray-900">{item.title}</span>
+        <span className={`block max-w-full truncate rounded px-1 py-0.5 text-[9px] font-extrabold leading-3 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
+      </button>;
+    };
+    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1.5 px-2 py-1">
+      <div className="shrink-0 flex items-center gap-2 px-1 py-0.5">
+        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="min-w-0 flex-1 flex flex-col items-start justify-center text-right">
-          <h2 className="block w-full truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
-          <p className="mt-1 block w-full truncate text-sm font-bold leading-5 text-gray-600 text-right" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
+          <h2 className="block w-full truncate text-sm font-black leading-5 text-gray-900">{displayName}</h2>
+          <p className="block w-full truncate text-xs font-bold leading-4 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
         </div>
-        <div className="shrink-0 flex flex-col items-center justify-center rounded-xl bg-orange-50 px-3 py-2 text-orange-800">
-          <Award className="h-6 w-6"/>
-          <span className="mt-0.5 text-xs font-black">امتیاز</span>
-          <strong className="text-xl font-black leading-6 tabular-nums">{money(driverScore)}</strong>
-        </div>
-      </div>
-
-      <div className="min-h-0 flex-1 grid grid-cols-3 grid-rows-3 gap-2">
-        {items.map(({title,icon:Icon,status,tone,action})=><button key={title} type="button" onClick={action} className="flex h-full min-h-0 min-w-0 flex-col items-center justify-between gap-1 rounded-2xl border border-gray-200 bg-white px-1.5 py-2 text-center shadow-sm transition-colors hover:border-[#032E5C]/30 hover:bg-slate-50 active:scale-[0.98]">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#032E5C]/5 text-[#032E5C]"><Icon className="h-[21px] w-[21px]"/></span>
-          <span className="block w-full truncate text-[13px] font-black leading-5 text-gray-900">{title}</span>
-          <span className={`block max-w-full truncate rounded-full px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[tone] || statusTones.slate}`}>{status}</span>
-        </button>)}
-      </div>
-
-      <div className="shrink-0 flex items-center gap-2">
-        <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="flex min-h-[60px] flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-2 py-3 text-sm font-black text-red-600 transition-colors hover:bg-red-100"><LogOut className="h-5 w-5"/>خروج از حساب کاربری</button>
-        <div className="flex shrink-0 items-center gap-2">
-          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
-          <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-7 w-7 object-contain" loading="lazy"/></a>
-          <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
+        <div className="shrink-0 flex items-center gap-1 rounded-md bg-orange-50 px-2 py-1 text-orange-800">
+          <Award className="h-5 w-5"/>
+          <span className="text-[10px] font-black">امتیاز</span>
+          <strong className="text-base font-black leading-5 tabular-nums">{money(driverScore)}</strong>
         </div>
       </div>
-      <p className="shrink-0 text-center text-[11px] font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
+      <section aria-label="اطلاعات حساب و خودرو" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="grid grid-cols-3 gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
+      </section>
+      <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="grid grid-cols-2 gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
+      </section>
+      <section aria-label="سایر امکانات" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="grid grid-cols-2 gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
+      </section>
+      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-100">
+        <LogOut className="h-5 w-5"/>خروج از حساب کاربری
+      </button>
+      <div className="shrink-0 flex items-center justify-center gap-5 py-0.5">
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-7 w-7 object-contain" loading="lazy"/></a>
+        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
+      </div>
+      <p className="shrink-0 text-center text-[10px] font-bold leading-3 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><LogOut className="h-7 w-7"/></div>
@@ -1007,7 +1011,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       </div>}
     </div>;
   };
-    const getLoadInteraction = (loadId:string) => {
+  const getLoadInteraction = (loadId:string) => {
     const contact = contactHistory.some(item => item.loadId === loadId);
     const offer = myOffers.some(item => item.loadId === loadId);
     if (contact || offer) return { label:'تماس گرفته‌اید', cls:'border-primary-200 bg-primary-50 text-primary-700' };
