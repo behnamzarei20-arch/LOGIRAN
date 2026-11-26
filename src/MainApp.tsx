@@ -939,8 +939,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
     const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
     const items = [
-      { title:'اطلاعات کاربری', icon:User, status:profile?.full_name && profile?.phone ? 'ثبت شده' : 'نیازمند تکمیل', tone:profile?.full_name && profile?.phone ? 'green' : 'amber', action:()=>go('account') },
-      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('verification-intro') },
+      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('account') },
       { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', tone:savedVehicle ? 'blue' : 'amber', action:()=>go('vehicle-dashboard') },
       { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
       { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', tone:'slate', action:()=>go('transactions') },
@@ -961,13 +960,13 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     const renderMenuCard = (item: typeof items[number]) => {
       const Icon = item.icon;
-      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[42px] w-full min-w-0 items-center gap-2 rounded-xl border-2 border-slate-200 bg-[#FFF8EA] px-2.5 py-1.5 text-right shadow-sm transition-colors hover:border-amber-300 hover:bg-[#FFF4DF] active:scale-[0.99]">
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[42px] w-full min-w-0 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-right shadow-sm transition-colors hover:border-slate-300 hover:bg-gray-50 active:scale-[0.99]">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center text-amber-700"><Icon className="h-5 w-5" aria-hidden="true"/></span>
         <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-slate-950">{item.title}</span>
         <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
       </button>;
     };
-    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1.5 px-2 py-1">
+    return <div dir="rtl" className="h-full min-h-0 w-full overflow-hidden flex flex-col gap-1 px-0 py-0">
       <div className="shrink-0 flex items-center gap-2 px-1 py-0.5">
         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="min-w-0 flex-1 flex flex-col items-start justify-center text-right">
@@ -980,24 +979,24 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
           <strong className="text-base font-black leading-5 tabular-nums">{money(driverScore)}</strong>
         </div>
       </div>
-      <section aria-label="اطلاعات حساب و خودرو" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+      <section aria-label="احراز هویت و حساب کاربری" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
         <div className="flex flex-col gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
       </section>
-      <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+      <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
         <div className="flex flex-col gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
       </section>
-      <section aria-label="سایر امکانات" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+      <section aria-label="سایر امکانات" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
         <div className="flex flex-col gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
       </section>
-      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-100">
+      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50">
         <LogOut className="h-5 w-5"/>خروج از حساب کاربری
       </button>
-      <div className="shrink-0 flex items-center justify-center gap-5 py-0.5">
-        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
-        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-7 w-7 object-contain" loading="lazy"/></a>
+      <div aria-label="شبکه‌های اجتماعی لوجیران" className="shrink-0 flex min-h-9 w-full items-center justify-center gap-7 py-0.5">
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
         <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
       </div>
-      <p className="shrink-0 text-center text-[10px] font-bold leading-3 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
+      <p className="mt-auto shrink-0 w-full border-t border-gray-100 pt-1 text-center text-[11px] font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><LogOut className="h-7 w-7"/></div>
@@ -2116,13 +2115,20 @@ const ProfilePage = () => <div className="space-y-3">
       </div>;
     }
     
-    if (page==='account') return <Card><CardBody className="p-5 space-y-1">
-      <div className="flex items-center justify-between py-4 border-b border-gray-100"><span className="text-sm font-bold text-gray-500">نام و نام خانوادگی</span><b className="text-sm">{profile?.full_name || accountName || 'ثبت نشده'}</b></div>
-      <div className="flex items-center justify-between py-4 border-b border-gray-100"><span className="text-sm font-bold text-gray-500">کد ملی</span><b className="text-sm">{(profile as any)?.national_id || 'ثبت نشده'}</b></div>
-      <div className="flex items-center justify-between py-4 border-b border-gray-100"><span className="text-sm font-bold text-gray-500">موبایل</span><b className="text-sm" dir="ltr">{profile?.phone || 'ثبت نشده'}</b></div>
-      <button type="button" onClick={()=>go('verification')} className="w-full flex items-center justify-between py-4 border-b border-gray-100 text-right"><span className="text-sm font-bold text-gray-500">احراز هویت</span><span className={identityVerified ? 'text-sm font-black text-emerald-600' : identityPending ? 'text-sm font-black text-orange-500' : 'text-sm font-black text-gray-500'}>{identityVerified ? '✓ تایید شده' : identityPending ? 'در انتظار تایید' : 'ارسال مدارک'}</span></button>
-      <div className="flex items-center justify-between py-4"><span className="text-sm font-bold text-gray-500">شماره هوشمند راننده</span><b className="text-sm">{(profile as any)?.driver_smart_number || 'ثبت نشده'}</b></div>
-    </CardBody></Card>;
+    if (page==='account') return <div className="w-full space-y-3" dir="rtl">
+      <Card><CardBody className="p-4 space-y-0">
+        <div className="mb-3 flex items-center gap-2 border-b border-gray-100 pb-3"><User className="h-5 w-5 text-primary-600"/><h2 className="font-black text-base">اطلاعات حساب کاربری</h2></div>
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 py-3"><span className="shrink-0 text-sm font-bold text-gray-500">نام و نام خانوادگی</span><b className="min-w-0 text-left text-sm font-black">{profile?.full_name || accountName || 'ثبت نشده'}</b></div>
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 py-3"><span className="shrink-0 text-sm font-bold text-gray-500">کد ملی</span><b className="text-sm font-black" dir="ltr">{(profile as any)?.national_id || 'ثبت نشده'}</b></div>
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 py-3"><span className="shrink-0 text-sm font-bold text-gray-500">شماره موبایل</span><b className="text-sm font-black" dir="ltr">{profile?.phone || 'ثبت نشده'}</b></div>
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 py-3"><span className="shrink-0 text-sm font-bold text-gray-500">شماره هوشمند راننده</span><b className="text-sm font-black">{(profile as any)?.driver_smart_number || 'هنوز صادر نشده'}</b></div>
+      </CardBody></Card>
+      <Card><CardBody className="p-4">
+        <div className="flex items-center justify-between gap-3"><div className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary-600"/><b className="font-black">وضعیت احراز هویت</b></div><span className={identityVerified ? 'rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700' : identityRejected ? 'rounded-lg bg-red-50 px-3 py-1.5 text-xs font-black text-red-700' : identityPending ? 'rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700' : 'rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-black text-gray-700'}>{identityVerified ? 'تأیید شده' : identityRejected ? 'نیازمند اصلاح' : identityPending ? 'در انتظار بررسی' : 'تأیید نشده'}</span></div>
+        <p className="mt-3 text-sm leading-7 text-gray-600">{identityVerified ? 'هویت شما تأیید شده و حساب کاربری آماده استفاده از خدمات است.' : identityRejected ? 'مدارک نیازمند اصلاح هستند؛ برای تکمیل دوباره فرایند را باز کنید.' : identityPending ? 'مدارک ثبت شده و در انتظار بررسی هستند.' : 'برای فعال شدن امکانات حساب، فرایند احراز هویت را تکمیل کنید.'}</p>
+        <Button size="full" className="mt-3" onClick={()=>go(identityPending || identityRejected || identityVerified ? 'verification' : 'verification-intro')}>{identityVerified ? 'مشاهده وضعیت احراز هویت' : identityPending ? 'پیگیری وضعیت' : identityRejected ? 'اصلاح مدارک' : 'شروع احراز هویت'}</Button>
+      </CardBody></Card>
+    </div>;
     if (page==='support') return <div className="space-y-3"><Card><CardBody className="p-5"><Headset className="w-7 h-7 text-primary-600"/><h3 className="font-black mt-3">مرکز پشتیبانی</h3><p className="text-sm text-gray-500 leading-7 mt-2">برای مشکلات حساب، بار یا سفر، موضوع خود را از مسیرهای زیر پیگیری کنید.</p><div className="grid grid-cols-2 gap-2 mt-4"><Button size="sm" variant="outline" onClick={()=>notify('چت پشتیبانی در نسخه نهایی فعال می‌شود.')}>گفتگوی آنلاین</Button><a href="tel:02100000000" className="min-h-11 rounded-xl bg-primary-600 text-white flex items-center justify-center gap-2 text-sm font-bold"><Phone className="w-4 h-4"/> تماس</a></div></CardBody></Card><Card><CardBody><b>وضعیت سرویس</b><div className="mt-3 flex items-center gap-2 text-emerald-700 text-sm"><CheckCircle2 className="w-4 h-4"/> همه بخش‌های آزمایشی فعال هستند</div></CardBody></Card></div>;
     if (page==='display') return <Card><CardBody className="p-5 space-y-4">
       <div><h3 className="font-black text-lg">تنظیمات برنامه</h3><p className="text-sm text-gray-500 mt-1">برای تغییر سریع، از آیکون بالای صفحه استفاده کنید. لمس کوتاه روز/شب را عوض می‌کند و نگه‌داشتن، حالت خودکار را فعال می‌کند.</p></div>
@@ -2208,7 +2214,7 @@ const ProfilePage = () => <div className="space-y-3">
         <button type="button" onClick={()=>setShowPageHelp(true)} className="w-10 h-10 shrink-0 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-primary-600" aria-label="توضیحات این صفحه" title="توضیحات این صفحه"><Info className="w-5 h-5"/></button>
       </div>
     </div>}
-    <main key={page}  className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : page === 'profile' ? 'h-[calc(100dvh-9.5rem)] min-h-0 overflow-hidden flex flex-col pb-2' : 'pb-24'}`}>
+    <main key={page}  className={`${page === 'profile' ? 'w-full max-w-none mx-0 px-0 pt-1' : 'max-w-lg mx-auto px-4 pt-3'} ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : page === 'profile' ? 'h-[calc(100dvh-9.5rem)] min-h-0 w-full max-w-none overflow-hidden flex flex-col px-0 pb-2' : 'pb-24'}`}>
       {pendingContactLoadId && page!=='contact-report' && <button type="button" onClick={()=>{const load=loads.find(l=>l.id===pendingContactLoadId); if(load){setSelected(load);go('contact-report');}}} className="w-full mb-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4 text-right text-amber-900 shadow-sm"><b className="block">⚠️ این بار هنوز تعیین تکلیف نشده است</b><span className="block text-xs font-bold mt-1">نتیجه تماس را ثبت کنید تا این یادآوری بسته شود.</span></button>}
       {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='offer-detail' ? <OfferDetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
     </main>
