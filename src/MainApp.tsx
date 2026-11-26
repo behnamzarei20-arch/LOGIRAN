@@ -15,6 +15,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { iranLocations } from '@/data/iranLocations';
 import { readDemoVerificationStatus, writeDemoVerificationStatus, type IdentityVerificationStatus } from '@/features/verification/verificationStatus';
 
+// Web/PWA and iOS WebView use browser history; Android uses the native Back event.
+const shouldUseBrowserHistory = () => shouldUseBrowserHistory() || Capacitor.getPlatform() === 'ios';
+
 type Page =
   | 'home' | 'search' | 'nearby' | 'calls' | 'profile' | 'features' | 'account' | 'vehicle' | 'vehicle-dashboard' | 'vehicle-select'
   | 'wallet' | 'transactions' | 'support' | 'rules' | 'notifications' | 'display'
@@ -611,7 +614,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       setSearchSubmitted(false);
     }
 
-    if (!Capacitor.isNativePlatform()) {
+    if (shouldUseBrowserHistory()) {
       const isSearchResults = previous === 'search' &&
         (window.history.state?.bbberahSearchResults === true || searchSubmittedRef.current);
       window.history.replaceState(
@@ -643,7 +646,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   useEffect(() => registerBackHandler(handleBackNavigation, 0), [handleBackNavigation]);
 
   useEffect(() => {
-    if (Capacitor.isNativePlatform()) return;
+    if (!shouldUseBrowserHistory()) return;
     // Keep one app-owned Home guard. Page routing itself is driven by the
     // in-memory stack; browser history is only an input/output adapter.
     if (window.history.state?.bbberahGuard !== true) {
@@ -696,7 +699,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       if (pageRef.current === p && pageHistoryRef.current.length === 2) return;
       const wasAtHomeRoot = pageHistoryRef.current.length === 1 && pageRef.current === 'home';
       pageHistoryRef.current = ['home', p];
-      if (!Capacitor.isNativePlatform()) {
+      if (shouldUseBrowserHistory()) {
         const state = { bbberahPage: p, bbberahGuard: true };
         if (wasAtHomeRoot) window.history.pushState(state, '', '#' + p);
         else window.history.replaceState(state, '', '#' + p);
@@ -708,7 +711,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
     if (p === pageRef.current) return;
     pageHistoryRef.current = navigatePageHistory(pageHistoryRef.current, p, 'home');
-    if (!Capacitor.isNativePlatform()) {
+    if (shouldUseBrowserHistory()) {
       window.history.pushState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     }
     setPageWithTransition(p);
@@ -720,7 +723,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (stack.length > 1 && stack[stack.length - 2] === p) stack.pop();
     else if (stack.length) stack[stack.length - 1] = p;
     else pageHistoryRef.current = [p];
-    if (!Capacitor.isNativePlatform()) window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
+    if (shouldUseBrowserHistory()) window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -728,7 +731,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     pageRef.current = 'home';
-    if (!Capacitor.isNativePlatform()) window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    if (shouldUseBrowserHistory()) window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -1030,7 +1033,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       go('search', true);
       // The Home search flow must mark this exact history entry as submitted
       // results, so Back from cargo detail returns to the result cards (not Home).
-      if (!Capacitor.isNativePlatform()) {
+      if (shouldUseBrowserHistory()) {
         window.history.replaceState(
           { bbberahPage: 'search', bbberahGuard: true, bbberahSearchResults: true },
           '',
@@ -1168,7 +1171,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
       // Mark this search entry as results without creating a duplicate Home-like step.
       // Back from results returns directly to the previous app page.
-      window.history.replaceState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
+      if (shouldUseBrowserHistory()) window.history.replaceState({ bbberahPage: 'search', bbberahGuard: true, bbberahSearchResults: true }, '', '#search-results');
       setSearchSubmitted(true);
     };
     const clearAll = () => {
