@@ -677,13 +677,28 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       // At Home, an unconsumed browser Back should leave the PWA as before.
       if (pageRef.current === 'home') return;
 
-      const target = (event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null)?.bbberahPage;
-      const targetPage = typeof target === 'string' &&
+      const historyState = event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null;
+      const target = historyState?.bbberahPage;
+      let targetPage: Page = typeof target === 'string' &&
         (target === 'home' || pageHistoryRef.current.includes(target as Page))
         ? target as Page
         : 'home';
-      if (targetPage === 'search') {
-        setSearchSubmitted((event.state as { bbberahSearchResults?: boolean } | null)?.bbberahSearchResults === true);
+
+      // SearchPage renders HomePage when no results are submitted. Treat that
+      // history entry as Home too; otherwise Back can show Home content while
+      // the Home tab remains inactive for one extra Back press.
+      if (targetPage === 'search' && historyState?.bbberahSearchResults !== true) {
+        targetPage = 'home';
+        setSearchSubmitted(false);
+        window.history.replaceState(
+          { bbberahPage: 'home', bbberahGuard: true },
+          '',
+          '#home'
+        );
+      } else if (targetPage === 'search') {
+        setSearchSubmitted(true);
+      } else if (targetPage === 'home') {
+        setSearchSubmitted(false);
       }
 
       const stack = pageHistoryRef.current;
