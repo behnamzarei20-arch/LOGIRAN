@@ -576,8 +576,12 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     // Only the actual home screen may exit the native app.
     if (currentPage === 'home') {
       pageHistoryRef.current = ['home'];
-      if (Capacitor.isNativePlatform()) void CapacitorApp.exitApp().catch(() => {});
-      return;
+      if (Capacitor.isNativePlatform()) {
+        void CapacitorApp.exitApp().catch(() => {});
+        return true;
+      }
+      // In a browser/PWA shortcut, allow the browser's Back action to leave the app.
+      return false;
     }
 
     if (stack.length > 1) {
@@ -640,7 +644,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (Capacitor.isNativePlatform()) return;
     window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     const onPopState = () => {
-      dispatchBack();
+      // Re-arm the in-app history only when an overlay or an in-app page consumed Back.
+      // At Home, an unconsumed Back is intentionally allowed to leave the web shortcut.
+      if (!dispatchBack()) return;
       const currentStack = pageHistoryRef.current;
       const currentPage = currentStack[currentStack.length - 1] || 'home';
       window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
