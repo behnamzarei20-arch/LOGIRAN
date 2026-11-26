@@ -963,16 +963,17 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       pink:'bg-pink-100 text-pink-800',
     };
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
-    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1.5 px-2 py-1.5">
-      <div className="shrink-0 flex items-center gap-2 rounded-2xl border border-gray-200 bg-white px-2.5 py-2 shadow-sm">
-        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
+    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-1.5">
+      <div className="shrink-0 flex items-center gap-3 px-1 py-1">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-sm font-black leading-5 text-gray-900">{displayName}</h2>
-          <p className="truncate text-xs font-bold text-gray-500" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
-          <div className="mt-0.5 flex items-center gap-1 text-xs font-extrabold text-orange-700">
-            <Award className="h-4 w-4 shrink-0"/>
-            <span className="whitespace-nowrap">امتیاز: {money(driverScore)}</span>
-          </div>
+          <h2 className="truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
+          <p className="truncate text-sm font-bold leading-5 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
+        </div>
+        <div className="shrink-0 flex flex-col items-center justify-center rounded-xl bg-orange-50 px-3 py-2 text-orange-800">
+          <Award className="h-6 w-6"/>
+          <span className="mt-0.5 text-xs font-black">امتیاز</span>
+          <strong className="text-xl font-black leading-6 tabular-nums">{money(driverScore)}</strong>
         </div>
       </div>
 
@@ -985,11 +986,11 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       </div>
 
       <div className="shrink-0 flex items-center gap-2">
-        <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="flex min-h-12 flex-[0.85] items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-2 py-2.5 text-xs font-black text-red-600 transition-colors hover:bg-red-100"><LogOut className="h-5 w-5"/>خروج از حساب کاربری</button>
+        <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="flex min-h-[60px] flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-2 py-3 text-sm font-black text-red-600 transition-colors hover:bg-red-100"><LogOut className="h-5 w-5"/>خروج از حساب کاربری</button>
         <div className="flex shrink-0 items-center gap-2">
-          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-6 w-6"/></span>
-          <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-6 w-6 object-contain" loading="lazy"/></a>
-          <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-6 w-6 object-contain" loading="lazy"/></a>
+          <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+          <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-7 w-7 object-contain" loading="lazy"/></a>
+          <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
         </div>
       </div>
       <p className="shrink-0 text-center text-[11px] font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
@@ -2195,7 +2196,7 @@ const ProfilePage = () => <div className="space-y-3">
       </div>;
   };
 
-  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
+  return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' || page === 'profile' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
     {page==='home' ? <Header/> : <div className="max-w-lg mx-auto px-4 pt-4">
       <div className="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
         <button type="button" onClick={goBack} className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-gray-600 bg-white border border-gray-200" aria-label="بازگشت" title="بازگشت"><ArrowRight className="w-5 h-5"/></button>
