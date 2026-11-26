@@ -980,13 +980,13 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </div>
       </div>
       <section aria-label="احراز هویت و حساب کاربری" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
-        <div className="flex flex-col gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(0,2).map(renderMenuCard)}</div>
       </section>
       <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
-        <div className="flex flex-col gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(2,4).map(renderMenuCard)}</div>
       </section>
       <section aria-label="سایر امکانات" className="shrink-0 w-full rounded-md border border-gray-200 bg-white p-1 shadow-sm">
-        <div className="flex flex-col gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(4,8).map(renderMenuCard)}</div>
       </section>
       <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50">
         <LogOut className="h-5 w-5"/>خروج از حساب کاربری
