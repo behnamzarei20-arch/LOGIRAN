@@ -16,7 +16,7 @@ import { iranLocations } from '@/data/iranLocations';
 import { readDemoVerificationStatus, writeDemoVerificationStatus, type IdentityVerificationStatus } from '@/features/verification/verificationStatus';
 
 // Web/PWA and iOS WebView use browser history; Android uses the native Back event.
-const shouldUseBrowserHistory = () => shouldUseBrowserHistory() || Capacitor.getPlatform() === 'ios';
+const shouldUseBrowserHistory = () => !Capacitor.isNativePlatform() || Capacitor.getPlatform() === 'ios';
 
 type Page =
   | 'home' | 'search' | 'nearby' | 'calls' | 'profile' | 'features' | 'account' | 'vehicle' | 'vehicle-dashboard' | 'vehicle-select'
