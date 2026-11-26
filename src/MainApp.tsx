@@ -966,9 +966,9 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-1.5">
       <div className="shrink-0 flex items-center gap-3 px-1 py-1">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
-          <p className="truncate text-sm font-bold leading-5 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
+        <div className="min-w-0 flex-1 flex flex-col items-start justify-center text-right">
+          <h2 className="block w-full truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
+          <p className="mt-1 block w-full truncate text-sm font-bold leading-5 text-gray-600 text-right" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
         </div>
         <div className="shrink-0 flex flex-col items-center justify-center rounded-xl bg-orange-50 px-3 py-2 text-orange-800">
           <Award className="h-6 w-6"/>
