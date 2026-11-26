@@ -674,8 +674,14 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
         return;
       }
 
+      // At Home, an unconsumed browser Back should leave the PWA as before.
+      if (pageRef.current === 'home') return;
+
       const target = (event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null)?.bbberahPage;
-      const targetPage = typeof target === 'string' ? target as Page : 'home';
+      const targetPage = typeof target === 'string' &&
+        (target === 'home' || pageHistoryRef.current.includes(target as Page))
+        ? target as Page
+        : 'home';
       if (targetPage === 'search') {
         setSearchSubmitted((event.state as { bbberahSearchResults?: boolean } | null)?.bbberahSearchResults === true);
       }
