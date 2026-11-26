@@ -678,16 +678,28 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       if (pageRef.current === 'home') return;
 
       const historyState = event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null;
+      const stack = pageHistoryRef.current;
+      const previousStackPage = stack.length > 1 ? stack[stack.length - 2] : null;
       const target = historyState?.bbberahPage;
       let targetPage: Page = typeof target === 'string' &&
-        (target === 'home' || pageHistoryRef.current.includes(target as Page))
+        (target === 'home' || stack.includes(target as Page))
         ? target as Page
-        : 'home';
+        : (pageRef.current === 'cargo-detail' && previousStackPage
+            ? previousStackPage
+            : 'home');
 
-      // SearchPage renders HomePage when no results are submitted. Treat that
-      // history entry as Home too; otherwise Back can show Home content while
-      // the Home tab remains inactive for one extra Back press.
-      if (targetPage === 'search' && historyState?.bbberahSearchResults !== true) {
+      // When returning from a cargo detail opened in search results, the
+      // in-memory navigation stack is the reliable fallback if the browser
+      // drops or restores an incomplete history.state. Never jump to Home.
+      const returningFromDetailToSearch =
+        pageRef.current === 'cargo-detail' && previousStackPage === 'search';
+      if (returningFromDetailToSearch) targetPage = 'search';
+
+      // SearchPage renders HomePage when no results are submitted. Normalize
+      // only genuine empty-search entries, not a return from a load detail.
+      if (targetPage === 'search' &&
+          historyState?.bbberahSearchResults !== true &&
+          !returningFromDetailToSearch) {
         targetPage = 'home';
         setSearchSubmitted(false);
         window.history.replaceState(
@@ -697,11 +709,16 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
         );
       } else if (targetPage === 'search') {
         setSearchSubmitted(true);
+        if (returningFromDetailToSearch && historyState?.bbberahSearchResults !== true) {
+          window.history.replaceState(
+            { bbberahPage: 'search', bbberahGuard: true, bbberahSearchResults: true },
+            '',
+            '#search-results'
+          );
+        }
       } else if (targetPage === 'home') {
         setSearchSubmitted(false);
       }
-
-      const stack = pageHistoryRef.current;
       if (targetPage === 'home') {
         pageHistoryRef.current = ['home'];
       } else {
