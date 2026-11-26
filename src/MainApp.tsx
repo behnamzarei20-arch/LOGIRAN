@@ -2,6 +2,7 @@ import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { dispatchBack, registerBackHandler } from '@/navigation/backManager';
+import { getActiveMainSection, navigatePageHistory, popPageHistory, MAIN_SECTION_PAGES } from '@/navigation/pageHistory';
 import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
@@ -246,8 +247,6 @@ export function MainApp() {
   const pageRef = useRef<Page>('home');
   pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
-  // Explicit return path for cargo details opened from the Calls page.
-  const callsDetailReturnRef = useRef(false);
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -304,6 +303,8 @@ export function MainApp() {
   const [destinationCounty, setDestinationCounty] = useState('');
   const [frequentRoute, setFrequentRoute] = useState<{from:string;to:string}|null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const searchSubmittedRef = useRef(false);
+  searchSubmittedRef.current = searchSubmitted;
   const [activeSearchField, setActiveSearchField] = useState<'origin'|'destination'>('origin');
   const [locationReturnPage, setLocationReturnPage] = useState<'home'|'search'>('search');
   const [nearbyDestination, setNearbyDestination] = useState('');
@@ -573,69 +574,55 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   };
   const handleBackNavigation = () => {
     const currentPage = pageRef.current;
-    const stack = pageHistoryRef.current;
 
-    // Details opened from Calls must return to Calls, even if another flow
-    // has left the generic page stack out of sync.
-    if (currentPage === 'cargo-detail' && callsDetailReturnRef.current) {
-      callsDetailReturnRef.current = false;
-      pageHistoryRef.current = ['home', 'calls'];
-      if (!Capacitor.isNativePlatform()) {
-        window.history.replaceState({ bbberahPage: 'calls', bbberahGuard: true }, '', '#calls');
-      }
-      setPageWithTransition('calls', 'back');
-      window.scrollTo({top:0,behavior:'auto'});
-      return true;
-    }
-
-    // Only the actual home screen may exit the native app.
+    // The app may only exit from its actual Home root.
     if (currentPage === 'home') {
       pageHistoryRef.current = ['home'];
-      if (Capacitor.isNativePlatform()) {
+      if (Capacitor.getPlatform() === 'android') {
         void CapacitorApp.exitApp().catch(() => {});
         return true;
       }
-      // In a browser/PWA shortcut, allow the browser's Back action to leave the app.
+      // Let the browser / iOS host handle Back from Home.
       return false;
     }
 
-    if (stack.length > 1) {
-      stack.pop();
-      const previous = stack[stack.length - 1] || 'home';
-      pageHistoryRef.current = stack.length ? stack : ['home'];
-      if (previous === 'origin-select') {
-        setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty(''); setSearchSubmitted(false);
+    const { history: nextStack, page: previous } = popPageHistory(pageHistoryRef.current, 'home');
+    pageHistoryRef.current = nextStack;
+
+    // Preserve the existing selection-flow cleanup while using one stack.
+    if (previous === 'origin-select') {
+      setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty(''); setSearchSubmitted(false);
+    }
+    if (previous === 'destination-select' || previous === 'destination-all' || previous === 'frequent-route') {
+      setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); setSearchSubmitted(false);
+    }
+    if (previous === 'nearby-destination-select' || previous === 'nearby-results') {
+      setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty('');
+    }
+    if (previous === 'search') {
+      const returningToResults = window.history.state?.bbberahSearchResults === true || searchSubmittedRef.current;
+      setSearchSubmitted(returningToResults);
+      if (!returningToResults) {
+        setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
+        setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
+        setFrequentRoute(null);
       }
-      if (previous === 'destination-select' || previous === 'destination-all' || previous === 'frequent-route') {
-        setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty(''); setSearchSubmitted(false);
-      }
-      if (previous === 'nearby-destination-select' || previous === 'nearby-results') {
-        setNearbyDestination(''); setNearbyDestinationText(''); setNearbyDestinationProvince(''); setNearbyDestinationCounty('');
-      }
-      if (previous === 'search') {
-        const returningToResults = window.history.state?.bbberahSearchResults === true;
-        setSearchSubmitted(returningToResults);
-        if (!returningToResults) {
-          setOrigin(''); setOriginText(''); setOriginProvince(''); setOriginCounty('');
-          setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
-          setFrequentRoute(null);
-        }
-      }
-      if (!Capacitor.isNativePlatform()) {
-        window.history.replaceState({ bbberahPage: previous, bbberahGuard: true }, '', '#' + previous);
-      }
-      setPageWithTransition(previous, 'back');
-      window.scrollTo({top:0,behavior:'auto'});
-      return;
+    } else if (previous === 'home') {
+      setSearchSubmitted(false);
     }
 
-    // A malformed or empty history returns to Home; it never exits from a subpage.
-    pageHistoryRef.current = ['home'];
     if (!Capacitor.isNativePlatform()) {
-      window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+      const isSearchResults = previous === 'search' &&
+        (window.history.state?.bbberahSearchResults === true || searchSubmittedRef.current);
+      window.history.replaceState(
+        { bbberahPage: previous, bbberahGuard: true, ...(isSearchResults ? { bbberahSearchResults: true } : {}) },
+        '',
+        isSearchResults ? '#search-results' : '#' + previous
+      );
     }
-    setPageWithTransition('home', 'back');
-    window.scrollTo({top:0,behavior:'auto'});
+    setPageWithTransition(previous, 'back');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    return true;
   };
 
   const handleOverlayBack = () => {
@@ -657,82 +644,38 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
-    // React StrictMode replays effects in development. Do not add a second
-    // Home guard when the first setup has already installed one.
+    // Keep one app-owned Home guard. Page routing itself is driven by the
+    // in-memory stack; browser history is only an input/output adapter.
     if (window.history.state?.bbberahGuard !== true) {
       window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     }
+
     const onPopState = (event: PopStateEvent) => {
-      // Browser history owns PWA page navigation. Only overlays may consume
-      // this Back event; the page-level handler is reserved for the in-app arrow.
+      // An overlay consumes Back before page navigation.
       if (dispatchBack(1)) {
+        const isSearchResults = pageRef.current === 'search' && searchSubmittedRef.current;
         window.history.pushState(
-          { ...(event.state || {}), bbberahPage: pageRef.current, bbberahGuard: true },
+          { bbberahPage: pageRef.current, bbberahGuard: true, ...(isSearchResults ? { bbberahSearchResults: true } : {}) },
           '',
-          '#' + pageRef.current
+          isSearchResults ? '#search-results' : '#' + pageRef.current
         );
         return;
       }
 
-      // At Home, an unconsumed browser Back should leave the PWA as before.
-      if (pageRef.current === 'home') return;
-
-      const historyState = event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null;
-      const stack = pageHistoryRef.current;
-      const previousStackPage = stack.length > 1 ? stack[stack.length - 2] : null;
-      const target = historyState?.bbberahPage;
-      let targetPage: Page = typeof target === 'string' &&
-        (target === 'home' || stack.includes(target as Page))
-        ? target as Page
-        : (pageRef.current === 'cargo-detail' && previousStackPage
-            ? previousStackPage
-            : 'home');
-
-      // When returning from a cargo detail opened in search results, the
-      // in-memory navigation stack is the reliable fallback if the browser
-      // drops or restores an incomplete history.state. Never jump to Home.
-      const returningFromDetailToSearch =
-        pageRef.current === 'cargo-detail' && previousStackPage === 'search';
-      if (returningFromDetailToSearch) targetPage = 'search';
-
-      // SearchPage renders HomePage when no results are submitted. Normalize
-      // only genuine empty-search entries, not a return from a load detail.
-      if (targetPage === 'search' &&
-          historyState?.bbberahSearchResults !== true &&
-          !returningFromDetailToSearch) {
-        targetPage = 'home';
-        setSearchSubmitted(false);
-        window.history.replaceState(
-          { bbberahPage: 'home', bbberahGuard: true },
-          '',
-          '#home'
-        );
-      } else if (targetPage === 'search') {
-        setSearchSubmitted(true);
-        if (returningFromDetailToSearch && historyState?.bbberahSearchResults !== true) {
-          window.history.replaceState(
-            { bbberahPage: 'search', bbberahGuard: true, bbberahSearchResults: true },
-            '',
-            '#search-results'
-          );
+      if (pageRef.current === 'home') {
+        // Tab switches can leave older app-owned entries below Home. Skip
+        // those automatically so a Back from Home exits the app in one action.
+        if ((event.state as { bbberahGuard?: boolean } | null)?.bbberahGuard === true) {
+          window.history.back();
         }
-      } else if (targetPage === 'home') {
-        setSearchSubmitted(false);
-      }
-      if (targetPage === 'home') {
-        pageHistoryRef.current = ['home'];
-      } else {
-        const targetIndex = stack.lastIndexOf(targetPage);
-        pageHistoryRef.current = targetIndex >= 0
-          ? stack.slice(0, targetIndex + 1)
-          : ['home', targetPage];
+        return;
       }
 
-      if (pageRef.current !== targetPage) {
-        setPageWithTransition(targetPage, 'back');
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      }
+      // Never trust a browser hash/state to choose the destination. The single
+      // in-memory page stack is authoritative on every web/PWA Back event.
+      handleBackNavigation();
     };
+
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -747,13 +690,29 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       setDestination(''); setDestinationText(''); setDestinationProvince(''); setDestinationCounty('');
       setFrequentRoute(null); setSearchSubmitted(false);
     }
+
+    // The four shortcut tabs are section roots, not Back-stack destinations.
+    if ((MAIN_SECTION_PAGES as readonly string[]).includes(p)) {
+      if (pageRef.current === p && pageHistoryRef.current.length === 2) return;
+      const wasAtHomeRoot = pageHistoryRef.current.length === 1 && pageRef.current === 'home';
+      pageHistoryRef.current = ['home', p];
+      if (!Capacitor.isNativePlatform()) {
+        const state = { bbberahPage: p, bbberahGuard: true };
+        if (wasAtHomeRoot) window.history.pushState(state, '', '#' + p);
+        else window.history.replaceState(state, '', '#' + p);
+      }
+      setPageWithTransition(p);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
+
     if (p === pageRef.current) return;
-    pageHistoryRef.current = [...pageHistoryRef.current, p];
+    pageHistoryRef.current = navigatePageHistory(pageHistoryRef.current, p, 'home');
     if (!Capacitor.isNativePlatform()) {
       window.history.pushState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     }
     setPageWithTransition(p);
-    window.scrollTo({top:0,behavior:'auto'});
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
   const replacePage = (p:Page) => {
     if (p === 'home') { goHome(); return; }
@@ -761,7 +720,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (stack.length > 1 && stack[stack.length - 2] === p) stack.pop();
     else if (stack.length) stack[stack.length - 1] = p;
     else pageHistoryRef.current = [p];
-    window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
+    if (!Capacitor.isNativePlatform()) window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -769,7 +728,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   const goHome = () => {
     pageHistoryRef.current = ['home'];
     pageRef.current = 'home';
-    window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    if (!Capacitor.isNativePlatform()) window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
     window.scrollTo({top:0,behavior:'auto'});
   };
@@ -846,7 +805,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       go('offers');
       return;
     }
-    setSelected(load); setOfferPrice(String(load.price)); setOfferSlider(50); setOfferPercent(0); setOfferDragY(0); setOfferOpen(true); window.history.pushState({ bbberahPage: page, bbberahOffer: true }, '', window.location.href);
+    setSelected(load); setOfferPrice(String(load.price)); setOfferSlider(50); setOfferPercent(0); setOfferDragY(0); setOfferOpen(true);
   };
   const updateOfferSlider = (clientX:number, element:HTMLElement) => {
     if (!selected) return;
@@ -918,8 +877,8 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
-        const activePage = page;
-        const active = activePage===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(activePage));
+        const activeSection = getActiveMainSection(pageHistoryRef.current, 'home');
+        const active = activeSection === p;
         return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-14 min-w-0 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors ${active ? 'bg-[#F5A623] text-white shadow-[0_0_0_5px_rgba(245,166,35,0.13)] font-black' : 'bg-transparent text-gray-500 font-bold hover:text-accent-500'}`}>
           {createElement(I as any,{className:'w-5 h-5'})}
           <span className="text-[10px] leading-tight">{String(l)}</span>
@@ -1794,7 +1753,7 @@ const ProfilePage = () => <div className="space-y-3">
             {expanded && <div className={"grid "+(needsStatus ? "grid-cols-3" : "grid-cols-2")+" gap-2 border-t border-sky-200 bg-white p-3"}>
               <a href={identityVerified ? 'tel:'+load.phone : undefined} onClick={event=>{if(!requireIdentityForContact(load)){event.preventDefault();return;}setSelected(load);contactCallStartedAt.current=Date.now();setPendingContactReturn(true);}} className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-2.5 text-sm font-black text-emerald-800"><Phone className="h-4 w-4"/>تماس</a>
               {needsStatus && <button type="button" onClick={()=>{setSelected(load);setContactReport(null);go('contact-report');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2 py-2.5 text-sm font-black text-amber-800">تعیین وضعیت</button>}
-              <button type="button" onClick={()=>{setExpandedCallId(null);setSelected(load);callsDetailReturnRef.current=true;go('cargo-detail');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2 py-2.5 text-sm font-black text-gray-800"><FileText className="h-4 w-4"/>جزئیات</button>
+              <button type="button" onClick={()=>{setExpandedCallId(null);setSelected(load);go('cargo-detail');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2 py-2.5 text-sm font-black text-gray-800"><FileText className="h-4 w-4"/>جزئیات</button>
             </div>}
           </div>;
         })}
