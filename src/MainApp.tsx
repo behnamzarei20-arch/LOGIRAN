@@ -939,7 +939,8 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
     const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
     const items = [
-      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go(identityPending || identityRejected ? 'verification' : 'verification-intro') },
+      { title:'اطلاعات کاربری', icon:User, status:profile?.full_name && profile?.phone ? 'ثبت شده' : 'نیازمند تکمیل', tone:profile?.full_name && profile?.phone ? 'green' : 'amber', action:()=>go('account') },
+      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('verification-intro') },
       { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', tone:savedVehicle ? 'blue' : 'amber', action:()=>go('vehicle-dashboard') },
       { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
       { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', tone:'slate', action:()=>go('transactions') },
@@ -960,13 +961,13 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     const renderMenuCard = (item: typeof items[number]) => {
       const Icon = item.icon;
-      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[46px] w-full min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-right shadow-sm transition-colors hover:border-amber-300 hover:bg-slate-50 active:scale-[0.99]">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center text-amber-700"><Icon className="h-5 w-5" aria-hidden="true"/></span>
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[42px] w-full min-w-0 items-center gap-2 rounded-xl border-2 border-slate-200 bg-[#FFF8EA] px-2.5 py-1.5 text-right shadow-sm transition-colors hover:border-amber-300 hover:bg-[#FFF4DF] active:scale-[0.99]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-amber-700"><Icon className="h-5 w-5" aria-hidden="true"/></span>
         <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-slate-950">{item.title}</span>
-        <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[11px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
+        <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
       </button>;
     };
-    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1 px-2 py-0.5">
+    return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1.5 px-2 py-1">
       <div className="shrink-0 flex items-center gap-2 px-1 py-0.5">
         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="min-w-0 flex-1 flex flex-col items-start justify-center text-right">
@@ -979,24 +980,24 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
           <strong className="text-base font-black leading-5 tabular-nums">{money(driverScore)}</strong>
         </div>
       </div>
-      <section aria-label="احراز هویت و خودرو" className="shrink-0 rounded-md border border-gray-200 bg-white p-0.5 shadow-sm">
-        <div className="flex flex-col gap-0.5">{items.slice(0,2).map(renderMenuCard)}</div>
+      <section aria-label="اطلاعات حساب و خودرو" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="flex flex-col gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
       </section>
-      <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 rounded-md border border-gray-200 bg-white p-0.5 shadow-sm">
-        <div className="flex flex-col gap-0.5">{items.slice(2,4).map(renderMenuCard)}</div>
+      <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="flex flex-col gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
       </section>
-      <section aria-label="سایر امکانات" className="shrink-0 rounded-md border border-gray-200 bg-white p-0.5 shadow-sm">
-        <div className="flex flex-col gap-0.5">{items.slice(4,8).map(renderMenuCard)}</div>
+      <section aria-label="سایر امکانات" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
+        <div className="flex flex-col gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
       </section>
-      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50 whitespace-nowrap">
-        <LogOut className="h-5 w-5 shrink-0"/>خروج از حساب کاربری
+      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-100">
+        <LogOut className="h-5 w-5"/>خروج از حساب کاربری
       </button>
-      <div className="shrink-0 flex min-h-9 items-center justify-center gap-6 py-0.5">
-        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-8 w-8"/></span>
-        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#229ED9]"><Navigation className="h-8 w-8"/></a>
-        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#7B3FF2]"><MessageCircle className="h-8 w-8"/></a>
+      <div className="shrink-0 flex items-center justify-center gap-5 py-0.5">
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-7 w-7 object-contain" loading="lazy"/></a>
+        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
       </div>
-      <p className="shrink-0 py-0.5 text-center text-xs font-bold leading-4 text-gray-600">نسخه برنامه: ۱.۰.۱</p>
+      <p className="shrink-0 text-center text-[10px] font-bold leading-3 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><LogOut className="h-7 w-7"/></div>
