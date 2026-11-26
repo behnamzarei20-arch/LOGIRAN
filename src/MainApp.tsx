@@ -816,7 +816,6 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
   };
 
   const openOfferDetail = (loadId:string) => { setOfferDetailLoadId(loadId); go('offer-detail'); };
-  const closeOfferDetail = () => setOfferDetailLoadId(null);
 
   const requestOffer = (load:Load) => {
     if (myOffers.some(o => o.loadId === load.id)) {
@@ -2155,7 +2154,7 @@ const ProfilePage = () => <div className="space-y-3">
     const detailLoad = loads.find(l=>l.id===offerDetailLoadId);
     if (!offerDetailLoadId || !detailOffer || !detailLoad) return null;
     return <div className="mx-auto w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-4 shadow-sm" dir="rtl">
-        <div className="flex items-center justify-between gap-3"><h3 className="text-lg font-black text-gray-900">جزئیات پیشنهاد قیمت</h3><button type="button" onClick={closeOfferDetail} aria-label="بستن" className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center"><X className="w-5 h-5"/></button></div>
+        <div className="flex items-center justify-between gap-3"><h3 className="text-lg font-black text-gray-900">جزئیات پیشنهاد قیمت</h3><button type="button" onClick={goBack} aria-label="بازگشت" className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center"><X className="w-5 h-5"/></button></div>
         <div className="mt-4 rounded-lg bg-gray-50 p-4">
           <div className="text-center text-lg font-black text-gray-900"><span>⚫️{detailLoad.from}</span><span className="mx-2 text-gray-400">---&gt;</span><span className="text-primary-600">🔵{detailLoad.to}</span></div>
           <div className="mt-4 grid grid-cols-2 gap-2">
@@ -2167,8 +2166,7 @@ const ProfilePage = () => <div className="space-y-3">
           <p className="mt-4 text-sm font-bold leading-7 text-gray-700">{detailLoad.description}</p>
           <div className="mt-3 rounded-xl bg-white p-3 text-sm"><span className="text-gray-500">وضعیت پیشنهاد: </span><b className="text-gray-900">{detailOffer.status==='accepted'?'پذیرفته شد':detailOffer.status==='rejected'?'رد شد':'در انتظار'}</b></div>
         </div>
-      </div>
-    </div>;
+      </div>;
   };
 
   return <div dir="rtl" data-theme={effectiveDark ? "dark" : "light"} className={`${page === 'home' ? 'h-[100dvh] overflow-hidden overscroll-none' : 'min-h-screen'} ${effectiveDark ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"}`}>
