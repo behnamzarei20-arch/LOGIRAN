@@ -644,12 +644,20 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (Capacitor.isNativePlatform()) return;
     window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     const onPopState = () => {
-      // Re-arm the in-app history only when an overlay or an in-app page consumed Back.
-      // At Home, an unconsumed Back is intentionally allowed to leave the web shortcut.
+      // The browser has already moved to the previous history entry.
+      // If Back only closed an overlay, keep the current page guarded.
+      // If the in-app page stack changed, the browser's previous entry is now
+      // the correct page entry; do not add another history step.
+      const previousStack = [...pageHistoryRef.current];
       if (!dispatchBack()) return;
       const currentStack = pageHistoryRef.current;
-      const currentPage = currentStack[currentStack.length - 1] || 'home';
-      window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
+      const pageChanged =
+        currentStack.length !== previousStack.length ||
+        currentStack[currentStack.length - 1] !== previousStack[previousStack.length - 1];
+      if (!pageChanged) {
+        const currentPage = currentStack[currentStack.length - 1] || 'home';
+        window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
+      }
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -667,7 +675,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     }
     if (p === pageRef.current) return;
     pageHistoryRef.current = [...pageHistoryRef.current, p];
-    window.history.replaceState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
+    if (!Capacitor.isNativePlatform()) {
+      window.history.pushState({ bbberahPage: p, bbberahGuard: true }, '', '#' + p);
+    }
     setPageWithTransition(p);
     window.scrollTo({top:0,behavior:'auto'});
   };
