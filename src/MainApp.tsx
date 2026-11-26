@@ -21,7 +21,7 @@ const shouldUseBrowserHistory = () => !Capacitor.isNativePlatform() || Capacitor
 type Page =
   | 'home' | 'search' | 'nearby' | 'calls' | 'profile' | 'features' | 'account' | 'vehicle' | 'vehicle-dashboard' | 'vehicle-select'
   | 'wallet' | 'transactions' | 'support' | 'rules' | 'notifications' | 'display'
-  | 'cargo-detail' | 'vehicle-loader' | 'trailer-select' | 'jooft-usage' | 'jooft-feature' | 'tak-usage' | 'tak-feature' | 'komionet-usage' | 'komionet-feature' | 'van-usage' | 'van-feature' | 'flatbed-size' | 'report' | 'offers' | 'verification' | 'verification-intro' | 'shipment' | 'origin-select' | 'destination-select' | 'nearby-destination-select' | 'nearby-results' | 'destination-all' | 'frequent-route' | 'contact-report';
+  | 'cargo-detail' | 'vehicle-loader' | 'trailer-select' | 'jooft-usage' | 'jooft-feature' | 'tak-usage' | 'tak-feature' | 'komionet-usage' | 'komionet-feature' | 'van-usage' | 'van-feature' | 'flatbed-size' | 'report' | 'offers' | 'verification' | 'verification-intro' | 'shipment' | 'origin-select' | 'destination-select' | 'nearby-destination-select' | 'nearby-results' | 'destination-all' | 'frequent-route' | 'contact-report' | 'offer-detail';
 
 type LoadStatus = 'open' | 'reserved' | 'delivered';
 type Load = {
@@ -593,6 +593,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     }
 
     const { history: nextStack, page: previous } = popPageHistory(pageHistoryRef.current, 'home');
+    if (currentPage === 'offer-detail') setOfferDetailLoadId(null);
     pageHistoryRef.current = nextStack;
     if (previous === 'home' || (MAIN_SECTION_PAGES as readonly string[]).includes(previous)) {
       setActiveMainSection(previous);
@@ -636,7 +637,6 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
   const handleOverlayBack = () => {
     if (offerOpen) { setOfferOpen(false); setOfferDragY(0); return true; }
-    if (offerDetailLoadId) { setOfferDetailLoadId(null); return true; }
     if (plateEntryOpen) { setPlateEntryOpen(false); return true; }
     if (confirmAction) { setConfirmAction(null); return true; }
     if (showIdentityGate) { setShowIdentityGate(false); return true; }
@@ -812,10 +812,10 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     home:'براه', search:'جستجوی بار', nearby:'اطراف من', calls:'تماس‌های من', profile:'پروفایل', features:'امکانات',
     account:'اطلاعات حساب', verification:'احراز هویت', 'verification-intro':'چرا احراز هویت ضروری است؟', vehicle:'خودروی من', 'vehicle-dashboard':'خودروی من', 'vehicle-select':'نوع خودرو', wallet:'کیف پول', transactions:'تراکنش‌ها',
     support:'پشتیبانی', rules:'قوانین و مقررات', notifications:'اعلان‌ها', display:'تنظیمات ظاهری', 'cargo-detail':'جزئیات بار',
-offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 'trailer-select':'نوع کاربری را انتخاب کنید', 'jooft-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'jooft-feature':'ویژگی کاربری', 'tak-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'tak-feature':'ویژگی کاربری', 'komionet-usage':'نوع بارگیر خود را انتخاب کنید', 'komionet-feature':'ویژگی بارگیر خود را انتخاب کنید', 'van-usage':'نوع کاربری خود را انتخاب کنید', 'van-feature':'ویژگی بارگیر خود را انتخاب کنید', 'flatbed-size':'ویژگی کاربری', report:'گزارش تخلف', shipment:'سفر جاری', 'origin-select':'انتخاب مبدأ', 'destination-select':'انتخاب مقصد', 'destination-all':'انتخاب شهر مقصد', 'frequent-route':'بارهای مسیر', 'contact-report':'نتیجه تماس', 'nearby-destination-select':'انتخاب مقصد', 'nearby-results':'اطراف من'
+offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد', 'vehicle-loader':'ویژگی کاربری', 'trailer-select':'نوع کاربری را انتخاب کنید', 'jooft-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'jooft-feature':'ویژگی کاربری', 'tak-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'tak-feature':'ویژگی کاربری', 'komionet-usage':'نوع بارگیر خود را انتخاب کنید', 'komionet-feature':'ویژگی بارگیر خود را انتخاب کنید', 'van-usage':'نوع کاربری خود را انتخاب کنید', 'van-feature':'ویژگی بارگیر خود را انتخاب کنید', 'flatbed-size':'ویژگی کاربری', report:'گزارش تخلف', shipment:'سفر جاری', 'origin-select':'انتخاب مبدأ', 'destination-select':'انتخاب مقصد', 'destination-all':'انتخاب شهر مقصد', 'frequent-route':'بارهای مسیر', 'contact-report':'نتیجه تماس', 'nearby-destination-select':'انتخاب مقصد', 'nearby-results':'اطراف من'
   };
 
-  const openOfferDetail = (loadId:string) => setOfferDetailLoadId(loadId);
+  const openOfferDetail = (loadId:string) => { setOfferDetailLoadId(loadId); go('offer-detail'); };
   const closeOfferDetail = () => setOfferDetailLoadId(null);
 
   const requestOffer = (load:Load) => {
@@ -2150,12 +2150,11 @@ const ProfilePage = () => <div className="space-y-3">
     offers:'پیشنهادهای قیمت ثبت‌شده و وضعیت آن‌ها در این بخش نمایش داده می‌شود.',
     support:'از این بخش می‌توانید برای پیگیری مشکلات حساب، بار یا سفر اقدام کنید.'
   };
-  const OfferDetailModal = () => {
+  const OfferDetailPage = () => {
     const detailOffer = myOffers.find(o=>o.loadId===offerDetailLoadId);
     const detailLoad = loads.find(l=>l.id===offerDetailLoadId);
     if (!offerDetailLoadId || !detailOffer || !detailLoad) return null;
-    return <div className="fixed inset-0 z-[80] bg-black/40 flex items-end justify-center p-0" onClick={closeOfferDetail}>
-      <div className="w-full max-w-lg rounded-t-[28px] bg-white p-5 pb-7 shadow-2xl" onClick={e=>e.stopPropagation()} dir="rtl">
+    return <div className="mx-auto w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-4 shadow-sm" dir="rtl">
         <div className="flex items-center justify-between gap-3"><h3 className="text-lg font-black text-gray-900">جزئیات پیشنهاد قیمت</h3><button type="button" onClick={closeOfferDetail} aria-label="بستن" className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center"><X className="w-5 h-5"/></button></div>
         <div className="mt-4 rounded-lg bg-gray-50 p-4">
           <div className="text-center text-lg font-black text-gray-900"><span>⚫️{detailLoad.from}</span><span className="mx-2 text-gray-400">---&gt;</span><span className="text-primary-600">🔵{detailLoad.to}</span></div>
@@ -2182,13 +2181,12 @@ const ProfilePage = () => <div className="space-y-3">
     </div>}
     <main key={page}  className={`max-w-lg mx-auto px-4 pt-3 ${page === 'home' ? 'pb-2 h-[calc(100dvh-8.5rem)] min-h-0 overflow-hidden flex flex-col' : page === 'profile' ? 'h-[calc(100dvh-9.5rem)] min-h-0 overflow-hidden flex flex-col pb-2' : 'pb-24'}`}>
       {pendingContactLoadId && page!=='contact-report' && <button type="button" onClick={()=>{const load=loads.find(l=>l.id===pendingContactLoadId); if(load){setSelected(load);go('contact-report');}}} className="w-full mb-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4 text-right text-amber-900 shadow-sm"><b className="block">⚠️ این بار هنوز تعیین تکلیف نشده است</b><span className="block text-xs font-bold mt-1">نتیجه تماس را ثبت کنید تا این یادآوری بسته شود.</span></button>}
-      {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
+      {page==='home' ? <HomePage/> : page==='search' ? <SearchPage/> : page==='profile' ? <AccountHome/> : page==='features' ? SimplePage() : page==='cargo-detail' ? <DetailPage/> : page==='offer-detail' ? <OfferDetailPage/> : page==='verification-intro' ? <VerificationIntroPage/> : page==='verification' ? <VerificationPage/> : page==='vehicle-dashboard' ? SimplePage() : page==='vehicle-select' ? SimplePage() : page==='vehicle' ? SimplePage() : page==='vehicle-loader' ? SimplePage() : page==='trailer-select' ? SimplePage() : page==='jooft-usage' ? SimplePage() : page==='jooft-feature' ? SimplePage() : page==='tak-usage' ? SimplePage() : page==='tak-feature' ? SimplePage() : page==='komionet-usage' ? SimplePage() : page==='komionet-feature' ? SimplePage() : page==='van-usage' ? SimplePage() : page==='van-feature' ? SimplePage() : page==='flatbed-size' ? SimplePage() : page==='report' ? <ViolationReportPage/> : page==='origin-select' ? <LocationSelectPage mode="origin"/> : page==='destination-select' ? <LocationSelectPage mode="destination"/> : page==='nearby-destination-select' ? <LocationSelectPage mode="nearby-destination"/> : page==='nearby-results' ? <NearbyResultsPage/> : page==='destination-all' ? <AllDestinationCitiesPage/> : page==='frequent-route' ? <FrequentRoutePage/> : page==='contact-report' ? <ContactReportPage/> : SimplePage()}
     </main>
     <BottomNav />
     <Toast message={toast} onClose={()=>setToast('')} />
     {showIdentityGate && <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setShowIdentityGate(false); }}><div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="identity-gate-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl"><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-50 text-orange-600"><ShieldCheck className="h-7 w-7"/></div><h2 id="identity-gate-title" className="text-center text-xl font-black text-gray-900">{identityPending ? 'احراز هویت در انتظار بررسی است' : identityRejected ? 'مدارک نیاز به اصلاح دارد' : 'ابتدا احراز هویت کنید'}</h2><p className="mt-3 text-center text-sm leading-7 text-gray-600">{identityPending ? 'تا زمانی که بررسی و تأیید نهایی انجام نشود، تماس با صاحب بار فعال نمی‌شود.' : identityRejected ? 'برای ادامه ارتباط با صاحب بار، اطلاعات و مدارک خود را اصلاح کنید.' : 'برای حفظ اعتماد و امنیت راننده‌ها و صاحبان بار، پیش از اولین تماس باید هویت شما بررسی و تأیید شود.'}</p><Button className="w-full mt-5" onClick={() => { setShowIdentityGate(false); go(identityPending || identityRejected ? 'verification' : 'verification-intro'); }}>{identityPending ? 'مشاهده وضعیت' : identityRejected ? 'اصلاح مدارک' : 'متوجه شدم'}</Button><button type="button" onClick={() => setShowIdentityGate(false)} className="mt-3 w-full rounded-xl border border-gray-200 py-3 font-bold text-gray-600">فعلاً نه</button></div></div>}
     {showPageHelp && <div className="fixed inset-0 z-[90] bg-black/40 flex items-center justify-center p-5" onClick={()=>setShowPageHelp(false)}><div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl text-gray-900" onClick={e=>e.stopPropagation()}><div className="flex items-center justify-between gap-3"><h3 className="font-black text-lg">درباره {currentPageTitle}</h3><button type="button" onClick={()=>setShowPageHelp(false)} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center" aria-label="بستن"><X className="w-4 h-4"/></button></div><p className="mt-3 text-sm leading-7 text-gray-600">{pageHelpText[page] || `این بخش برای مشاهده و مدیریت «${currentPageTitle}» در برنامه براه استفاده می‌شود.`}</p><Button className="w-full mt-4" onClick={()=>setShowPageHelp(false)}>متوجه شدم</Button></div></div>}
-    <OfferDetailModal/>
     {shipmentRewardSummary && <div className="fixed inset-0 z-[75] bg-black/40 flex items-center justify-center p-5">
       <div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl">
         <div className="flex items-center gap-3">
