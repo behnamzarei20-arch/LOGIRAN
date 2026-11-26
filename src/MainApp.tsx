@@ -663,43 +663,36 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     }
     const onPopState = (event: PopStateEvent) => {
-      // Give overlays first refusal. Page navigation is then reconciled against
-      // the browser entry we actually returned to, not a second independent stack.
-      const previousPage = pageRef.current;
-      if (!dispatchBack()) return;
-
-      const targetPage = (event.state as { bbberahPage?: Page } | null)?.bbberahPage;
-      if (targetPage) {
-        const stack = pageHistoryRef.current;
-        if (targetPage === 'home') {
-          pageHistoryRef.current = ['home'];
-        } else {
-          const targetIndex = stack.lastIndexOf(targetPage);
-          pageHistoryRef.current = targetIndex >= 0
-            ? stack.slice(0, targetIndex + 1)
-            : ['home', targetPage];
-        }
-        if (pageRef.current !== targetPage) {
-          setPageWithTransition(targetPage, 'back');
-          window.scrollTo({ top: 0, behavior: 'auto' });
-        }
+      // Browser history owns PWA page navigation. Only overlays may consume
+      // this Back event; the page-level handler is reserved for the in-app arrow.
+      if (dispatchBack(1)) {
+        window.history.pushState(
+          { ...(event.state || {}), bbberahPage: pageRef.current, bbberahGuard: true },
+          '',
+          '#' + pageRef.current
+        );
+        return;
       }
 
-      const currentPage = pageRef.current;
-      if (currentPage !== previousPage) {
-        // Keep the traversed browser entry aligned with the rendered page.
-        window.history.replaceState(
-          { ...(event.state || {}), bbberahPage: currentPage, bbberahGuard: true },
-          '',
-          '#' + currentPage
-        );
+      const target = (event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null)?.bbberahPage;
+      const targetPage = typeof target === 'string' ? target as Page : 'home';
+      if (targetPage === 'search') {
+        setSearchSubmitted((event.state as { bbberahSearchResults?: boolean } | null)?.bbberahSearchResults === true);
+      }
+
+      const stack = pageHistoryRef.current;
+      if (targetPage === 'home') {
+        pageHistoryRef.current = ['home'];
       } else {
-        // Back only dismissed an overlay; keep this page protected in history.
-        window.history.pushState(
-          { ...(event.state || {}), bbberahPage: currentPage, bbberahGuard: true },
-          '',
-          '#' + currentPage
-        );
+        const targetIndex = stack.lastIndexOf(targetPage);
+        pageHistoryRef.current = targetIndex >= 0
+          ? stack.slice(0, targetIndex + 1)
+          : ['home', targetPage];
+      }
+
+      if (pageRef.current !== targetPage) {
+        setPageWithTransition(targetPage, 'back');
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     };
     window.addEventListener('popstate', onPopState);
