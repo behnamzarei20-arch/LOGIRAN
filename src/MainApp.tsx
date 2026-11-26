@@ -674,6 +674,14 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
         return;
       }
 
+      // An in-app Back can replace the current browser entry with the
+      // previous page while an older entry for that same page remains below it.
+      // Skip that duplicate browser entry instead of popping the app stack twice.
+      const historyPage = (event.state as { bbberahPage?: unknown; bbberahSearchResults?: boolean } | null)?.bbberahPage;
+      const sameSearchState = pageRef.current !== 'search' ||
+        (event.state as { bbberahSearchResults?: boolean } | null)?.bbberahSearchResults === searchSubmittedRef.current;
+      if (historyPage === pageRef.current && sameSearchState) return;
+
       // Never trust a browser hash/state to choose the destination. The single
       // in-memory page stack is authoritative on every web/PWA Back event.
       handleBackNavigation();
