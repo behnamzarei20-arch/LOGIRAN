@@ -9,11 +9,11 @@ export const MAIN_SECTION_PAGES = ['features', 'calls', 'offers', 'profile'] as 
 
 const MAIN_SECTION_SET: ReadonlySet<string> = new Set(MAIN_SECTION_PAGES);
 
-export function navigatePageHistory(
-  history: readonly string[],
-  nextPage: string,
-  homePage = 'home',
-): string[] {
+export function navigatePageHistory<T extends string>(
+  history: readonly T[],
+  nextPage: T,
+  homePage: T,
+): T[] {
   if (nextPage === homePage) return [homePage];
 
   // A main tab switch is a root reset, never another Back step.
@@ -23,10 +23,10 @@ export function navigatePageHistory(
   return [...(history.length ? history : [homePage]), nextPage];
 }
 
-export function popPageHistory(
-  history: readonly string[],
-  homePage = 'home',
-): { history: string[]; page: string } {
+export function popPageHistory<T extends string>(
+  history: readonly T[],
+  homePage: T,
+): { history: T[]; page: T } {
   if (history.length <= 1) return { history: [homePage], page: homePage };
 
   const nextHistory = history.slice(0, -1);
@@ -37,7 +37,7 @@ export function popPageHistory(
 }
 
 /** The selected bottom tab follows the section root, not the leaf page. */
-export function getActiveMainSection(history: readonly string[], homePage = 'home'): string {
+export function getActiveMainSection<T extends string>(history: readonly T[], homePage: T): T {
   for (let index = history.length - 1; index >= 0; index -= 1) {
     const page = history[index];
     if (page === homePage || MAIN_SECTION_SET.has(page)) return page;
