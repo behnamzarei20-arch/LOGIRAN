@@ -965,7 +965,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-2 px-2 py-1.5">
       <div className="shrink-0 flex items-center gap-3 px-1 py-1">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full"><FacelessAvatar className="h-full w-full"/></div>
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
           <p className="truncate text-sm font-bold leading-5 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
