@@ -246,6 +246,8 @@ export function MainApp() {
   const pageRef = useRef<Page>('home');
   pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
+  // Explicit return path for cargo details opened from the Calls page.
+  const callsDetailReturnRef = useRef(false);
   useEffect(() => {
     let startY = 0;
     let canRefresh = false;
@@ -572,6 +574,19 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   const handleBackNavigation = () => {
     const currentPage = pageRef.current;
     const stack = pageHistoryRef.current;
+
+    // Details opened from Calls must return to Calls, even if another flow
+    // has left the generic page stack out of sync.
+    if (currentPage === 'cargo-detail' && callsDetailReturnRef.current) {
+      callsDetailReturnRef.current = false;
+      pageHistoryRef.current = ['home', 'calls'];
+      if (!Capacitor.isNativePlatform()) {
+        window.history.replaceState({ bbberahPage: 'calls', bbberahGuard: true }, '', '#calls');
+      }
+      setPageWithTransition('calls', 'back');
+      window.scrollTo({top:0,behavior:'auto'});
+      return true;
+    }
 
     // Only the actual home screen may exit the native app.
     if (currentPage === 'home') {
@@ -1715,7 +1730,7 @@ const ProfilePage = () => <div className="space-y-3">
             {expanded && <div className={"grid "+(needsStatus ? "grid-cols-3" : "grid-cols-2")+" gap-2 border-t border-sky-200 bg-white p-3"}>
               <a href={identityVerified ? 'tel:'+load.phone : undefined} onClick={event=>{if(!requireIdentityForContact(load)){event.preventDefault();return;}setSelected(load);contactCallStartedAt.current=Date.now();setPendingContactReturn(true);}} className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-2.5 text-sm font-black text-emerald-800"><Phone className="h-4 w-4"/>تماس</a>
               {needsStatus && <button type="button" onClick={()=>{setSelected(load);setContactReport(null);go('contact-report');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2 py-2.5 text-sm font-black text-amber-800">تعیین وضعیت</button>}
-              <button type="button" onClick={()=>{setExpandedCallId(null);setSelected(load);go('cargo-detail');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2 py-2.5 text-sm font-black text-gray-800"><FileText className="h-4 w-4"/>جزئیات</button>
+              <button type="button" onClick={()=>{setExpandedCallId(null);setSelected(load);callsDetailReturnRef.current=true;go('cargo-detail');}} className="flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2 py-2.5 text-sm font-black text-gray-800"><FileText className="h-4 w-4"/>جزئیات</button>
             </div>}
           </div>;
         })}
