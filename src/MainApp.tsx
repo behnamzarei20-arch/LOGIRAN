@@ -2,7 +2,7 @@ import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { dispatchBack, registerBackHandler } from '@/navigation/backManager';
-import { getActiveMainSection, navigatePageHistory, popPageHistory, MAIN_SECTION_PAGES } from '@/navigation/pageHistory';
+import { navigatePageHistory, popPageHistory, MAIN_SECTION_PAGES } from '@/navigation/pageHistory';
 import {
   ArrowLeft, ArrowRight, Bell, Car, CarFront, CheckCircle2, ChevronLeft, ChevronDown, Clock3, Weight as WeightIcon, Percent, Eye, Store, CreditCard, HeartPulse,
   FileText, Headset, Home, LogOut, MapPin, Navigation, Package,
@@ -247,6 +247,9 @@ export function MainApp() {
   const { profile, session, signOut } = useAuth();
   // A full browser refresh always starts at the home page, regardless of the current section or URL hash.
   const [page, setPage] = useState<Page>('home');
+  // Keep the selected main tab independently from the leaf page. Nested pages
+  // (for example cargo-detail opened from Calls) must not activate Home.
+  const [activeMainSection, setActiveMainSection] = useState<Page>('home');
   const pageRef = useRef<Page>('home');
   pageRef.current = page;
   const pageHistoryRef = useRef<Page[]>(['home']);
@@ -591,6 +594,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
     const { history: nextStack, page: previous } = popPageHistory(pageHistoryRef.current, 'home');
     pageHistoryRef.current = nextStack;
+    if (previous === 'home' || (MAIN_SECTION_PAGES as readonly string[]).includes(previous)) {
+      setActiveMainSection(previous);
+    }
 
     // Preserve the existing selection-flow cleanup while using one stack.
     if (previous === 'origin-select') {
@@ -707,6 +713,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       if (pageRef.current === p && pageHistoryRef.current.length === 2) return;
       const wasAtHomeRoot = pageHistoryRef.current.length === 1 && pageRef.current === 'home';
       pageHistoryRef.current = ['home', p];
+      setActiveMainSection(p);
       if (shouldUseBrowserHistory()) {
         const state = { bbberahPage: p, bbberahGuard: true };
         if (wasAtHomeRoot) window.history.pushState(state, '', '#' + p);
@@ -738,6 +745,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
   const goBack = () => dispatchBack();
   const goHome = () => {
     pageHistoryRef.current = ['home'];
+    setActiveMainSection('home');
     pageRef.current = 'home';
     if (shouldUseBrowserHistory()) window.history.replaceState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     setPageWithTransition('home', 'back');
@@ -888,8 +896,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
-        const activeSection = getActiveMainSection(pageHistoryRef.current, 'home');
-        const active = activeSection === p;
+        const active = activeMainSection === p;
         return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-14 min-w-0 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors ${active ? 'bg-[#F5A623] text-white shadow-[0_0_0_5px_rgba(245,166,35,0.13)] font-black' : 'bg-transparent text-gray-500 font-bold hover:text-accent-500'}`}>
           {createElement(I as any,{className:'w-5 h-5'})}
           <span className="text-[10px] leading-tight">{String(l)}</span>
