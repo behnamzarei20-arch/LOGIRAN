@@ -659,19 +659,28 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (Capacitor.isNativePlatform()) return;
     window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     const onPopState = () => {
-      // The browser has already moved to the previous history entry.
-      // If Back only closed an overlay, keep the current page guarded.
-      // If the in-app page stack changed, the browser's previous entry is now
-      // the correct page entry; do not add another history step.
-      const previousStack = [...pageHistoryRef.current];
+      // Let registered overlay handlers consume Back first, then navigation.
+      // pageRef is the authoritative source for the page shown by React and
+      // therefore for the active BottomNav item.
+      const previousPage = pageRef.current;
       if (!dispatchBack()) return;
-      const currentStack = pageHistoryRef.current;
-      const pageChanged =
-        currentStack.length !== previousStack.length ||
-        currentStack[currentStack.length - 1] !== previousStack[previousStack.length - 1];
-      if (!pageChanged) {
-        const currentPage = currentStack[currentStack.length - 1] || 'home';
-        window.history.pushState({ bbberahPage: currentPage, bbberahGuard: true }, '', '#' + currentPage);
+      const currentPage = pageRef.current;
+
+      if (currentPage !== previousPage) {
+        // The browser already traversed to the previous entry. Synchronize
+        // that entry with the page now rendered without adding another step.
+        window.history.replaceState(
+          { ...(window.history.state || {}), bbberahPage: currentPage, bbberahGuard: true },
+          '',
+          '#' + currentPage
+        );
+      } else {
+        // Back only dismissed an overlay; keep this page protected in history.
+        window.history.pushState(
+          { ...(window.history.state || {}), bbberahPage: currentPage, bbberahGuard: true },
+          '',
+          '#' + currentPage
+        );
       }
     };
     window.addEventListener('popstate', onPopState);
