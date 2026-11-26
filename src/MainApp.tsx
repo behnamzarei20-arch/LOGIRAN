@@ -662,26 +662,41 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     if (window.history.state?.bbberahGuard !== true) {
       window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
     }
-    const onPopState = () => {
-      // Let registered overlay handlers consume Back first, then navigation.
-      // pageRef is the authoritative source for the page shown by React and
-      // therefore for the active BottomNav item.
+    const onPopState = (event: PopStateEvent) => {
+      // Give overlays first refusal. Page navigation is then reconciled against
+      // the browser entry we actually returned to, not a second independent stack.
       const previousPage = pageRef.current;
       if (!dispatchBack()) return;
-      const currentPage = pageRef.current;
 
+      const targetPage = (event.state as { bbberahPage?: Page } | null)?.bbberahPage;
+      if (targetPage) {
+        const stack = pageHistoryRef.current;
+        if (targetPage === 'home') {
+          pageHistoryRef.current = ['home'];
+        } else {
+          const targetIndex = stack.lastIndexOf(targetPage);
+          pageHistoryRef.current = targetIndex >= 0
+            ? stack.slice(0, targetIndex + 1)
+            : ['home', targetPage];
+        }
+        if (pageRef.current !== targetPage) {
+          setPageWithTransition(targetPage, 'back');
+          window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+      }
+
+      const currentPage = pageRef.current;
       if (currentPage !== previousPage) {
-        // The browser already traversed to the previous entry. Synchronize
-        // that entry with the page now rendered without adding another step.
+        // Keep the traversed browser entry aligned with the rendered page.
         window.history.replaceState(
-          { ...(window.history.state || {}), bbberahPage: currentPage, bbberahGuard: true },
+          { ...(event.state || {}), bbberahPage: currentPage, bbberahGuard: true },
           '',
           '#' + currentPage
         );
       } else {
         // Back only dismissed an overlay; keep this page protected in history.
         window.history.pushState(
-          { ...(window.history.state || {}), bbberahPage: currentPage, bbberahGuard: true },
+          { ...(event.state || {}), bbberahPage: currentPage, bbberahGuard: true },
           '',
           '#' + currentPage
         );
