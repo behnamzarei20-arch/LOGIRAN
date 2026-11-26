@@ -648,6 +648,12 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     return false;
   };
 
+  // Keep the native Android listener mounted for the lifetime of MainApp.
+  // Re-registering it on every render can leave a window with no hardware
+  // Back listener while Capacitor resolves the asynchronous registration.
+  const handleBackNavigationRef = useRef(handleBackNavigation);
+  handleBackNavigationRef.current = handleBackNavigation;
+
   useEffect(() => registerBackHandler(handleOverlayBack, 100), [handleOverlayBack]);
   useEffect(() => registerBackHandler(handleBackNavigation, 0), [handleBackNavigation]);
   useEffect(() => {
@@ -655,9 +661,9 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     let disposed = false;
     let listener: { remove: () => Promise<void> } | undefined;
     CapacitorApp.addListener('backButton', () => {
-      // Prefer the registered overlay/page handlers; fall back to the page
-      // handler if the registry is momentarily empty during a render transition.
-      if (!dispatchBack()) handleBackNavigation();
+      // Dispatch overlays and the current page handler; use the latest page
+      // handler as a fallback if the registry is briefly empty.
+      if (!dispatchBack()) handleBackNavigationRef.current();
     }).then(item => {
       if (disposed) void item.remove();
       else listener = item;
@@ -666,7 +672,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
       disposed = true;
       if (listener) void listener.remove();
     };
-  }, [handleBackNavigation]);
+  }, []);
 
 
   useEffect(() => {
