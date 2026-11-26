@@ -1137,9 +1137,9 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       if (!originText || (!destinationText && !allDestinationsMode)) return notify('لطفاً مبدأ/مقصد را انتخاب کن.');
       if (!origin) setOrigin(originText);
       if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
-      // Keep the current search-selection entry, then add one history step for results.
-      // Back from results returns to the empty search-selection page; the next Back goes Home.
-      window.history.pushState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
+      // Mark this search entry as results without creating a duplicate Home-like step.
+      // Back from results returns directly to the previous app page.
+      window.history.replaceState({ bbberahPage: 'search', bbberahSearchResults: true }, '', '#search-results');
       setSearchSubmitted(true);
     };
     const clearAll = () => {
