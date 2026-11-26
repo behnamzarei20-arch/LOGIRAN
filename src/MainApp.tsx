@@ -650,6 +650,24 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
   useEffect(() => registerBackHandler(handleOverlayBack, 100), [handleOverlayBack]);
   useEffect(() => registerBackHandler(handleBackNavigation, 0), [handleBackNavigation]);
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') return;
+    let disposed = false;
+    let listener: { remove: () => Promise<void> } | undefined;
+    CapacitorApp.addListener('backButton', () => {
+      // Prefer the registered overlay/page handlers; fall back to the page
+      // handler if the registry is momentarily empty during a render transition.
+      if (!dispatchBack()) handleBackNavigation();
+    }).then(item => {
+      if (disposed) void item.remove();
+      else listener = item;
+    }).catch(() => {});
+    return () => {
+      disposed = true;
+      if (listener) void listener.remove();
+    };
+  }, [handleBackNavigation]);
+
 
   useEffect(() => {
     if (!shouldUseBrowserHistory()) return;
