@@ -1050,8 +1050,17 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       }
       if (!origin) setOrigin(originText);
       if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
-      setSearchSubmitted(true);
       go('search', true);
+      // The Home search flow must mark this exact history entry as submitted
+      // results, so Back from cargo detail returns to the result cards (not Home).
+      if (!Capacitor.isNativePlatform()) {
+        window.history.replaceState(
+          { bbberahPage: 'search', bbberahGuard: true, bbberahSearchResults: true },
+          '',
+          '#search-results'
+        );
+      }
+      setSearchSubmitted(true);
       window.scrollTo({top:0,behavior:'auto'});
     };
 
