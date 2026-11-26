@@ -1723,12 +1723,6 @@ const ProfilePage = () => <div className="space-y-3">
         <button type="button" onClick={()=>notify('استعلام کارت هوشمند هنوز به سامانه متصل نشده است.')} className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border border-orange-200 bg-white p-4 text-center shadow-sm"><CreditCard className="h-7 w-7 text-primary-600"/><b className="text-sm">استعلام کارت هوشمند</b><span className="text-[10px] font-bold text-gray-400">به‌زودی</span></button>
         <button type="button" onClick={()=>notify('استعلام کارت سلامت هنوز به سامانه متصل نشده است.')} className="flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl border border-orange-200 bg-white p-4 text-center shadow-sm"><HeartPulse className="h-7 w-7 text-emerald-600"/><b className="text-sm">استعلام کارت سلامت</b><span className="text-[10px] font-bold text-gray-400">به‌زودی</span></button>
       </section>
-      <h2 className="pt-2 text-base font-black">سایر امکانات براه</h2>
-      <section className="grid grid-cols-2 gap-3">
-        {[
-          ['جستجوی بار',Search,'search'],['بارهای اطراف من',Navigation,'nearby'],['احراز هویت',ShieldCheck,'account'],['مشخصات خودرو',CarFront,'vehicle-dashboard'],['کیف پول',Coins,'wallet'],['تراکنش‌ها',ReceiptText,'transactions'],['پشتیبانی',Headset,'support'],['اعلان‌ها',Bell,'notifications'],['سفر جاری',Truck,'shipment']
-        ].map(([label,Icon,target])=><button key={String(target)} type="button" onClick={()=>go(target as Page)} className="flex min-h-20 items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 text-right shadow-sm"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-accent-500">{createElement(Icon as any,{className:'h-5 w-5'})}</span><b className="text-xs leading-5">{String(label)}</b></button>)}
-      </section>
     </div>;
     if (page==='verification-intro') return <VerificationIntroPage/>;
     if (page==='verification') return <VerificationPage/>;
