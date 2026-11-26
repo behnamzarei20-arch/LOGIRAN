@@ -657,7 +657,11 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
 
   useEffect(() => {
     if (Capacitor.isNativePlatform()) return;
-    window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    // React StrictMode replays effects in development. Do not add a second
+    // Home guard when the first setup has already installed one.
+    if (window.history.state?.bbberahGuard !== true) {
+      window.history.pushState({ bbberahPage: 'home', bbberahGuard: true }, '', '#home');
+    }
     const onPopState = () => {
       // Let registered overlay handlers consume Back first, then navigation.
       // pageRef is the authoritative source for the page shown by React and
@@ -868,7 +872,7 @@ offers:'پیشنهادهای من', 'vehicle-loader':'ویژگی کاربری', 
       {[
         ['features','امکانات',Store],['calls','تماس‌ها',PhoneCall],['home','خانه',Home],['offers','پیشنهادها',MessageCircle],['profile','پروفایل',User]
       ].map(([p,l,I])=>{
-        const activePage = pageRef.current;
+        const activePage = page;
         const active = activePage===p || (p==='profile' && ['account','wallet','transactions','vehicle-dashboard','vehicle-select','vehicle','vehicle-loader','trailer-select','jooft-usage','jooft-feature','tak-usage','tak-feature','komionet-usage','komionet-feature','van-usage','van-feature','flatbed-size','rules','display'].includes(activePage));
         return <button key={p as string} type="button" onClick={()=>go(p as Page)} aria-current={active?'page':undefined} className={`h-14 min-w-0 rounded-2xl flex flex-col items-center justify-center gap-1 transition-colors ${active ? 'bg-[#F5A623] text-white shadow-[0_0_0_5px_rgba(245,166,35,0.13)] font-black' : 'bg-transparent text-gray-500 font-bold hover:text-accent-500'}`}>
           {createElement(I as any,{className:'w-5 h-5'})}
