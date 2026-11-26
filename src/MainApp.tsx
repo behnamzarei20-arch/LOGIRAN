@@ -1063,6 +1063,9 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       if (!origin) setOrigin(originText);
       if (!destination && destinationText && !allDestinationsMode) setDestination(destinationText);
       go('search', true);
+      // Search results are a nested Home flow, not the Home tab itself.
+      // Keep all bottom tabs neutral while viewing results and their cargo details.
+      setActiveMainSection('search');
       // The Home search flow must mark this exact history entry as submitted
       // results, so Back from cargo detail returns to the result cards (not Home).
       if (shouldUseBrowserHistory()) {
