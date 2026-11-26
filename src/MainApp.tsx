@@ -961,10 +961,10 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     const renderMenuCard = (item: typeof items[number]) => {
       const Icon = item.icon;
-      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[58px] min-w-0 flex-col items-center justify-center gap-0.5 rounded-md border border-gray-300 bg-white px-1 py-1 text-center shadow-sm transition-colors hover:border-[#032E5C]/40 hover:bg-slate-50 active:scale-[0.98]">
-        <Icon className="h-5 w-5 shrink-0 text-[#032E5C]" aria-hidden="true"/>
-        <span className="block w-full truncate text-[11px] font-black leading-4 text-gray-900">{item.title}</span>
-        <span className={`block max-w-full truncate rounded px-1 py-0.5 text-[9px] font-extrabold leading-3 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[42px] w-full min-w-0 items-center gap-2 rounded-xl border-2 border-slate-200 bg-[#FFF8EA] px-2.5 py-1.5 text-right shadow-sm transition-colors hover:border-amber-300 hover:bg-[#FFF4DF] active:scale-[0.99]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-amber-700"><Icon className="h-5 w-5" aria-hidden="true"/></span>
+        <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-slate-950">{item.title}</span>
+        <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
       </button>;
     };
     return <div dir="rtl" className="h-full min-h-0 overflow-hidden flex flex-col gap-1.5 px-2 py-1">
@@ -981,13 +981,13 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </div>
       </div>
       <section aria-label="اطلاعات حساب و خودرو" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
-        <div className="grid grid-cols-3 gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(0,3).map(renderMenuCard)}</div>
       </section>
       <section aria-label="کیف پول و تراکنش‌ها" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
-        <div className="grid grid-cols-2 gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(3,5).map(renderMenuCard)}</div>
       </section>
       <section aria-label="سایر امکانات" className="shrink-0 rounded-md border border-gray-300 bg-white p-1.5 shadow-sm">
-        <div className="grid grid-cols-2 gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
+        <div className="flex flex-col gap-1.5">{items.slice(5,9).map(renderMenuCard)}</div>
       </section>
       <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-100">
         <LogOut className="h-5 w-5"/>خروج از حساب کاربری
