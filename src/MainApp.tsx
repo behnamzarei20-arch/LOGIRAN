@@ -1041,7 +1041,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-9 w-9 object-contain" loading="lazy"/></a>
       </div>
       <p className="mt-auto w-full shrink-0 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
-      <div className={`fixed inset-0 z-[60] flex items-end justify-center ${settingsOpen ? 'visible' : 'invisible pointer-events-none'}`} aria-hidden={!settingsOpen}>
+      <div className={`fixed inset-x-0 top-0 bottom-[calc(72px+env(safe-area-inset-bottom))] z-[60] flex items-end justify-center ${settingsOpen ? 'visible' : 'invisible pointer-events-none'}`} aria-hidden={!settingsOpen}>
         <button type="button" aria-label="بستن تنظیمات" tabIndex={settingsOpen ? 0 : -1} onClick={()=>{setDraftDisplayMode(displayMode);setSettingsOpen(false)}} className="absolute inset-0 bg-transparent"/>
         <section dir="rtl" role="dialog" aria-modal="true" aria-label="تنظیمات نمایش برنامه" className={`relative z-10 w-full max-w-lg rounded-t-[28px] border border-[#D9E2EC] bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-4 shadow-[0_-8px_32px_rgba(3,46,92,0.16)] transition-transform duration-300 [transition-timing-function:cubic-bezier(.22,.75,.25,1)] ${settingsOpen ? 'translate-y-0' : 'translate-y-full'}`}>
           <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-gray-300" aria-hidden="true"/>
