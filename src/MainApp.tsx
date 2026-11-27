@@ -991,11 +991,25 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       { title:'دعوت از دوستان', icon:Share2, action:inviteFriends, tone:'text-[#D97706]' },
       { title:'خروج از حساب کاربری', icon:LogOut, action:()=>setShowLogoutConfirm(true), tone:'text-[#D92D3A]' },
     ];
+    const vehicleSaved = Boolean(window.localStorage.getItem('bbberah_vehicle_v1'));
+    const identityLabel = identityVerified ? 'تأیید شده' : identityRejected ? 'نیازمند اصلاح' : identityPending ? 'در انتظار بررسی' : 'تأیید نشده';
+    const identityTone = identityVerified ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : identityRejected ? 'border-red-200 bg-red-50 text-red-700' : identityPending ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-gray-200 bg-gray-100 text-gray-700';
     const renderMenuCard = (item: typeof wideItems[number] | typeof compactItems[number], compact=false) => {
       const Icon=item.icon;
-      return <button key={item.title} type="button" onClick={item.action} className={`flex h-11 min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-[#D9E2EC] bg-white px-2 text-center text-[#032E5C] shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99] ${compact ? 'text-[14px]' : 'text-[15px]'}`}>
-        <Icon className={`h-[18px] w-[18px] shrink-0 ${item.tone}`} aria-hidden="true"/>
-        <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
+      const isWide = !compact;
+      const status = item.title === 'احراز هویت' ? identityLabel : item.title === 'خودروی من' ? (vehicleSaved ? 'ثبت شده' : 'ثبت نشده') : item.title === 'کیف پول' ? `${money(walletBalance)} تومان` : '';
+      const statusTone = item.title === 'احراز هویت' ? identityTone : item.title === 'خودروی من' ? (vehicleSaved ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-100 text-gray-600') : 'border-blue-100 bg-blue-50 text-blue-700';
+      return <button key={item.title} type="button" onClick={item.action} className={`flex h-[52px] min-h-[52px] w-full min-w-0 items-center rounded-xl border border-[#D9E2EC] bg-white px-3 text-[#032E5C] shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99] ${isWide ? 'justify-between text-right' : 'justify-center gap-2 text-center'} ${compact ? 'text-[14px]' : 'text-[15px]'}`}>
+        {isWide ? <>
+          <span className="flex min-w-0 items-center gap-2 text-right">
+            <Icon className={`h-5 w-5 shrink-0 ${item.tone}`} aria-hidden="true"/>
+            <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
+          </span>
+          <span className={`max-w-[46%] shrink-0 truncate rounded-lg border px-2 py-1 text-[11px] font-black leading-4 ${statusTone}`}>{status}</span>
+        </> : <>
+          <Icon className={`h-5 w-5 shrink-0 ${item.tone}`} aria-hidden="true"/>
+          <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
+        </>}
       </button>;
     };
     return <div dir="rtl" className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden px-1 py-1">
