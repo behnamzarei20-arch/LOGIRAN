@@ -969,60 +969,58 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       if (!showLogoutConfirm) return;
       return registerBackHandler(() => { setShowLogoutConfirm(false); return true; }, 200);
     }, [showLogoutConfirm]);
-    const verificationLabel = identityVerified ? 'تأیید شده' : identityPending ? 'در انتظار بررسی' : identityRejected ? 'رد شده' : 'تأیید نشده';
-    const savedVehicle = Boolean(window.localStorage.getItem('bbberah_vehicle_v1') && vehicleForm.type && vehicleForm.feature);
-    const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
-    const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
-    const items = [
-      { title:'حساب کاربری و احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('account') },
-      { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', tone:savedVehicle ? 'blue' : 'amber', action:()=>go('vehicle-dashboard') },
-      { title:'کیف پول و تراکنش‌ها', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
-      { title:'تنظیمات و قوانین', icon:Monitor, status:'مدیریت برنامه و مقررات', tone:'blue', action:()=>go('display') },
-      { title:'پشتیبانی', icon:Headset, status:'ارتباط با پشتیبانی', tone:'cyan', action:()=>go('support') },
-    ];
-    const statusTones: Record<string, string> = {
-      green:'bg-[#E8F3EE] text-[#176B55]', amber:'bg-[#FFF1DD] text-[#925500]',
-      red:'bg-[#FBEAEA] text-[#A33A3A]', slate:'bg-[#E8EEF5] text-[#032E5C]',
-      blue:'bg-[#E8EEF5] text-[#032E5C]', violet:'bg-[#E8EEF5] text-[#032E5C]',
-      cyan:'bg-[#E8EEF5] text-[#032E5C]', pink:'bg-[#FFF1DD] text-[#925500]',
-    };
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
-    const renderMenuCard = (item: typeof items[number]) => {
-      const Icon = item.icon;
-      const itemIndex = items.indexOf(item);
-      const hasStatus = itemIndex < 3;
-      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[72px] w-full min-w-0 items-center gap-3 rounded-2xl border border-[#D9E2EC] bg-white px-4 py-3 text-right shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99]">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-[#032E5C]"><Icon className="h-5 w-5" aria-hidden="true"/></span>
-        <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-[#032E5C]">{item.title}</span>
-        {hasStatus ? <span className={`max-w-[48%] shrink truncate rounded-xl border border-[#D9E2EC] px-3 py-2 text-[11px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span> : <ChevronLeft className="h-5 w-5 shrink-0 text-[#032E5C]/65" aria-hidden="true"/>}
+    const inviteFriends = async () => {
+      const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';
+      try {
+        if(navigator.share) await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin});
+        else if(navigator.clipboard) { await navigator.clipboard.writeText(inviteText+' '+window.location.origin); notify('پیام دعوت کپی شد.'); }
+        else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.');
+      } catch {}
+    };
+    const wideItems = [
+      { title:'احراز هویت', icon:ShieldCheck, action:()=>go('account'), tone:'text-[#176B55]' },
+      { title:'خودروی من', icon:CarFront, action:()=>go('vehicle-dashboard'), tone:'text-[#D97706]' },
+      { title:'کیف پول', icon:CreditCard, action:()=>go('wallet'), tone:'text-[#1769AA]' },
+    ];
+    const compactItems = [
+      { title:'تراکنش‌ها', icon:ReceiptText, action:()=>go('transactions'), tone:'text-[#1769AA]' },
+      { title:'تنظیمات', icon:Monitor, action:()=>go('display'), tone:'text-[#032E5C]' },
+      { title:'قوانین و مقررات', icon:FileText, action:()=>go('rules'), tone:'text-[#6D4BC3]' },
+      { title:'پشتیبانی', icon:Headset, action:()=>go('support'), tone:'text-[#07839A]' },
+      { title:'دعوت از دوستان', icon:Share2, action:inviteFriends, tone:'text-[#D97706]' },
+      { title:'خروج از حساب کاربری', icon:LogOut, action:()=>setShowLogoutConfirm(true), tone:'text-[#D92D3A]' },
+    ];
+    const renderMenuCard = (item: typeof wideItems[number] | typeof compactItems[number], compact=false) => {
+      const Icon=item.icon;
+      return <button key={item.title} type="button" onClick={item.action} className={`flex h-11 min-h-11 w-full min-w-0 items-center justify-center gap-2 rounded-xl border border-[#D9E2EC] bg-white px-2 text-center text-[#032E5C] shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99] ${compact ? 'text-[14px]' : 'text-[15px]'}`}>
+        <Icon className={`h-[18px] w-[18px] shrink-0 ${item.tone}`} aria-hidden="true"/>
+        <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
       </button>;
     };
-    return <div dir="rtl" className="h-full min-h-0 w-full overflow-hidden flex flex-col gap-1 px-0 py-0">
-      <div className="shrink-0 flex items-center gap-2 px-1 py-0.5">
-        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[#032E5C]/15 bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
-        <div className="min-w-0 flex-1 flex flex-col items-start justify-center text-right">
-          <h2 className="block w-full truncate text-sm font-black leading-5 text-gray-900">{displayName}</h2>
-          <p className="block w-full truncate text-xs font-bold leading-4 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
+    return <div dir="rtl" className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden px-1 py-1">
+      <div className="flex shrink-0 items-center gap-3 px-1 py-1">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
+        <div className="flex min-w-0 flex-1 flex-col items-start justify-center text-right">
+          <h2 className="block w-full truncate text-base font-black leading-6 text-gray-900">{displayName}</h2>
+          <p className="block w-full truncate text-sm font-bold leading-5 text-gray-600" dir="ltr">{profile?.phone || 'شماره موبایل ثبت نشده'}</p>
         </div>
-        <div className="shrink-0 flex items-center gap-1 rounded-md bg-orange-50 px-2 py-1 text-orange-800">
-          <Award className="h-5 w-5"/>
-          <span className="text-[10px] font-black">امتیاز</span>
-          <strong className="text-base font-black leading-5 tabular-nums">{money(driverScore)}</strong>
+        <div className="flex shrink-0 items-center gap-1 px-1 text-orange-800">
+          <Award className="h-6 w-6"/>
+          <span className="text-xs font-black">امتیاز</span>
+          <strong className="text-lg font-black leading-6 tabular-nums">{money(driverScore)}</strong>
         </div>
       </div>
-      <section aria-label="امکانات حساب کاربری" className="shrink-0 w-full px-1">
-        <div className="flex w-full flex-col gap-2.5">{items.map(renderMenuCard)}</div>
+      <section aria-label="امکانات حساب کاربری" className="flex w-full shrink-0 flex-col gap-1.5">
+        <div className="flex w-full flex-col gap-1.5">{wideItems.map(item=>renderMenuCard(item))}</div>
+        <div className="grid w-full grid-cols-2 gap-1.5">{compactItems.map(item=>renderMenuCard(item,true))}</div>
       </section>
-      <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50">
-        <LogOut className="h-5 w-5"/>خروج از حساب کاربری
-      </button>
-      <div aria-label="دعوت از دوستان و شبکه‌های اجتماعی لوجیران" className="shrink-0 flex min-h-10 w-full items-center justify-center gap-5 py-0.5">
-        <button type="button" onClick={async()=>{const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';try{if(navigator.share)await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin});else if(navigator.clipboard){await navigator.clipboard.writeText(inviteText+' '+window.location.origin);notify('پیام دعوت کپی شد.');}else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.');}catch{}}} aria-label="دعوت از دوستان" title="دعوت از دوستان" className="flex h-9 items-center gap-1.5 rounded-full border border-[#D9E2EC] bg-white px-3 text-xs font-black text-[#032E5C]"><Share2 className="h-4 w-4"/>دعوت از دوستان</button>
-        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-6 w-6"/></span>
-        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
-        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
+      <div aria-label="شبکه‌های اجتماعی لوجیران" className="flex h-9 w-full shrink-0 items-center justify-center gap-5">
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
+        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-9 w-9 items-center justify-center"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-8 w-8 object-contain" loading="lazy"/></a>
       </div>
-      <p className="mt-auto shrink-0 w-full border-t border-gray-100 pt-1 text-center text-[11px] font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
+      <p className="mt-auto w-full shrink-0 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><LogOut className="h-7 w-7"/></div>
