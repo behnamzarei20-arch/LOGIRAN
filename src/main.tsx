@@ -44,7 +44,7 @@ function AdminLogin({onSuccess}:{onSuccess:(role:AdminRole)=>void}) {
     else setError('نام کاربری یا رمز عبور صحیح نیست.');
   }
   const selected=accounts.find(item=>item.username===username)||accounts[0];
-  if (!ADMIN_DEMO_MODE) return <main dir="rtl" className="min-h-screen bg-slate-50 px-4 py-10 flex items-center justify-center"><section className="max-w-lg rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm"><ShieldCheck size={36} className="mx-auto text-slate-400"/><h1 className="mt-4 text-xl font-black text-slate-900">پنل نمایشی مدیریت غیرفعال است</h1><p className="mt-3 text-sm leading-7 text-slate-600">داده‌ها و ورود آزمایشی مدیران در این build غیرفعال‌اند. برای فعال‌سازی پیش‌نمایش، متغیر VITE_ENABLE_ADMIN_DEMO_DATA را فقط در محیط آزمایشی روی true قرار دهید. این پنل تا اتصال احراز هویت و مجوزهای سمت سرور نباید برای مدیریت واقعی استفاده شود.</p><a href="/bbberah/" className="mt-5 inline-flex rounded-xl bg-sky-900 px-4 py-3 text-sm font-bold text-white">بازگشت به لوجیران</a></section></main>;
+  if (!ADMIN_DEMO_MODE) return <main dir="rtl" className="min-h-screen bg-slate-50 px-4 py-10 flex items-center justify-center"><section className="max-w-lg rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm"><ShieldCheck size={36} className="mx-auto text-slate-400"/><h1 className="mt-4 text-xl font-black text-slate-900">پنل نمایشی مدیریت غیرفعال است</h1><p className="mt-3 text-sm leading-7 text-slate-600">داده‌ها و ورود آزمایشی مدیران در این build غیرفعال‌اند. برای فعال‌سازی پیش‌نمایش، متغیر VITE_ENABLE_ADMIN_DEMO_DATA را فقط در محیط آزمایشی روی true قرار دهید. این پنل تا اتصال احراز هویت و مجوزهای سمت سرور نباید برای مدیریت واقعی استفاده شود.</p><a href="/logiran/" className="mt-5 inline-flex rounded-xl bg-sky-900 px-4 py-3 text-sm font-bold text-white">بازگشت به لوجیران</a></section></main>;
   return <main dir="rtl" className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-sky-50 px-4 py-8 flex items-center justify-center">
     <section className="w-full max-w-4xl rounded-[28px] border border-slate-200 bg-white p-5 sm:p-8 shadow-xl shadow-slate-900/5">
       <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-900 text-white shadow-lg"><ShieldCheck size={28}/></div>
@@ -57,7 +57,7 @@ function AdminLogin({onSuccess}:{onSuccess:(role:AdminRole)=>void}) {
         <button type="submit" className="w-full rounded-xl bg-sky-900 px-4 py-3.5 font-black text-white transition hover:bg-sky-950">ورود به پنل با این سطح دسترسی</button>
       </form>
       <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-900"><p className="font-black">فقط برای آزمایش رابط کاربری</p><p>نام‌های کاربری و رمزها در این نسخه نمایشی‌اند و به‌دلیل نبود احراز هویت سمت سرور، امنیت واقعی ایجاد نمی‌کنند. اطلاعات و سطح دسترسی واقعی باید در بک‌اند اعمال شوند.</p></div>
-      <a href="/bbberah/" className="mt-5 block text-center text-sm font-bold text-slate-500 hover:text-sky-900">بازگشت به برنامه لوجیران</a>
+      <a href="/logiran/" className="mt-5 block text-center text-sm font-bold text-slate-500 hover:text-sky-900">بازگشت به برنامه لوجیران</a>
     </section>
   </main>;
 }

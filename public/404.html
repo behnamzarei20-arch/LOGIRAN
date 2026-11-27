@@ -8,8 +8,12 @@
     <script>
       (function () {
         var path = window.location.pathname.replace(/\\/+$/, '');
-        if (path === '/bbberah/admin-preview' || path === '/bbberah/admin-preview/index.html') {\n          window.location.replace('/bbberah/admin-preview/');\n          return;\n        }\n        if (path === '/bbberah/admin' || path === '/bbberah/admin/index.html') {
-          window.location.replace('/bbberah/?admin=1');
+        if (path === '/logiran/admin-preview' || path === '/logiran/admin-preview/index.html') {
+          window.location.replace('/logiran/admin-preview/');
+          return;
+        }
+        if (path === '/logiran/admin' || path === '/logiran/admin/index.html') {
+          window.location.replace('/logiran/?admin=1');
         }
       })();
     </script>
@@ -23,8 +27,8 @@
     <main>
       <h1>صفحه پیدا نشد</h1>
       <p>آدرس واردشده در لوجیران وجود ندارد یا جابه‌جا شده است.</p>
-      <a href="/bbberah/admin-preview/">باز کردن پنل مدیریت لوجیران</a>
-      <a href="/bbberah/">بازگشت به لوجیران</a>
+      <a href="/logiran/admin-preview/">باز کردن پنل مدیریت لوجیران</a>
+      <a href="/logiran/">بازگشت به لوجیران</a>
     </main>
   </body>
 </html>
