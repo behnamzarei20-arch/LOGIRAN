@@ -974,17 +974,11 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     const vehicleTypeLabel = vehicleForm.type === 'وانت و نیسان' ? 'نیسان' : vehicleForm.type;
     const vehicleSummary = [vehicleTypeLabel, vehicleForm.usage, vehicleForm.feature].filter(Boolean).join(' · ');
     const items = [
-      { title:'احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('account') },
+      { title:'حساب کاربری و احراز هویت', icon:ShieldCheck, status:verificationLabel, tone:identityVerified ? 'green' : identityPending ? 'amber' : identityRejected ? 'red' : 'slate', action:()=>go('account') },
       { title:'خودروی من', icon:CarFront, status:savedVehicle ? vehicleSummary : 'ثبت نشده', tone:savedVehicle ? 'blue' : 'amber', action:()=>go('vehicle-dashboard') },
-      { title:'کیف پول', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
-      { title:'تراکنش‌ها', icon:ReceiptText, status:'مشاهده سوابق', tone:'slate', action:()=>go('transactions') },
-      { title:'قوانین و مقررات', icon:FileText, status:'مشاهده قوانین', tone:'slate', action:()=>go('rules') },
-      { title:'تنظیمات', icon:Monitor, status:'تنظیمات نمایش', tone:'blue', action:()=>go('display') },
+      { title:'کیف پول و تراکنش‌ها', icon:CreditCard, status:money(walletBalance)+' تومان', tone:'violet', action:()=>go('wallet') },
+      { title:'تنظیمات و قوانین', icon:Monitor, status:'مدیریت برنامه و مقررات', tone:'blue', action:()=>go('display') },
       { title:'پشتیبانی', icon:Headset, status:'ارتباط با پشتیبانی', tone:'cyan', action:()=>go('support') },
-      { title:'دعوت از دوستان', icon:Share2, status:'اشتراک‌گذاری لوجیران', tone:'pink', action:async()=>{
-        const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';
-        try { if(navigator.share) await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin}); else if(navigator.clipboard) { await navigator.clipboard.writeText(inviteText+' '+window.location.origin); notify('پیام دعوت کپی شد.'); } else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.'); } catch {}
-      } },
     ];
     const statusTones: Record<string, string> = {
       green:'bg-[#E8F3EE] text-[#176B55]', amber:'bg-[#FFF1DD] text-[#925500]',
@@ -1022,8 +1016,9 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50">
         <LogOut className="h-5 w-5"/>خروج از حساب کاربری
       </button>
-      <div aria-label="شبکه‌های اجتماعی لوجیران" className="shrink-0 flex min-h-9 w-full items-center justify-center gap-7 py-0.5">
-        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-7 w-7"/></span>
+      <div aria-label="دعوت از دوستان و شبکه‌های اجتماعی لوجیران" className="shrink-0 flex min-h-10 w-full items-center justify-center gap-5 py-0.5">
+        <button type="button" onClick={async()=>{const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';try{if(navigator.share)await navigator.share({title:'لوجیران',text:inviteText,url:window.location.origin});else if(navigator.clipboard){await navigator.clipboard.writeText(inviteText+' '+window.location.origin);notify('پیام دعوت کپی شد.');}else notify('امکان اشتراک‌گذاری در این دستگاه فعال نیست.');}catch{}}} aria-label="دعوت از دوستان" title="دعوت از دوستان" className="flex h-9 items-center gap-1.5 rounded-full border border-[#D9E2EC] bg-white px-3 text-xs font-black text-[#032E5C]"><Share2 className="h-4 w-4"/>دعوت از دوستان</button>
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#d62976]"><Instagram className="h-6 w-6"/></span>
         <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center rounded-full bg-white"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
         <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-8 w-8 items-center justify-center rounded-full bg-white"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-7 w-7 object-contain" loading="lazy"/></a>
       </div>
@@ -1899,7 +1894,36 @@ const ProfilePage = () => <div className="space-y-3">
         </CardBody></Card>;
       })() : <Card><CardBody className="p-5"><div className="flex items-center gap-3"><Truck className="w-7 h-7 text-primary-600"/><div><b>سفر جاری</b><p className="text-xs text-gray-400 mt-1">در حال حاضر حمل توافق‌شده‌ای برای تعیین تکلیف ندارید.</p></div></div></CardBody></Card>}
     </div>;
-    if (page==='wallet') return <div className="space-y-4"><Card><CardBody className="p-6 text-center"><CircleDollarSign className="w-8 h-8 mx-auto text-primary-600"/><p className="text-sm text-gray-400 mt-3">موجودی کیف پول</p><b className={`text-3xl block mt-2 ${walletBalance < 0 ? 'text-red-600' : 'text-gray-900'}`}>{money(walletBalance)} تومان</b><Button className="w-full mt-5" onClick={()=>notify('درگاه پرداخت در فاز دوم متصل می‌شود.')}>افزایش موجودی</Button></CardBody></Card></div>;
+    if (page==='wallet') {
+      const walletItems = [
+        ...walletTransactions.map(item => ({id:item.id, type:item.type, amount:item.amount, at:item.at, title:item.title, description:item.description || (item.source === 'gift' ? 'هدیه افزایش موجودی از طرف اپلیکیشن' : ''), gift:item.source === 'gift'})),
+        ...shipmentHistory.filter(item => item.outcome === 'carried' && item.commission > 0).map(item => {
+          const load = loads.find(l=>l.id===item.loadId);
+          return {id:'commission-'+item.loadId+'-'+item.at, type:'decrease' as const, amount:item.commission, at:item.at, title:'کسر کمیسیون حمل', description:load ? load.from+' ← '+load.to : 'کمیسیون بار', gift:false};
+        })
+      ].sort((a,b)=>b.at-a.at);
+      return <div className="space-y-3">
+        <Card><CardBody className="p-5 text-center"><CircleDollarSign className="w-8 h-8 mx-auto text-primary-600"/><p className="text-sm text-gray-400 mt-2">موجودی کیف پول</p><b className={`text-2xl block mt-1 ${walletBalance < 0 ? 'text-red-600' : 'text-gray-900'}`}>{money(walletBalance)} تومان</b><Button className="w-full mt-3" onClick={()=>notify('درگاه پرداخت در فاز دوم متصل می‌شود.')}>افزایش موجودی</Button></CardBody></Card>
+        <div className="space-y-2">
+          <h3 className="px-1 text-sm font-black text-gray-700">تاریخچه تراکنش‌ها</h3>
+          {walletItems.length===0 ? <Card><CardBody className="p-4"><Empty title="تراکنشی ثبت نشده" text="سوابق افزایش و کاهش موجودی کیف پول در این بخش نمایش داده می‌شود."/></CardBody></Card> : walletItems.map(item => {
+            const incoming = item.type === 'increase';
+            const color = incoming ? 'text-emerald-600' : 'text-red-600';
+            return <Card key={item.id}><CardBody className="px-3 py-3">
+              <div className="flex items-center gap-3">
+                <WalletMovementIcon type={item.gift ? 'gift' : incoming ? 'increase' : 'decrease'}/>
+                <div className="min-w-0 flex-1">
+                  <b className="block truncate text-sm font-black text-gray-900">{item.title}</b>
+                  <div className="mt-1 flex items-center gap-1 text-[11px] text-gray-500"><Clock3 className="h-3.5 w-3.5 shrink-0"/><span>{new Date(item.at).toLocaleDateString('fa-IR')}</span></div>
+                  {item.description && <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-600">{item.description}</p>}
+                </div>
+                <b className={`shrink-0 text-sm font-black ${color}`} dir="rtl"><span>{money(item.amount)}</span><span>{incoming?'+':'−'}</span><span className="text-[10px]">تومان</span></b>
+              </div>
+            </CardBody></Card>;
+          })}
+        </div>
+      </div>;
+    }
     if (page==='transactions') {
       const walletItems = [
         ...walletTransactions.map(item => ({id:item.id, type:item.type, amount:item.amount, at:item.at, title:item.title, description:item.description || (item.source === 'gift' ? 'هدیه افزایش موجودی از طرف اپلیکیشن' : ''), gift:item.source === 'gift'})),
@@ -2161,10 +2185,10 @@ const ProfilePage = () => <div className="space-y-3">
       </CardBody></Card>
     </div>;
     if (page==='support') return <div className="space-y-3"><Card><CardBody className="p-5"><Headset className="w-7 h-7 text-primary-600"/><h3 className="font-black mt-3">مرکز پشتیبانی</h3><p className="text-sm text-gray-500 leading-7 mt-2">برای مشکلات حساب، بار یا سفر، موضوع خود را از مسیرهای زیر پیگیری کنید.</p><div className="grid grid-cols-2 gap-2 mt-4"><Button size="sm" variant="outline" onClick={()=>notify('چت پشتیبانی در نسخه نهایی فعال می‌شود.')}>گفتگوی آنلاین</Button><a href="tel:02100000000" className="min-h-11 rounded-xl bg-primary-600 text-white flex items-center justify-center gap-2 text-sm font-bold"><Phone className="w-4 h-4"/> تماس</a></div></CardBody></Card><Card><CardBody><b>وضعیت سرویس</b><div className="mt-3 flex items-center gap-2 text-emerald-700 text-sm"><CheckCircle2 className="w-4 h-4"/> همه بخش‌های آزمایشی فعال هستند</div></CardBody></Card></div>;
-    if (page==='display') return <Card><CardBody className="p-5 space-y-4">
+    if (page==='display') return <div className="space-y-3"><Card><CardBody className="p-5 space-y-4">
       <div><h3 className="font-black text-lg">تنظیمات برنامه</h3><p className="text-sm text-gray-500 mt-1">برای تغییر سریع، از آیکون بالای صفحه استفاده کنید. لمس کوتاه روز/شب را عوض می‌کند و نگه‌داشتن، حالت خودکار را فعال می‌کند.</p></div>
       {([['day','حالت روز',Sun],['night','حالت شب',Moon],['auto','حالت خودکار',Monitor]] as const).map(([mode,label,Icon])=><button type="button" key={mode} onClick={()=>setDisplayMode(mode)} className={`w-full flex items-center gap-3 rounded-xl border p-4 text-right ${displayMode===mode?'border-primary-500 bg-primary-50':'border-gray-100 bg-gray-50'}`}><Icon className="w-5 h-5 text-primary-600"/><span className="flex-1 font-bold text-sm">{label}</span><span className={`text-xs font-black ${displayMode===mode?'text-primary-700':'text-gray-400'}`}>{displayMode===mode?'فعال':'انتخاب'}</span></button>)}
-    </CardBody></Card>;
+    </CardBody></Card><Card><CardBody className="p-4"><div className="flex items-center justify-between gap-3"><div><b className="text-sm">قوانین و مقررات</b><p className="mt-1 text-xs text-gray-500">شرایط استفاده از خدمات لوجیران</p></div><Button size="sm" variant="outline" onClick={()=>go('rules')}>مطالعه قوانین</Button></div></CardBody></Card></div>;
     if (page==='rules') return <div className="space-y-4">
       <Card><CardBody className="p-5 text-sm text-gray-700 leading-8">
         <h3 className="font-black text-xl text-gray-900">قوانین و مقررات اپلیکیشن رانندگان براه</h3>
