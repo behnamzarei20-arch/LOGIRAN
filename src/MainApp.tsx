@@ -1018,7 +1018,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </>}
       </button>;
     };
-    return <div dir="rtl" className={`flex h-full min-h-0 w-full flex-col gap-2 px-1 py-1 ${settingsOpen?'overflow-y-auto':'overflow-hidden'}`}>
+    return <div dir="rtl" className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden px-1 py-1">
       <div className="flex shrink-0 items-center gap-3 px-1 py-1">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="flex min-w-0 flex-1 flex-col items-start justify-center text-right">
