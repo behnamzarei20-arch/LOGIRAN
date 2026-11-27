@@ -2,7 +2,7 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
-// This repository is published at https://behnamzarei20-arch.github.io/bbberah/.
+// This repository is published at https://behnamzarei20-arch.github.io/logiran/.
 // Use the explicit project path so production assets always resolve from that URL.
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
     (configuredDemoFlag === undefined && mode === 'development');
 
   return {
-  base: '/bbberah/',
+  base: '/logiran/',
   plugins: [react()],
   resolve: {
     alias: {
