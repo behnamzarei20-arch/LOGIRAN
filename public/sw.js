@@ -1,4 +1,4 @@
-const CACHE_NAME = "logiran-shell-v1";
+const CACHE_NAME = "logiran-shell-v2";
 const APP_PREFIX = "/LOGIRAN/";
 const LEGACY_CACHE_PREFIXES = ["berah-", "bbberah-"];
 const CORE_ASSETS = [APP_PREFIX, APP_PREFIX + "index.html", APP_PREFIX + "manifest.webmanifest", APP_PREFIX + "icon.svg"];
@@ -12,7 +12,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys
-        .filter((key) => key !== CACHE_NAME && LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .filter((key) => key !== CACHE_NAME && (key.startsWith("logiran-shell-") || LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))))
         .map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
