@@ -1,19 +1,19 @@
 {
-  "id": "/bbberah/",
+  "id": "/logiran/",
   "name": "LOGIRAN | لوجیران",
   "short_name": "LOGIRAN",
   "description": "بستر ارتباط و معرفی در حمل‌ونقل بار",
   "lang": "fa",
   "dir": "rtl",
-  "start_url": "/bbberah/",
-  "scope": "/bbberah/",
+  "start_url": "/logiran/",
+  "scope": "/logiran/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "/bbberah/icon.svg",
+      "src": "/logiran/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
