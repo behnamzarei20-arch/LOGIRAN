@@ -43,7 +43,7 @@ jobs:
       - name: Build isolated admin UI preview
         env:
           VITE_ENABLE_ADMIN_DEMO_DATA: 'true'
-        run: npm run build -- --base=/logiran/admin-preview/ --outDir dist/admin-preview
+        run: npm run build -- --base=/LOGIRAN/admin-preview/ --outDir dist/admin-preview
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
