@@ -987,18 +987,20 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       } },
     ];
     const statusTones: Record<string, string> = {
-      green:'bg-emerald-100 text-emerald-800', amber:'bg-amber-100 text-amber-800',
-      red:'bg-red-100 text-red-800', slate:'bg-slate-100 text-slate-700',
-      blue:'bg-blue-100 text-blue-800', violet:'bg-violet-100 text-violet-800',
-      cyan:'bg-cyan-100 text-cyan-800', pink:'bg-pink-100 text-pink-800',
+      green:'bg-[#E8F3EE] text-[#176B55]', amber:'bg-[#FFF1DD] text-[#925500]',
+      red:'bg-[#FBEAEA] text-[#A33A3A]', slate:'bg-[#E8EEF5] text-[#032E5C]',
+      blue:'bg-[#E8EEF5] text-[#032E5C]', violet:'bg-[#E8EEF5] text-[#032E5C]',
+      cyan:'bg-[#E8EEF5] text-[#032E5C]', pink:'bg-[#FFF1DD] text-[#925500]',
     };
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     const renderMenuCard = (item: typeof items[number]) => {
       const Icon = item.icon;
-      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[42px] w-full min-w-0 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-right shadow-sm transition-colors hover:border-slate-300 hover:bg-gray-50 active:scale-[0.99]">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-amber-700"><Icon className="h-5 w-5" aria-hidden="true"/></span>
-        <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-slate-950">{item.title}</span>
-        <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span>
+      const itemIndex = items.indexOf(item);
+      const hasStatus = itemIndex < 3;
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[54px] w-full min-w-0 items-center gap-2 rounded-xl border border-[#D9E2EC] bg-white px-3 py-2.5 text-right shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-[#032E5C]"><Icon className="h-5 w-5" aria-hidden="true"/></span>
+        <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-[#032E5C]">{item.title}</span>
+        {hasStatus ? <span className={`max-w-[48%] shrink truncate rounded-lg px-2 py-1 text-[10px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span> : <ChevronLeft className="h-5 w-5 shrink-0 text-[#032E5C]/65" aria-hidden="true"/>}
       </button>;
     };
     return <div dir="rtl" className="h-full min-h-0 w-full overflow-hidden flex flex-col gap-1 px-0 py-0">
