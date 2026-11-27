@@ -1,4 +1,4 @@
-const CACHE_NAME = "logiran-shell-v2";
+const CACHE_NAME = "logiran-shell-v3";
 const APP_PREFIX = "/LOGIRAN/";
 const LEGACY_CACHE_PREFIXES = ["berah-", "bbberah-"];
 const CORE_ASSETS = [APP_PREFIX, APP_PREFIX + "index.html", APP_PREFIX + "manifest.webmanifest", APP_PREFIX + "icon.svg"];
@@ -25,7 +25,7 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).then((response) => {
+      fetch(new Request(request, { cache: "no-store" })).then((response) => {
         if (response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(APP_PREFIX + "index.html", copy));
@@ -36,16 +36,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Prefer the deployed hashed asset over an older cached response. Keep cache only as offline fallback.
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const network = fetch(request).then((response) => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        }
-        return response;
-      });
-      return cached || network;
-    })
+    fetch(new Request(request, { cache: "no-store" })).then((response) => {
+      if (response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      }
+      return response;
+    }).catch(() => caches.match(request))
   );
 });
