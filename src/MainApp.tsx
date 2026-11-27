@@ -997,14 +997,11 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       const Icon = item.icon;
       const itemIndex = items.indexOf(item);
       const hasStatus = itemIndex < 3;
-      return <div key={item.title} className="flex min-w-0 flex-col gap-1.5">
-        <button type="button" onClick={item.action} className="relative flex min-h-[92px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-[#D9E2EC] bg-white px-2 py-3 text-center shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99]">
-          <Icon className="h-9 w-9 shrink-0 text-[#032E5C]" aria-hidden="true"/>
-          <span className="w-full truncate text-sm font-black leading-5 text-[#032E5C]">{item.title}</span>
-          {!hasStatus && <ChevronLeft className="absolute left-2 top-2 h-4 w-4 text-[#032E5C]/65" aria-hidden="true"/>}
-        </button>
-        {hasStatus && <div className={`flex min-h-8 w-full items-center justify-center rounded-xl border border-[#D9E2EC] px-1.5 py-1 text-center text-[11px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</div>}
-      </div>;
+      return <button key={item.title} type="button" onClick={item.action} className="flex min-h-[72px] w-full min-w-0 items-center gap-3 rounded-2xl border border-[#D9E2EC] bg-white px-4 py-3 text-right shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-[#032E5C]"><Icon className="h-5 w-5" aria-hidden="true"/></span>
+        <span className="min-w-0 flex-1 truncate text-sm font-black leading-5 text-[#032E5C]">{item.title}</span>
+        {hasStatus ? <span className={`max-w-[48%] shrink truncate rounded-xl border border-[#D9E2EC] px-3 py-2 text-[11px] font-extrabold leading-4 ${statusTones[item.tone] || statusTones.slate}`}>{item.status}</span> : <ChevronLeft className="h-5 w-5 shrink-0 text-[#032E5C]/65" aria-hidden="true"/>}
+      </button>;
     };
     return <div dir="rtl" className="h-full min-h-0 w-full overflow-hidden flex flex-col gap-1 px-0 py-0">
       <div className="shrink-0 flex items-center gap-2 px-1 py-0.5">
@@ -1020,7 +1017,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </div>
       </div>
       <section aria-label="امکانات حساب کاربری" className="shrink-0 w-full px-1">
-        <div className="grid grid-cols-3 items-start gap-x-2.5 gap-y-3">{items.map(renderMenuCard)}</div>
+        <div className="flex w-full flex-col gap-2.5">{items.map(renderMenuCard)}</div>
       </section>
       <button type="button" onClick={()=>setShowLogoutConfirm(true)} className="shrink-0 flex min-h-[42px] w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-black text-red-600 shadow-sm transition-colors hover:bg-red-50">
         <LogOut className="h-5 w-5"/>خروج از حساب کاربری
