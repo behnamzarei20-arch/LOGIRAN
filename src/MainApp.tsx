@@ -969,7 +969,6 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       if (!showLogoutConfirm) return;
       return registerBackHandler(() => { setShowLogoutConfirm(false); return true; }, 200);
     }, [showLogoutConfirm]);
-    const savedVehicle = Boolean(window.localStorage.getItem('bbberah_vehicle_v1') && vehicleForm.type && vehicleForm.feature);
     const displayName = profile?.full_name === 'د' ? 'بهنام ادمین' : profile?.full_name || 'بهنام ادمین';
     const inviteFriends = async () => {
       const inviteText='به لوجیران، شبکه هوشمند خدمات و لجستیک ایران بپیوندید.';
