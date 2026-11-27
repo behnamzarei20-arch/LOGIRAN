@@ -1,5 +1,6 @@
-const CACHE_NAME = "berah-shell-v3";
-const APP_PREFIX = "/bbberah/";
+const CACHE_NAME = "logiran-shell-v1";
+const APP_PREFIX = "/logiran/";
+const LEGACY_CACHE_PREFIXES = ["berah-", "bbberah-"];
 const CORE_ASSETS = [APP_PREFIX, APP_PREFIX + "index.html", APP_PREFIX + "manifest.webmanifest", APP_PREFIX + "icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -9,7 +10,10 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("berah-") && key !== CACHE_NAME).map((key) => caches.delete(key))))
+    caches.keys()
+      .then((keys) => Promise.all(keys
+        .filter((key) => key !== CACHE_NAME && LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        .map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
