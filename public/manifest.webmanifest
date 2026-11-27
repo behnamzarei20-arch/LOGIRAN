@@ -1,19 +1,19 @@
 {
-  "id": "/logiran/",
+  "id": "/LOGIRAN/",
   "name": "LOGIRAN | لوجیران",
   "short_name": "LOGIRAN",
   "description": "بستر ارتباط و معرفی در حمل‌ونقل بار",
   "lang": "fa",
   "dir": "rtl",
-  "start_url": "/logiran/",
-  "scope": "/logiran/",
+  "start_url": "/LOGIRAN/",
+  "scope": "/LOGIRAN/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "/logiran/icon.svg",
+      "src": "/LOGIRAN/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
