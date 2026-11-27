@@ -991,7 +991,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     ];
     const compactItems = [
       { title:'تراکنش‌ها', icon:ReceiptText, action:()=>go('transactions'), tone:'text-[#1769AA]' },
-      { title:'تنظیمات', icon:Monitor, action:()=>{setDraftDisplayMode(displayMode);setSettingsOpen(v=>!v)}, tone:'text-[#032E5C]' },
+      { title:'تنظیمات', icon:Monitor, action:()=>{setDraftDisplayMode(displayMode);setSettingsOpen(true)}, tone:'text-[#032E5C]' },
       { title:'قوانین و مقررات', icon:FileText, action:()=>go('rules'), tone:'text-[#6D4BC3]' },
       { title:'پشتیبانی', icon:Headset, action:()=>go('support'), tone:'text-[#07839A]' },
       { title:'دعوت از دوستان', icon:Share2, action:inviteFriends, tone:'text-[#D97706]' },
@@ -1018,15 +1018,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </>}
       </button>;
     };
-    return <div dir="rtl" className={`flex h-full min-h-0 w-full flex-col gap-2 px-1 py-1 ${settingsOpen?'overflow-y-auto':'overflow-hidden'}`}>
-      {settingsOpen && <section aria-label="تنظیمات نمایش برنامه" className="flex w-full shrink-0 flex-col gap-2 rounded-xl border border-[#D9E2EC] bg-white p-3 shadow-sm">
-        <h3 className="text-center text-base font-black text-[#032E5C]">حالت نمایش برنامه</h3>
-        <p className="text-center text-xs font-medium text-gray-500">حالت موردنظر را انتخاب کنید و برای ثبت، تأیید را بزنید.</p>
-        <div className="grid w-full gap-2">
-          {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
-        </div>
-        <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);setSettingsOpen(false);notify('تنظیمات نمایش ثبت شد.')}} className="flex h-[72px] min-h-[72px] w-full items-center justify-center rounded-xl border border-[#D9E2EC] bg-[#032E5C] px-3 text-lg font-black text-white shadow-sm">تأیید و ثبت</button>
-      </section>}
+    return <div dir="rtl" className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden px-1 py-1">
       <div className="flex shrink-0 items-center gap-3 px-1 py-1">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="flex min-w-0 flex-1 flex-col items-start justify-center text-right">
@@ -1049,6 +1041,21 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-9 w-9 object-contain" loading="lazy"/></a>
       </div>
       <p className="mt-auto w-full shrink-0 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
+      <div className={`fixed inset-0 z-[60] flex items-end justify-center ${settingsOpen ? 'visible' : 'invisible pointer-events-none'}`} aria-hidden={!settingsOpen}>
+        <button type="button" aria-label="بستن تنظیمات" tabIndex={settingsOpen ? 0 : -1} onClick={()=>{setDraftDisplayMode(displayMode);setSettingsOpen(false)}} className="absolute inset-0 bg-transparent"/>
+        <section dir="rtl" role="dialog" aria-modal="true" aria-label="تنظیمات نمایش برنامه" className={`relative z-10 w-full max-w-lg rounded-t-[28px] border border-[#D9E2EC] bg-white px-4 pb-[calc(env(safe-area-inset-bottom)+20px)] pt-4 shadow-[0_-8px_32px_rgba(3,46,92,0.16)] transition-transform duration-300 [transition-timing-function:cubic-bezier(.22,.75,.25,1)] ${settingsOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-gray-300" aria-hidden="true"/>
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-base font-black text-[#032E5C]">حالت نمایش برنامه</h3>
+            <button type="button" onClick={()=>{setDraftDisplayMode(displayMode);setSettingsOpen(false)}} aria-label="بستن" className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100 text-gray-600"><X className="h-5 w-5"/></button>
+          </div>
+          <p className="mb-3 text-center text-xs font-medium text-gray-500">حالت موردنظر را انتخاب کنید و برای ثبت، تأیید را بزنید.</p>
+          <div className="grid w-full gap-2">
+            {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
+          </div>
+          <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);setSettingsOpen(false);notify('تنظیمات نمایش ثبت شد.')}} className="mt-3 flex h-[72px] min-h-[72px] w-full items-center justify-center rounded-xl border border-[#D9E2EC] bg-[#032E5C] px-3 text-lg font-black text-white shadow-sm">تأیید و ثبت</button>
+        </section>
+      </div>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
         <div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="main-logout-confirm-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><LogOut className="h-7 w-7"/></div>
