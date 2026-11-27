@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.berah.app',
-  appName: 'براه',
+  appName: 'LOGIRAN',
   webDir: 'dist',
   bundledWebRuntime: false,
 };
