@@ -47,7 +47,7 @@ export function RulesContent({ onAccept }: { onAccept?: () => void }) {
     <Card><CardBody className="p-5">
       <div className="flex items-start gap-3">
         <ShieldCheck className="w-6 h-6 text-primary-600 shrink-0 mt-1"/>
-        <div className="flex-1"><b>تأیید مطالعه و پذیرش شرایط</b><p className="text-xs text-gray-500 mt-1 leading-6">برای استفاده از خدمات، مطالعه و تأیید شرایط استفاده الزامی است. سیاست حریم خصوصی نیز باید جداگانه مطالعه و تأیید شود.</p></div>
+        <div className="flex-1"><b>تأیید مطالعه و پذیرش شرایط</b><p className="text-xs text-gray-500 mt-1 leading-6">برای استفاده از خدمات، مطالعه و تأیید شرایط استفاده الزامی است.</p></div>
       </div>
       {onAccept && <button type="button" onClick={onAccept} className="w-full mt-4 rounded-xl px-4 py-3 text-sm font-black bg-primary-600 text-white">مطالعه کردم و می‌پذیرم</button>}
     </CardBody></Card>
