@@ -1019,6 +1019,14 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       </button>;
     };
     return <div dir="rtl" className={`flex h-full min-h-0 w-full flex-col gap-2 px-1 py-1 ${settingsOpen?'overflow-y-auto':'overflow-hidden'}`}>
+      {settingsOpen && <section aria-label="تنظیمات نمایش برنامه" className="flex w-full shrink-0 flex-col gap-2 rounded-xl border border-[#D9E2EC] bg-white p-3 shadow-sm">
+        <h3 className="text-center text-base font-black text-[#032E5C]">حالت نمایش برنامه</h3>
+        <p className="text-center text-xs font-medium text-gray-500">حالت موردنظر را انتخاب کنید و برای ثبت، تأیید را بزنید.</p>
+        <div className="grid w-full gap-2">
+          {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
+        </div>
+        <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);setSettingsOpen(false);notify('تنظیمات نمایش ثبت شد.')}} className="flex h-[72px] min-h-[72px] w-full items-center justify-center rounded-xl border border-[#D9E2EC] bg-[#032E5C] px-3 text-lg font-black text-white shadow-sm">تأیید و ثبت</button>
+      </section>}
       <div className="flex shrink-0 items-center gap-3 px-1 py-1">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="flex min-w-0 flex-1 flex-col items-start justify-center text-right">
@@ -1035,14 +1043,6 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         <div className="flex w-full flex-col gap-1.5">{wideItems.map(item=>renderMenuCard(item))}</div>
         <div className="grid w-full grid-cols-2 gap-1.5">{compactItems.map(item=>renderMenuCard(item,true))}</div>
       </section>
-      {settingsOpen && <section aria-label="تنظیمات نمایش برنامه" className="flex w-full shrink-0 flex-col gap-2 rounded-xl border border-[#D9E2EC] bg-white p-3 shadow-sm">
-        <h3 className="text-center text-base font-black text-[#032E5C]">حالت نمایش برنامه</h3>
-        <p className="text-center text-xs font-medium text-gray-500">حالت موردنظر را انتخاب کنید و برای ثبت، تأیید را بزنید.</p>
-        <div className="grid w-full gap-2">
-          {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
-        </div>
-        <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);setSettingsOpen(false);notify('تنظیمات نمایش ثبت شد.')}} className="flex h-[72px] min-h-[72px] w-full items-center justify-center rounded-xl border border-[#D9E2EC] bg-[#032E5C] px-3 text-lg font-black text-white shadow-sm">تأیید و ثبت</button>
-      </section>}
       <div aria-label="شبکه‌های اجتماعی لوجیران" className="flex h-11 w-full shrink-0 items-center justify-center gap-5">
         <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-10 w-10 items-center justify-center text-[#d62976]"><Instagram className="h-9 w-9"/></span>
         <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-9 w-9 object-contain" loading="lazy"/></a>
