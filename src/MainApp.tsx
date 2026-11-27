@@ -999,13 +999,13 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
       const isWide = !compact;
       const status = item.title === 'احراز هویت' ? identityLabel : item.title === 'خودروی من' ? (vehicleSaved ? 'ثبت شده' : 'ثبت نشده') : item.title === 'کیف پول' ? `${money(walletBalance)} تومان` : '';
       const statusTone = item.title === 'احراز هویت' ? identityTone : item.title === 'خودروی من' ? (vehicleSaved ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-100 text-gray-600') : 'border-blue-100 bg-blue-50 text-blue-700';
-      return <button key={item.title} type="button" onClick={item.action} className={`flex h-[52px] min-h-[52px] w-full min-w-0 items-center rounded-xl border border-[#D9E2EC] bg-white px-3 text-[#032E5C] shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99] ${isWide ? 'justify-between text-right' : 'justify-center gap-2 text-center'} ${compact ? 'text-[14px]' : 'text-[15px]'}`}>
+      return <button key={item.title} type="button" onClick={item.action} className={`flex h-[72px] min-h-[72px] w-full min-w-0 items-center rounded-xl border border-[#D9E2EC] bg-white px-3 text-[#032E5C] shadow-sm transition-colors hover:border-[#032E5C]/35 hover:bg-[#F7F9FC] active:scale-[0.99] ${isWide ? 'justify-between text-right' : 'justify-center gap-2 text-center'} text-[18px]`}>
         {isWide ? <>
           <span className="flex min-w-0 items-center gap-2 text-right">
             <Icon className={`h-5 w-5 shrink-0 ${item.tone}`} aria-hidden="true"/>
             <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
           </span>
-          <span className={`max-w-[46%] shrink-0 truncate rounded-lg border px-2 py-1 text-[11px] font-black leading-4 ${statusTone}`}>{status}</span>
+          <span className={`max-w-[46%] shrink-0 truncate rounded-lg border px-2 py-1 text-[13px] font-black leading-5 ${statusTone}`}>{status}</span>
         </> : <>
           <Icon className={`h-5 w-5 shrink-0 ${item.tone}`} aria-hidden="true"/>
           <span className="min-w-0 truncate font-black leading-5">{item.title}</span>
@@ -1029,10 +1029,10 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         <div className="flex w-full flex-col gap-1.5">{wideItems.map(item=>renderMenuCard(item))}</div>
         <div className="grid w-full grid-cols-2 gap-1.5">{compactItems.map(item=>renderMenuCard(item,true))}</div>
       </section>
-      <div aria-label="شبکه‌های اجتماعی لوجیران" className="flex h-9 w-full shrink-0 items-center justify-center gap-5">
-        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-9 w-9 items-center justify-center text-[#d62976]"><Instagram className="h-7 w-7"/></span>
-        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-9 w-9 items-center justify-center"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-8 w-8 object-contain" loading="lazy"/></a>
-        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-9 w-9 items-center justify-center"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-8 w-8 object-contain" loading="lazy"/></a>
+      <div aria-label="شبکه‌های اجتماعی لوجیران" className="flex h-11 w-full shrink-0 items-center justify-center gap-5">
+        <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-10 w-10 items-center justify-center text-[#d62976]"><Instagram className="h-9 w-9"/></span>
+        <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-9 w-9 object-contain" loading="lazy"/></a>
+        <a href="https://rubika.ir/Logiran" target="_blank" rel="noopener noreferrer" aria-label="ورود به صفحه روبیکای لوجیران" title="روبیکا لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Rubika_Icon.png" alt="روبیکا" className="h-9 w-9 object-contain" loading="lazy"/></a>
       </div>
       <p className="mt-auto w-full shrink-0 text-center text-xs font-bold leading-4 text-gray-500">نسخه برنامه: ۱.۰.۱</p>
       {showLogoutConfirm && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setShowLogoutConfirm(false)}}>
