@@ -338,6 +338,7 @@ export function MainApp() {
     const saved = window.localStorage.getItem('bbberah-display-mode');
     return saved === 'day' || saved === 'night' || saved === 'auto' ? saved : 'auto';
   });
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [systemDark, setSystemDark] = useState<boolean>(() => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false);
   const [smsNotificationsEnabled, setSmsNotificationsEnabled] = useState<boolean>(() => window.localStorage.getItem('bbberah-sms-notifications-enabled') !== 'false');
   const themePressTimer = useRef<number | null>(null);
@@ -990,7 +991,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
     ];
     const compactItems = [
       { title:'تراکنش‌ها', icon:ReceiptText, action:()=>go('transactions'), tone:'text-[#1769AA]' },
-      { title:'تنظیمات', icon:Monitor, action:()=>{setDraftDisplayMode(displayMode);go('display')}, tone:'text-[#032E5C]' },
+      { title:'تنظیمات', icon:Monitor, action:()=>{setDraftDisplayMode(displayMode);setSettingsOpen(v=>!v)}, tone:'text-[#032E5C]' },
       { title:'قوانین و مقررات', icon:FileText, action:()=>go('rules'), tone:'text-[#6D4BC3]' },
       { title:'پشتیبانی', icon:Headset, action:()=>go('support'), tone:'text-[#07839A]' },
       { title:'دعوت از دوستان', icon:Share2, action:inviteFriends, tone:'text-[#D97706]' },
@@ -1017,7 +1018,7 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         </>}
       </button>;
     };
-    return <div dir="rtl" className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden px-1 py-1">
+    return <div dir="rtl" className={`flex h-full min-h-0 w-full flex-col gap-2 px-1 py-1 ${settingsOpen?'overflow-y-auto':'overflow-hidden'}`}>
       <div className="flex shrink-0 items-center gap-3 px-1 py-1">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-blue-50"><FacelessAvatar className="h-full w-full"/></div>
         <div className="flex min-w-0 flex-1 flex-col items-start justify-center text-right">
@@ -1034,6 +1035,14 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
         <div className="flex w-full flex-col gap-1.5">{wideItems.map(item=>renderMenuCard(item))}</div>
         <div className="grid w-full grid-cols-2 gap-1.5">{compactItems.map(item=>renderMenuCard(item,true))}</div>
       </section>
+      {settingsOpen && <section aria-label="تنظیمات نمایش برنامه" className="flex w-full shrink-0 flex-col gap-2 rounded-xl border border-[#D9E2EC] bg-white p-3 shadow-sm">
+        <h3 className="text-center text-base font-black text-[#032E5C]">حالت نمایش برنامه</h3>
+        <p className="text-center text-xs font-medium text-gray-500">حالت موردنظر را انتخاب کنید و برای ثبت، تأیید را بزنید.</p>
+        <div className="grid w-full gap-2">
+          {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
+        </div>
+        <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);setSettingsOpen(false);notify('تنظیمات نمایش ثبت شد.')}} className="flex h-[72px] min-h-[72px] w-full items-center justify-center rounded-xl border border-[#D9E2EC] bg-[#032E5C] px-3 text-lg font-black text-white shadow-sm">تأیید و ثبت</button>
+      </section>}
       <div aria-label="شبکه‌های اجتماعی لوجیران" className="flex h-11 w-full shrink-0 items-center justify-center gap-5">
         <span aria-label="اینستاگرام؛ لینک به‌زودی اضافه می‌شود" title="اینستاگرام — لینک به‌زودی اضافه می‌شود" className="flex h-10 w-10 items-center justify-center text-[#d62976]"><Instagram className="h-9 w-9"/></span>
         <a href="https://t.me/LOGIRAN_IR" target="_blank" rel="noopener noreferrer" aria-label="ورود به کانال تلگرام لوجیران" title="تلگرام لوجیران" className="flex h-10 w-10 items-center justify-center"><img src="https://telegram.org/img/t_logo.png" alt="تلگرام" className="h-9 w-9 object-contain" loading="lazy"/></a>
@@ -2202,17 +2211,6 @@ const ProfilePage = () => <div className="space-y-3">
       </CardBody></Card>
     </div>;
     if (page==='support') return <div className="space-y-3"><Card><CardBody className="p-5"><Headset className="w-7 h-7 text-primary-600"/><h3 className="font-black mt-3">مرکز پشتیبانی</h3><p className="text-sm text-gray-500 leading-7 mt-2">برای مشکلات حساب، بار یا سفر، موضوع خود را از مسیرهای زیر پیگیری کنید.</p><div className="grid grid-cols-2 gap-2 mt-4"><Button size="sm" variant="outline" onClick={()=>notify('چت پشتیبانی در نسخه نهایی فعال می‌شود.')}>گفتگوی آنلاین</Button><a href="tel:02100000000" className="min-h-11 rounded-xl bg-primary-600 text-white flex items-center justify-center gap-2 text-sm font-bold"><Phone className="w-4 h-4"/> تماس</a></div></CardBody></Card><Card><CardBody><b>وضعیت سرویس</b><div className="mt-3 flex items-center gap-2 text-emerald-700 text-sm"><CheckCircle2 className="w-4 h-4"/> همه بخش‌های آزمایشی فعال هستند</div></CardBody></Card></div>;
-    if (page==='display') return <div className="fixed inset-0 z-[130] flex items-end bg-black/45" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)go('profile')}}>
-      <section dir="rtl" role="dialog" aria-modal="true" aria-labelledby="display-settings-title" className="slide-up w-full rounded-t-3xl border-t border-gray-200 bg-white px-4 pb-[max(20px,env(safe-area-inset-bottom))] pt-5 shadow-2xl">
-        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-300"/>
-        <h2 id="display-settings-title" className="mb-2 text-center text-lg font-black text-gray-900">تنظیمات برنامه</h2>
-        <p className="mb-4 text-center text-xs font-medium text-gray-500">حالت نمایش موردنظر را انتخاب و سپس تأیید کنید.</p>
-        <div className="grid w-full gap-3">
-          {([['auto','حالت خودکار',Monitor],['day','حالت روز',Sun],['night','حالت شب',Moon]] as const).map(([mode,label,Icon])=><button type="button" key={mode} aria-pressed={draftDisplayMode===mode} onClick={()=>setDraftDisplayMode(mode)} className={`flex min-h-[62px] w-full items-center gap-3 rounded-xl border-2 px-4 py-3 text-right transition-colors ${draftDisplayMode===mode?'border-[#032E5C] bg-blue-50':'border-gray-200 bg-white'}`}><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${draftDisplayMode===mode?'border-[#032E5C] bg-[#032E5C] text-white':'border-gray-400 bg-white'}`}>{draftDisplayMode===mode&&<CheckCircle2 className="h-4 w-4"/>}</span><Icon className="h-5 w-5 shrink-0 text-[#032E5C]"/><span className="flex-1 font-bold text-gray-800">{label}</span></button>)}
-        </div>
-        <button type="button" onClick={()=>{setDisplayMode(draftDisplayMode);go('profile')}} className="mt-4 w-full rounded-xl bg-[#032E5C] px-4 py-3.5 text-base font-black text-white shadow-sm">تأیید</button>
-      </section>
-    </div>;
     if (page==='rules') return <RulesContent onAccept={()=>{setTermsAccepted(v=>!v);notify(!termsAccepted?'پذیرش قوانین ثبت شد.':'پذیرش قوانین لغو شد.')}} />;
     return ProfilePage();
   };
