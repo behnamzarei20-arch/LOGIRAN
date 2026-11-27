@@ -138,7 +138,7 @@ export function AuthPage(_props: { mode: 'login' | 'register'; onModeChange: (mo
       </div>
 
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-black text-gray-900">براه خوش آمدید</h1>
+        <h1 className="text-2xl font-black text-gray-900">لوجیران خوش آمدید</h1>
         <p className="mt-3 text-sm font-medium text-gray-500">{APP_TAGLINE}</p>
       </div>
 
@@ -165,7 +165,7 @@ export function AuthPage(_props: { mode: 'login' | 'register'; onModeChange: (mo
               className="mt-1 h-4 w-4 shrink-0 accent-[#1358ED]"
             />
             <label htmlFor="terms-accepted" className="text-sm leading-7 text-gray-600">
-              با ورود به براه قوانین و مقررات را می‌پذیرم.{' '}
+              با ورود به لوجیران قوانین و مقررات را می‌پذیرم.{' '}
               <button type="button" onClick={() => setTermsOpen(true)} className="font-bold text-primary-700 underline underline-offset-2">مطالعه قوانین و مقررات</button>
             </label>
           </div>
