@@ -8,8 +8,8 @@ import type {
   CargoStatus,
 } from '@/types';
 
-export const APP_NAME = 'براه';
-export const APP_TAGLINE = 'بازارگاه حمل و نقل هوشمند';
+export const APP_NAME = 'لوجیران (LOGIRAN)';
+export const APP_TAGLINE = 'بستر ارتباط و معرفی در حمل‌ونقل بار';
 
 export const CITIES: string[] = [
   'تهران',
@@ -189,4 +189,4 @@ export const NOTIFICATION_TYPE_LABELS: Record<string, string> = {
 };
 
 export const COMMISSION_RATE = 0;
-export const COMMISSION_LABEL = `کمیسیون براه (۰٪)`;
+export const COMMISSION_LABEL = `کمیسیون لوجیران (۰٪)`;
