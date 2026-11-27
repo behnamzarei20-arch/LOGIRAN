@@ -376,7 +376,7 @@ const [walletTransactions] = useState<Array<{id:string; type:'increase'|'decreas
       const now = Date.now();
       saved = [
         {id:'demo-increase-1',type:'increase',amount:2500000,at:now-86400000*2,title:'افزایش موجودی',description:'شارژ کیف پول',source:'demo'},
-        {id:'demo-gift-1',type:'increase',amount:500000,at:now-86400000,title:'هدیه افزایش موجودی',description:'هدیه خوش‌آمدگویی از طرف براه',source:'gift'},
+        {id:'demo-gift-1',type:'increase',amount:500000,at:now-86400000,title:'هدیه افزایش موجودی',description:'هدیه خوش‌آمدگویی از طرف لوجیران',source:'gift'},
         {id:'demo-increase-2',type:'increase',amount:1000000,at:now-3600000*5,title:'افزایش موجودی',description:'افزایش آزمایشی موجودی کیف پول',source:'demo'},
       ];
       window.localStorage.setItem('bbberah_wallet_transactions_v1', JSON.stringify(saved));
@@ -869,7 +869,7 @@ useEffect(() => { window.localStorage.setItem('bbberah_contact_history_v2', JSON
     return originMatch && destinationMatch;
   }), [loads, origin, originProvince, originCounty, destination, destinationProvince, destinationCounty, nearbyUserLocation]);
   const title:Record<Page,string> = {
-    home:'براه', search:'جستجوی بار', nearby:'اطراف من', calls:'تماس‌های من', profile:'پروفایل', features:'امکانات',
+    home:'لوجیران', search:'جستجوی بار', nearby:'اطراف من', calls:'تماس‌های من', profile:'پروفایل', features:'امکانات',
     account:'اطلاعات حساب', verification:'احراز هویت', 'verification-intro':'چرا احراز هویت ضروری است؟', vehicle:'خودروی من', 'vehicle-dashboard':'خودروی من', 'vehicle-select':'نوع خودرو', wallet:'کیف پول', transactions:'تراکنش‌ها',
     support:'پشتیبانی', rules:'قوانین و مقررات', notifications:'اعلان‌ها', display:'تنظیمات ظاهری', 'cargo-detail':'جزئیات بار',
 offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد', 'vehicle-loader':'ویژگی کاربری', 'trailer-select':'نوع کاربری را انتخاب کنید', 'jooft-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'jooft-feature':'ویژگی کاربری', 'tak-usage':'نوع کاربری خودرو خود را انتخاب کنید', 'tak-feature':'ویژگی کاربری', 'komionet-usage':'نوع بارگیر خود را انتخاب کنید', 'komionet-feature':'ویژگی بارگیر خود را انتخاب کنید', 'van-usage':'نوع کاربری خود را انتخاب کنید', 'van-feature':'ویژگی بارگیر خود را انتخاب کنید', 'flatbed-size':'ویژگی کاربری', report:'گزارش تخلف', shipment:'سفر جاری', 'origin-select':'انتخاب مبدأ', 'destination-select':'انتخاب مقصد', 'destination-all':'انتخاب شهر مقصد', 'frequent-route':'بارهای مسیر', 'contact-report':'نتیجه تماس', 'nearby-destination-select':'انتخاب مقصد', 'nearby-results':'اطراف من'
@@ -914,8 +914,8 @@ offers:'پیشنهادهای من', 'offer-detail':'جزئیات پیشنهاد'
   const submitOffer = () => {
     if (actionBusy) return;
     const n = Number(offerPrice.replace(/,/g,''));
-    if (!termsAccepted) return notify('ابتدا قوانین و مقررات براه را مطالعه و تأیید کنید.');
-    if (!session) return notify('برای ثبت پیشنهاد ابتدا به براه متصل شوید.');
+    if (!termsAccepted) return notify('ابتدا قوانین و مقررات لوجیران را مطالعه و تأیید کنید.');
+    if (!session) return notify('برای ثبت پیشنهاد ابتدا به لوجیران متصل شوید.');
     if (!Number.isFinite(n) || n < 0) return notify('مبلغ پیشنهاد نامعتبر است.');
     setActionBusy(true);
     setTimeout(()=>setActionBusy(false),500);
@@ -1643,7 +1643,7 @@ const ProfilePage = () => <div className="space-y-3">
     <Card><CardBody className="p-5 space-y-4">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 text-primary-700"><ShieldCheck className="h-9 w-9"/></div>
       <h2 className="text-center text-xl font-black">چرا احراز هویت ضروری است؟</h2>
-      <p className="text-sm leading-7 text-gray-600">براه راننده‌ها و صاحبان بار را به هم متصل می‌کند. تأیید هویت به اعتماد متقابل کمک می‌کند و امکان پیگیری مسئولانه‌تر تعامل‌ها را فراهم می‌سازد.</p>
+      <p className="text-sm leading-7 text-gray-600">لوجیران راننده‌ها و صاحبان بار را به هم متصل می‌کند. تأیید هویت به اعتماد متقابل کمک می‌کند و امکان پیگیری مسئولانه‌تر تعامل‌ها را فراهم می‌سازد.</p>
       <div className="space-y-3">
         {[
           ['اعتماد بیشتر','اطمینان بهتر از هویت طرف‌های معامله و کاهش حساب‌های جعلی.'],
@@ -1662,7 +1662,7 @@ const ProfilePage = () => <div className="space-y-3">
     <Card><CardBody className="p-5"><h2 className="text-xl font-black">{selected.title}</h2><div className="flex items-center gap-4 mt-5" dir="rtl"><div className="flex-1 text-center"><b className="block text-lg">{selected.from}</b><span className="block text-sm font-bold text-gray-500 mt-1">استان {cityProvinceName(selected.from)}</span></div><div className="w-24 relative flex items-center justify-center"><div className="w-full border-t-2 border-dashed border-primary-300"/><div className="absolute flex flex-col items-center bg-white px-1"><Route className="w-5 h-5 text-primary-500 rotate-180"/><span className="text-xs font-black text-primary-700 mt-0.5">{fa(selected.routeDistance)} کیلومتر</span></div></div><div className="flex-1 text-center"><b className="block text-lg">{selected.to}</b><span className="block text-sm font-bold text-gray-500 mt-1">استان {cityProvinceName(selected.to)}</span></div></div></CardBody></Card>
     <Card><CardBody className="p-5 space-y-4"><h3 className="font-black">جزئیات بار</h3><div className="grid grid-cols-2 gap-3 text-sm">
       <div className="bg-gray-50 rounded-xl p-3"><div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center"><Package className="w-5 h-5 text-primary-600"/></div><span className="block text-gray-500 mt-2 text-base font-bold">نوع بار</span><b className="block mt-1 text-base font-black">{selected.type}</b></div>
-      <div className="bg-gray-50 rounded-xl p-3"><div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center"><Percent className="w-4 h-4 text-primary-600"/></div><span className="block text-gray-500 mt-2 text-base font-bold">کمیسیون براه</span><b className="block mt-1 text-base font-black">{money(commission)} تومان</b></div>
+      <div className="bg-gray-50 rounded-xl p-3"><div className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center"><Percent className="w-4 h-4 text-primary-600"/></div><span className="block text-gray-500 mt-2 text-base font-bold">کمیسیون لوجیران</span><b className="block mt-1 text-base font-black">{money(commission)} تومان</b></div>
       <div className="bg-gray-50 rounded-xl p-3"><div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center"><WeightIcon className="w-5 h-5 text-amber-600"/></div><span className="block text-gray-500 mt-2 text-base font-bold">وزن بار</span><b className="block mt-1 text-base font-black">{fa(selected.weight)} کیلو</b></div>
       <div className="bg-gray-50 rounded-xl p-3"><div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center"><CircleDollarSign className="w-5 h-5 text-emerald-600"/></div><span className="block text-gray-500 mt-2 text-base font-bold">کرایه اعلامی</span><b className="block mt-1 text-base font-black">{money(selected.price)} تومان</b></div>
     </div><div className="flex items-center gap-3 text-sm"><Clock3 className="w-5 h-5 text-primary-600"/><span>بارگیری: <b>{selected.pickup}</b></span></div><div className="flex items-center gap-3 text-sm"><MapPin className="w-5 h-5 text-primary-600"/><span>تحویل: <b>{selected.delivery}</b></span></div></CardBody></Card>
@@ -2206,7 +2206,7 @@ const ProfilePage = () => <div className="space-y-3">
     return ProfilePage();
   };
 
-  const currentPageTitle = title[page] || 'براه';
+  const currentPageTitle = title[page] || 'لوجیران';
   const pageHelpText:Partial<Record<Page,string>> = {
     calls:'در این صفحه سوابق تماس‌ها و پیشنهادهای قیمت خود را یکجا می‌بینید.',
     profile:'از این بخش می‌توانید به اطلاعات حساب و امکانات کاربری دسترسی داشته باشید.',
@@ -2251,7 +2251,7 @@ const ProfilePage = () => <div className="space-y-3">
     <BottomNav />
     <Toast message={toast} onClose={()=>setToast('')} />
     {showIdentityGate && <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 px-4" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setShowIdentityGate(false); }}><div dir="rtl" role="dialog" aria-modal="true" aria-labelledby="identity-gate-title" className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl"><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-50 text-orange-600"><ShieldCheck className="h-7 w-7"/></div><h2 id="identity-gate-title" className="text-center text-xl font-black text-gray-900">{identityPending ? 'احراز هویت در انتظار بررسی است' : identityRejected ? 'مدارک نیاز به اصلاح دارد' : 'ابتدا احراز هویت کنید'}</h2><p className="mt-3 text-center text-sm leading-7 text-gray-600">{identityPending ? 'تا زمانی که بررسی و تأیید نهایی انجام نشود، تماس با صاحب بار فعال نمی‌شود.' : identityRejected ? 'برای ادامه ارتباط با صاحب بار، اطلاعات و مدارک خود را اصلاح کنید.' : 'برای حفظ اعتماد و امنیت راننده‌ها و صاحبان بار، پیش از اولین تماس باید هویت شما بررسی و تأیید شود.'}</p><Button className="w-full mt-5" onClick={() => { setShowIdentityGate(false); go(identityPending || identityRejected ? 'verification' : 'verification-intro'); }}>{identityPending ? 'مشاهده وضعیت' : identityRejected ? 'اصلاح مدارک' : 'متوجه شدم'}</Button><button type="button" onClick={() => setShowIdentityGate(false)} className="mt-3 w-full rounded-xl border border-gray-200 py-3 font-bold text-gray-600">فعلاً نه</button></div></div>}
-    {showPageHelp && <div className="fixed inset-0 z-[90] bg-black/40 flex items-center justify-center p-5" onClick={()=>setShowPageHelp(false)}><div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl text-gray-900" onClick={e=>e.stopPropagation()}><div className="flex items-center justify-between gap-3"><h3 className="font-black text-lg">درباره {currentPageTitle}</h3><button type="button" onClick={()=>setShowPageHelp(false)} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center" aria-label="بستن"><X className="w-4 h-4"/></button></div><p className="mt-3 text-sm leading-7 text-gray-600">{pageHelpText[page] || `این بخش برای مشاهده و مدیریت «${currentPageTitle}» در برنامه براه استفاده می‌شود.`}</p><Button className="w-full mt-4" onClick={()=>setShowPageHelp(false)}>متوجه شدم</Button></div></div>}
+    {showPageHelp && <div className="fixed inset-0 z-[90] bg-black/40 flex items-center justify-center p-5" onClick={()=>setShowPageHelp(false)}><div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl text-gray-900" onClick={e=>e.stopPropagation()}><div className="flex items-center justify-between gap-3"><h3 className="font-black text-lg">درباره {currentPageTitle}</h3><button type="button" onClick={()=>setShowPageHelp(false)} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center" aria-label="بستن"><X className="w-4 h-4"/></button></div><p className="mt-3 text-sm leading-7 text-gray-600">{pageHelpText[page] || `این بخش برای مشاهده و مدیریت «${currentPageTitle}» در برنامه لوجیران استفاده می‌شود.`}</p><Button className="w-full mt-4" onClick={()=>setShowPageHelp(false)}>متوجه شدم</Button></div></div>}
     {shipmentRewardSummary && <div className="fixed inset-0 z-[75] bg-black/40 flex items-center justify-center p-5">
       <div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl">
         <div className="flex items-center gap-3">
