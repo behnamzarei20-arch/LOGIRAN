@@ -1,5 +1,5 @@
 const CACHE_NAME = "logiran-shell-v1";
-const APP_PREFIX = "/logiran/";
+const APP_PREFIX = "/LOGIRAN/";
 const LEGACY_CACHE_PREFIXES = ["berah-", "bbberah-"];
 const CORE_ASSETS = [APP_PREFIX, APP_PREFIX + "index.html", APP_PREFIX + "manifest.webmanifest", APP_PREFIX + "icon.svg"];
 
